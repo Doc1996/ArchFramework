@@ -1,10 +1,10 @@
 # Leva.Framework.Core
 
-`Leva.Framework.Core` is the shared vocabulary layer of ArchFramework. It defines stable contracts, IDs, result types, entries, and small runtime value objects used by the rest of the framework.
+`Leva.Framework.Core` is the shared vocabulary layer of ArchFramework. It defines stable contracts, IDs, result types, entries, snapshots, and small value objects used by the rest of the framework.
 
 ## Purpose and dependencies
 
-Core exists so all framework libraries can share the same language without creating dependency cycles. It contains concepts, not runtime execution, storage, UI, notifications, devices, providers, or application-specific behavior. `Leva.Framework.Core` depends only on .NET base libraries. Other framework libraries may depend on Core, but Core must not depend on Engine, Fakes, Storage, Presentation, Notifications, Authentication, provider implementations, or application projects.
+Core exists so framework libraries can share the same language without creating dependency cycles. It contains concepts, not runtime execution, storage, UI, notifications, devices, providers, or application-specific behavior. `Leva.Framework.Core` depends only on .NET base libraries. Other framework libraries may depend on Core, but Core must not depend on Engine, Fakes, Storage, Presentation, Notifications, Authentication, provider implementations, or application projects.
 
 ```text
 Leva.Framework.Core
@@ -12,19 +12,17 @@ Leva.Framework.Core
 
 Leva.Framework.Engine
 Leva.Framework.Fakes
-Leva.Framework.Storage       future
-Leva.Framework.Notifications future
-Leva.Framework.Presentation  future
+future provider libraries
   -> Leva.Framework.Core
 ```
 
 ## Project overview
 
-Core is intentionally small and stable. A type belongs here only when it represents a framework-wide concept that many libraries can safely depend on. This includes contracts such as `IEvent`, `IState<TAccess>`, `IRoutine<TAccess>`, `IBehavior<TAccess>`, `ITransition`, and `ITraceSink`; identity values such as `StateId`, `RoutineId`, `EventId`, `CommandId`, `RequestId`, and `AlarmId`; and shared values such as `Result`, `Error`, entries, and `Snapshot`.
+Core is intentionally small and stable. A type belongs here only when it represents a framework-wide concept that many libraries can safely depend on. This includes contracts such as `IEvent`, `IState<TAccess>`, `IRoutine<TAccess>`, `IBehavior<TAccess>`, `ITransition`, and `ITraceSink`; identity values such as `StateId`, `RoutineId`, `EventId`, `CommandId`, `RequestId`, and `AlarmId`; and shared values such as `Result`, `Error`, runtime entries, and `Snapshot`.
 
 Core does not decide how events are queued, how states are executed, how data is stored, or how UI is shown. Those responsibilities belong to Engine, provider libraries, or applications. Core only defines the shape of the concepts so those layers can communicate cleanly.
 
-`Snapshot` is the durable recovery term used by the framework. It replaces earlier checkpoint terminology and represents saved runtime/application state that can be persisted by a host or future storage provider.
+`Snapshot` is the durable recovery term used by the framework. It represents saved runtime/application state that can be persisted by a host or future storage provider.
 
 ## Files and classes
 

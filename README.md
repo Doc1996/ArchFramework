@@ -1,36 +1,36 @@
 # ArchFramework
 
-ArchFramework is a clean .NET framework for event-driven, state-machine applications with pluggable infrastructure. It gives applications a reusable architecture for typed events, explicit states, routines, behaviors, transitions, runtime memory, diagnostics, and recovery snapshots.
+ArchFramework is a clean .NET framework for event-driven, state-machine applications. It provides reusable runtime structure for typed events, explicit states, routines, behaviors, controlled transitions, runtime memory, diagnostics, and recovery snapshots.
 
-## Architecture
+## Architecture summary
 
-The framework separates application behavior from infrastructure. Applications define their own domain events, states, routines, screens, services, storage, notifications, and policies. ArchFramework provides the runtime structure that makes this behavior deterministic, observable, and testable.
+ArchFramework keeps important application behavior out of random services, UI callbacks, and uncontrolled background code. Work enters the runtime as typed events, flows through a deterministic dispatcher, reaches the active state or routine, can fall back to behaviors, and only then applies requested transitions. This makes the application easier to reason about, test, trace, and recover.
 
-The most important idea is that application logic should not be hidden inside random services, UI callbacks, or background tasks. Important behavior should flow through events, states, routines, behaviors, and controlled transitions.
+The framework is split into small libraries. `Leva.Framework.Core` defines the shared vocabulary. `Leva.Framework.Engine` implements the runtime. `Leva.Framework.Fakes` provides reusable test doubles. Future infrastructure libraries should stay separate, for example storage, notifications, authentication, and presentation adapters.
 
-## Current libraries
+## Library structure
 
 ```text
-Leva.Framework.Core   -> shared contracts and vocabulary
-Leva.Framework.Engine -> runtime implementation
-Leva.Framework.Fakes  -> reusable test doubles
+Leva.Framework.Core   -> shared contracts, IDs, entries, results, snapshots
+Leva.Framework.Engine -> event queue, dispatcher, state machine, boards, logs
+Leva.Framework.Fakes  -> fake clocks, events, queues, states, routines, traces
 ```
 
-Core defines the concepts. Engine executes the concepts. Fakes make the concepts easier to test. Future libraries should stay separate so Core and Engine do not become infrastructure-heavy.
+Future libraries should plug into the same architecture without forcing infrastructure into Core or Engine.
 
 ```text
-Leva.Framework.Storage           future
-Leva.Framework.Storage.InMemory  future
-Leva.Framework.Storage.Sqlite    future
-Leva.Framework.Notifications     future
-Leva.Framework.Authentication    future
-Leva.Framework.Presentation      future
+Leva.Framework.Storage            future
+Leva.Framework.Storage.InMemory   future
+Leva.Framework.Storage.Sqlite     future
+Leva.Framework.Notifications      future
+Leva.Framework.Authentication     future
+Leva.Framework.Presentation       future
 Leva.Framework.Presentation.Blazor future
 ```
 
 ## Dependency direction
 
-Framework dependencies move inward toward Core. Applications and provider libraries can depend on framework libraries, but framework libraries should not depend on applications or concrete providers.
+Dependencies move inward toward Core. Core depends only on .NET. Engine depends on Core. Fakes depends on Engine and Core because it is a testing support library. Applications and future provider libraries may depend on selected framework libraries, but Core and Engine should not depend on applications, UI providers, storage providers, notification providers, authentication providers, devices, databases, or web frameworks.
 
 ```text
 Leva.Framework.Core
@@ -47,56 +47,53 @@ Applications / future providers
   -> selected framework libraries
 ```
 
-Core must stay independent. Engine must stay independent from UI, storage providers, notification providers, authentication providers, devices, and application projects. Provider libraries adapt external systems; they should not be pushed into Core or Engine.
+## Runtime flow
 
-## Runtime model
-
-The engine processes work through one controlled path.
+The engine processes events through one controlled path.
 
 ```text
 EventQueue
 -> EventLoop
 -> EventDispatcher
--> StatusUpdater
--> AlarmSupervisor
+-> IStatusUpdater
+-> IAlarmSupervisor
 -> StateMachine
 -> RoutineRunner
 -> BehaviorRunner
--> transition drain
+-> queued transition drain
 ```
 
-An event enters the queue, is dispatched through global runtime components, reaches the active state, may continue an active routine, may fall through to fallback behaviors, and only then applies requested transitions. This keeps event handling predictable and avoids state changes happening randomly in the middle of execution.
+An event is queued, dequeued by the loop, dispatched through global runtime hooks, handled by the active state or routine when possible, optionally handled by fallback behaviors, and then transition requests are drained. This avoids state changes happening unpredictably in the middle of event handling.
 
 ## Access model
 
-States, routines, and behaviors should receive narrow typed access objects instead of the full runtime `Context`. The context owns engine services and runtime wiring, but application logic should only see the capabilities it is allowed to use.
+States, routines, and behaviors should receive narrow typed access objects instead of the full runtime `Context`. The context owns runtime services and wiring. Application logic should only see the capabilities it is allowed to use, such as transition, tracing, views, data, policies, navigation, or notifications depending on the application.
 
-This makes states easier to understand and test. A state that only needs navigation and transitions should not receive storage, notifications, device control, or unrelated application services.
+This keeps states smaller and easier to test. A state that only needs navigation and transitions should not receive storage, notifications, device control, or unrelated services.
 
-## Runtime memory
+## Memory model
 
-Engine memory is grouped by responsibility.
+The engine separates latest-known runtime facts from chronological history and diagnostic output.
 
 ```text
-AlarmBoard   -> active alarms and faults
-StatusBoard  -> latest-known statuses
+AlarmBoard   -> currently active alarms and faults
+StatusBoard  -> latest-known status values
 CommandBoard -> tracked command lifecycle entries
-RuntimeLog   -> chronological runtime history
+RuntimeLog   -> chronological runtime history as LogEntry values
 TraceSink    -> diagnostic trace output
 Snapshot     -> durable recovery state
 ```
 
-Boards answer “what is true now?” Runtime logs answer “what happened over time?” Trace sinks answer “what should diagnostics receive?” Snapshots answer “what state can be saved and restored?”
+Boards answer what is true now. The runtime log answers what happened over time. Trace sinks receive diagnostic output. Snapshots capture recovery data that can later be stored and restored by the host or a future storage library.
 
 ## Project guides
 
-The repository contains one general README and one focused guide per implemented library.
-
 ```text
-README.md    -> architecture and repository overview
-README_CORE.md   -> Core purpose, dependencies, overview and files/classes
-README_ENGINE.md -> Engine purpose, dependencies, overview and files/classes
-README_FAKES.md  -> Fakes purpose, dependencies, overview and files/classes
+README.md         -> architecture and repository overview
+README_CORE.md    -> Core purpose, dependencies, overview, files and classes
+README_ENGINE.md  -> Engine purpose, dependencies, overview, files and classes
+README_FAKES.md   -> Fakes purpose, dependencies, overview, files and classes
+README_*_TESTS.md -> focused test coverage summaries
 ```
 
 ## Build and test
@@ -107,12 +104,4 @@ From the repository root:
 dotnet restore ArchFramework.slnx
 dotnet build ArchFramework.slnx
 dotnet test ArchFramework.slnx
-```
-
-To test one library:
-
-```bash
-dotnet test tests/Leva.Framework.Core.Tests/Leva.Framework.Core.Tests.csproj
-dotnet test tests/Leva.Framework.Engine.Tests/Leva.Framework.Engine.Tests.csproj
-dotnet test tests/Leva.Framework.Fakes.Tests/Leva.Framework.Fakes.Tests.csproj
 ```

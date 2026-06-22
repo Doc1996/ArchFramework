@@ -4,7 +4,7 @@
 
 ## Purpose and dependencies
 
-Engine turns Core contracts into deterministic runtime behavior. It owns event processing, transition draining, state execution, routine execution, fallback behavior execution, alarms, statuses, commands, runtime history, tracing, and snapshot coordination. `Leva.Framework.Engine` depends on `Leva.Framework.Core`. Engine must not depend on Fakes, Storage implementations, UI providers, notification providers, authentication providers, database providers, devices, or application projects.
+Engine turns Core contracts into deterministic runtime behavior. It owns event queueing, dispatching, transition draining, state execution, routine execution, fallback behavior execution, alarms, statuses, commands, runtime history, tracing, and snapshot creation/loading. `Leva.Framework.Engine` depends on `Leva.Framework.Core`. Engine must not depend on Fakes, Storage implementations, UI providers, notification providers, authentication providers, database providers, devices, or application projects.
 
 ```text
 Leva.Framework.Engine
@@ -22,77 +22,85 @@ future provider libraries
 
 ## Project overview
 
-Engine is the layer that makes application behavior run through one controlled path. Events enter an event queue, the event loop dispatches them, global runtime components observe them, the current state handles them, an active routine may continue, fallback behaviors may run, and requested transitions are applied only after event handling finishes.
+Engine makes application behavior run through one controlled path. Events enter `EventQueue`, `EventLoop` dequeues them, `EventDispatcher` sends them through runtime hooks, the active state handles them, an active routine may continue, fallback behaviors may run, and queued transitions are applied only after event handling finishes.
 
 ```text
 EventQueue
 -> EventLoop
 -> EventDispatcher
--> StatusUpdater
--> AlarmSupervisor
+-> IStatusUpdater
+-> IAlarmSupervisor
 -> StateMachine
 -> RoutineRunner
 -> BehaviorRunner
--> transition drain
+-> QueuedTransition drain
 ```
 
-This separation keeps state changes predictable. Runtime code requests transitions through `ITransition`, but `StateMachine` decides when they are applied. That avoids arbitrary code changing the active state in the middle of event processing.
-
-Engine keeps latest-known runtime facts in boards and chronological history in the runtime log.
+This separation keeps state changes predictable. Runtime code requests transitions through `ITransition`, while `StateMachine` controls when those transitions are applied. Engine also keeps latest-known runtime facts in boards and chronological history in `RuntimeLog`.
 
 ```text
 AlarmBoard   -> active alarms
 StatusBoard  -> latest statuses
 CommandBoard -> tracked commands
-RuntimeLog   -> chronological runtime history
+RuntimeLog   -> chronological LogEntry history
 TraceSink    -> diagnostic output
+Context      -> runtime composition root
 ```
 
-The engine should remain application-independent. Applications provide concrete states, events, access objects, services, screens, persistence, notifications, and domain rules. Engine only provides reusable runtime mechanics.
+The engine stays application-independent. Applications provide concrete states, events, access objects, services, screens, persistence, notifications, and domain rules. Engine provides reusable runtime mechanics.
 
 ## Files and classes
 
 ### Composition and runtime execution
 
-`Context` - Main runtime composition object that owns engine services and exposes controlled runtime capabilities.
-`EventLoop` - Runs queued events through the dispatcher and coordinates continuous runtime processing.
-`EventDispatcher` - Sends each event through global runtime observers, current state, active routine, fallback behaviors, and transition draining.
-`EventQueue` - Priority-aware queue for events waiting to be processed by the engine.
+`Context` - Main runtime composition object that owns engine services and exposes controlled runtime capabilities to the host.
+`ContextBuilder` - Builds a `Context` from clocks, trace sinks, queues, supervisors, updaters, state bindings, and behavior bindings.
+`SystemClock` - Production `IClock` implementation based on UTC system time.
+
+### Events and dispatching
+
+`IEventQueue` - Queue contract used by the event loop.
+`EventQueue` - Priority-aware queue for immediate and delayed events.
+`QueuedEvent` - Event plus priority and enqueue time.
+`EventLoop` - Runs queued events through the dispatcher until cancelled.
+`EventDispatcher` - Routes one event through status update, alarm supervision, state handling, routine handling, behavior fallback, and transition draining.
 
 ### State machine and transitions
 
-`StateMachine<TAccess>` - Owns the current state, calls enter/exit lifecycle methods, and applies state changes.
-`TransitionController` - Captures transition requests so they can be drained and applied safely after event handling.
-`TransitionRequest` - Represents one requested state change.
+`StateMachine` - Owns the current state, calls enter/exit lifecycle methods, routes events to the current state, and applies queued transitions.
+`StateBinding<TAccess>` - Internal binding from a state to the access factory that creates its typed capability surface.
+`QueuedTransition` - Internal transition implementation that captures `To` and `Reenter` requests until the state machine drains them.
 
 ### Routines and behaviors
 
-`RoutineRunner<TAccess>` - Runs an active routine and tracks routine lifecycle behavior.
-`RoutineBinding<TAccess>` - Connects routine identifiers or triggers to routine instances/factories.
-`BehaviorRunner<TAccess>` - Runs fallback behaviors when an event is not handled by state or routine logic.
-`BehaviorBinding<TAccess>` - Defines behavior order and binding rules for fallback handling.
+`RoutineRunner` - Starts, cancels, and routes events to the currently active routine.
+`RoutineBinding<TAccess>` - Internal binding from a routine to its typed access factory.
+`BehaviorRunner` - Runs fallback behaviors when an event is not handled by alarm, state, or routine logic.
+`BehaviorBinding<TAccess>` - Internal binding from a behavior to its typed access factory.
 
-### Runtime boards
+### Runtime boards and hooks
 
 `AlarmBoard` - Stores active alarms and exposes safe snapshots of alarm entries.
-`AlarmSupervisor` - Updates alarm state from runtime events and application actions.
+`IAlarmSupervisor` - Hook that can map events to alarm behavior and optionally handle events before state logic.
+`NullAlarmSupervisor` - Default alarm supervisor that intentionally handles nothing.
 `StatusBoard` - Stores latest-known status values and exposes safe snapshots.
-`StatusUpdater` - Updates status entries from runtime events and application actions.
+`IStatusUpdater` - Hook that can update status memory from incoming events.
+`NullStatusUpdater` - Default status updater that intentionally updates nothing.
 `CommandBoard` - Tracks command lifecycle entries and exposes safe snapshots.
+`CommandHandle` - Handle returned for a tracked command so caller code can complete, fail, cancel, or timeout it.
 
 ### Runtime logging and tracing
 
-`RuntimeLog` - Stores chronological runtime entries for diagnostics, observation, and later persistence.
-`RuntimeEntry` - Represents one recorded runtime action, decision, event, transition, status update, alarm change, command change, or trace item.
-`RuntimeEntryKind` - Categorizes runtime log entries.
+`RuntimeLog` - Stores chronological runtime history and mirrors entries to an `ITraceSink`.
+`LogEntry` - Represents one structured runtime log entry.
+`LogCategory` - Groups runtime log entries by broad engine area.
 `MemoryTraceSink` - Thread-safe in-memory trace sink for diagnostics and tests.
-`CompositeTraceSink` - Forwards trace entries to multiple trace sinks.
 `NullTraceSink` - Trace sink implementation that intentionally ignores trace entries.
 
 ### Snapshot support
 
-`SnapshotProvider` - Produces runtime snapshots from the current engine state when available.
-`SnapshotRestorer` - Restores supported runtime state from a saved `Snapshot`.
+`Context.CreateSnapshot` - Captures current state ID, active alarms, statuses, commands, and optional host data into a `Snapshot`.
+`Context.LoadSnapshotAsync` - Restores alarms, statuses, commands, and state-machine position from a `Snapshot`.
 
 ### Synchronization helpers
 

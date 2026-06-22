@@ -17,9 +17,9 @@ Leva.Framework.Engine
 
 ## Project overview
 
-Fakes are intentionally small and observable. They should expose what happened in a test: captured trace entries, transition requests, queued events, current fake time, handler calls, enter/exit counts, status updates, alarm calls, and configured return behavior.
+Fakes are intentionally small and observable. They expose what happened in a test: captured trace entries, transition requests, queued events, current fake time, handler calls, enter/exit counts, status updates, alarm calls, and configured return behavior.
 
-Use focused fakes when testing one component. For example, use `FakeClock` for time-dependent tests, `FakeTransition` for transition-request tests, `FakeTraceSink` for trace-output tests, and `FakeEventQueue` for queue behavior. Use `FakeContext` when a test needs convenient runtime wiring and manual composition would distract from the test purpose.
+Use focused fakes when testing one component. For example, use `FakeClock` for time-dependent tests, `FakeTransition` for transition-request tests, `FakeTraceSink` for trace-output tests, and `FakeEventQueue` for queue behavior. Use `FakeContext` when a test needs convenient fake wiring and manual composition would distract from the test purpose.
 
 Fakes should not become a second engine. If a fake starts reproducing too much production behavior, the test should probably use Engine directly or introduce a smaller test seam.
 
@@ -37,8 +37,8 @@ Fakes should not become a second engine. If a fake starts reproducing too much p
 `FakeEvent` - Simple event implementation with generated or supplied `EventId` and name.
 `FakeEventQueue` - Deterministic in-memory event queue implementation with priority ordering and async waiting.
 `FakeTraceSink` - Stores trace entries in memory for tests.
-`FakeAlarmSupervisor` - Configurable alarm supervisor fake with call tracking.
-`FakeStatusUpdater` - Configurable status updater fake with call tracking.
+`FakeAlarmSupervisor` - Configurable `IAlarmSupervisor` fake with call tracking.
+`FakeStatusUpdater` - Configurable `IStatusUpdater` fake with call tracking.
 
 ### State, routine, and behavior fakes
 
@@ -48,4 +48,4 @@ Fakes should not become a second engine. If a fake starts reproducing too much p
 
 ### Context helper
 
-`FakeContext` - Provides ready-to-use fake runtime wiring for integration-style engine tests.
+`FakeContext` - Provides ready-to-use fake clock, trace sink, transition, access, and event queue wiring for tests.
