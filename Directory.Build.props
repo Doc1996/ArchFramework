@@ -4,6 +4,9 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 
+		<AllowMissingPrunePackageData>true</AllowMissingPrunePackageData>
+		<RestoreEnablePackagePruning>false</RestoreEnablePackagePruning>
+
 		<ArtifactsPath>$(MSBuildThisFileDirectory)artifacts/</ArtifactsPath>
 		<BaseOutputPath>$(ArtifactsPath)bin/$(MSBuildProjectName)/</BaseOutputPath>
 		<BaseIntermediateOutputPath>$(ArtifactsPath)obj/$(MSBuildProjectName)/</BaseIntermediateOutputPath>
