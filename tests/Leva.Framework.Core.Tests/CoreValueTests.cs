@@ -22,10 +22,10 @@ public sealed class CoreValueTests
 			AlarmLevel.Warning,
 			false,
 			DateTimeOffset.UnixEpoch,
-			new Dictionary<string, object?> { ["Device"] = "Robot" }
+			new Dictionary<string, object?> { ["Source"] = "Scheduler" }
 		);
 
-		Assert.Equal("Robot", alarmEntry.Properties?["Device"]);
+		Assert.Equal("Scheduler", alarmEntry.Properties?["Source"]);
 	}
 
 	[Fact]

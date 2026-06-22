@@ -1,6 +1,6 @@
-# Framework.Core.Tests
+# Leva.Framework.Core.Tests
 
-`Framework.Core.Tests` verifies the stable contracts and value types from `Framework.Core`. These tests focus on IDs, entries, result types, snapshots, and interface implementability rather than engine behavior.
+`Leva.Framework.Core.Tests` verifies the stable contracts and value types from `Leva.Framework.Core`. These tests focus on IDs, entries, result types, snapshots, and interface implementability rather than engine behavior.
 
 ## Coverage
 

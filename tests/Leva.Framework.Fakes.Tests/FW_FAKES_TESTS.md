@@ -1,6 +1,6 @@
-# Framework.Fakes.Tests
+# Leva.Framework.Fakes.Tests
 
-`Framework.Fakes.Tests` verifies the reusable fakes used by Core and Engine tests. These tests keep fake behavior aligned with the current Core and Engine APIs.
+`Leva.Framework.Fakes.Tests` verifies the reusable fakes used by Core and Engine tests. These tests keep fake behavior aligned with the current Core and Engine APIs.
 
 ## Coverage
 

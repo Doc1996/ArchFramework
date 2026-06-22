@@ -1,6 +1,6 @@
-# Framework.Engine.Tests
+# Leva.Framework.Engine.Tests
 
-`Framework.Engine.Tests` verifies the runtime behavior of `Framework.Engine` using `Framework.Fakes`. These tests cover boards, logs, queueing, dispatch, state transitions, routines, and snapshot restore behavior.
+`Leva.Framework.Engine.Tests` verifies the runtime behavior of `Leva.Framework.Engine` using `Leva.Framework.Fakes`. These tests cover boards, logs, queueing, dispatch, state transitions, routines, and snapshot restore behavior.
 
 ## Coverage
 

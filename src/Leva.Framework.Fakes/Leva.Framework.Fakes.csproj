@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<ItemGroup>
-		<ProjectReference Include="../Framework.Core/Framework.Core.csproj" />
-		<ProjectReference Include="../Framework.Engine/Framework.Engine.csproj" />
+		<ProjectReference Include="../Leva.Framework.Core/Leva.Framework.Core.csproj" />
+		<ProjectReference Include="../Leva.Framework.Engine/Leva.Framework.Engine.csproj" />
 	</ItemGroup>
 </Project>
