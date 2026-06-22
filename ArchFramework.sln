@@ -1,0 +1,37 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Leva.Framework.Core.Tests", "tests\Leva.Framework.Core.Tests\Leva.Framework.Core.Tests.csproj", "{FA787716-E105-5202-B9E3-3FCA92B0378C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Leva.Framework.Engine.Tests", "tests\Leva.Framework.Engine.Tests\Leva.Framework.Engine.Tests.csproj", "{F9EDCF21-4E1D-56C7-BFAA-2610FF249B4F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Leva.Framework.Fakes.Tests", "tests\Leva.Framework.Fakes.Tests\Leva.Framework.Fakes.Tests.csproj", "{B3A8EA04-CE35-587C-8D0D-AA407980C14C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{97715794-5DC6-5692-8377-78C3C7334256}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97715794-5DC6-5692-8377-78C3C7334256}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97715794-5DC6-5692-8377-78C3C7334256}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97715794-5DC6-5692-8377-78C3C7334256}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA787716-E105-5202-B9E3-3FCA92B0378C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA787716-E105-5202-B9E3-3FCA92B0378C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA787716-E105-5202-B9E3-3FCA92B0378C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA787716-E105-5202-B9E3-3FCA92B0378C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9EDCF21-4E1D-56C7-BFAA-2610FF249B4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9EDCF21-4E1D-56C7-BFAA-2610FF249B4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9EDCF21-4E1D-56C7-BFAA-2610FF249B4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9EDCF21-4E1D-56C7-BFAA-2610FF249B4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3A8EA04-CE35-587C-8D0D-AA407980C14C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3A8EA04-CE35-587C-8D0D-AA407980C14C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3A8EA04-CE35-587C-8D0D-AA407980C14C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3A8EA04-CE35-587C-8D0D-AA407980C14C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

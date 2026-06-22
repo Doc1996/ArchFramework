@@ -1,0 +1,20 @@
+{
+	"dotnetAcquisitionExtension.existingDotnetPath": [
+		{
+			"extensionId": "ms-dotnettools.csharp",
+			"path": "/home/dominik/.dotnet/dotnet"
+		},
+		{
+			"extensionId": "ms-dotnettools.csdevkit",
+			"path": "/home/dominik/.dotnet/dotnet"
+		}
+	],
+	"[csharp]": {
+		"editor.defaultFormatter": "csharpier.csharpier-vscode",
+		"editor.formatOnSave": true
+	},
+	"[xml]": {
+		"editor.defaultFormatter": "csharpier.csharpier-vscode",
+		"editor.formatOnSave": true
+	}
+}

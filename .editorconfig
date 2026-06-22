@@ -1,0 +1,7 @@
+root = true
+
+[*.{cs,csproj,props,targets,xml}]
+max_line_length = 120
+indent_style = tab
+indent_size = 4
+tab_width = 4

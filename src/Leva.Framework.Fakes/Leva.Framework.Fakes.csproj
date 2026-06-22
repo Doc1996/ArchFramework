@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<ItemGroup>
+		<ProjectReference Include="../Framework.Core/Framework.Core.csproj" />
+		<ProjectReference Include="../Framework.Engine/Framework.Engine.csproj" />
+	</ItemGroup>
+</Project>
