@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<ItemGroup>
+		<ProjectReference Include="../Leva.Framework.Core/Leva.Framework.Core.csproj" />
+	</ItemGroup>
+</Project>
