@@ -1,42 +1,41 @@
 using Leva.Framework.Core;
 
-namespace Leva.Framework.Storage.InMemory;
+namespace Leva.Framework.Storage.Memory;
 
 /// <summary>
 /// Holds the mutable in-memory state for one repository and can be cloned for storage sessions.
 /// </summary>
-internal sealed class InMemoryRepositoryStore<TId, TModel> : IInMemoryStoreBuffer
+internal sealed class MemoryRepositoryStore<TId, TModel> : IMemoryStoreBuffer
 	where TId : notnull
 {
 	private readonly Lock _lock = new();
 	private readonly Dictionary<TId, StorageEntry<TModel>> _entries = new();
 	private readonly string _name;
 
-	public InMemoryRepositoryStore(string name)
+	public MemoryRepositoryStore(string name)
 	{
 		ArgumentException.ThrowIfNullOrWhiteSpace(name);
 		_name = name;
 	}
 
-	public IInMemoryStoreBuffer Clone()
+	public IMemoryStoreBuffer Clone()
 	{
-		var storeBuffer = new InMemoryRepositoryStore<TId, TModel>(_name);
+		var buffer = new MemoryRepositoryStore<TId, TModel>(_name);
 		lock (_lock)
 		{
 			foreach (var item in _entries)
-				storeBuffer._entries[item.Key] = item.Value;
+				buffer._entries[item.Key] = item.Value;
 		}
 
-		return storeBuffer;
+		return buffer;
 	}
 
 	public Result<StorageEntry<TModel>> Save(TId id, TModel model, StorageVersion? expectedVersion)
 	{
+		var key = id.ToString() ?? string.Empty;
 		lock (_lock)
 		{
 			var utcNow = DateTimeOffset.UtcNow;
-			var key = id.ToString() ?? string.Empty;
-
 			if (_entries.TryGetValue(id, out var existing))
 			{
 				if (expectedVersion.HasValue && existing.Version != expectedVersion.Value)
@@ -78,10 +77,9 @@ internal sealed class InMemoryRepositoryStore<TId, TModel> : IInMemoryStoreBuffe
 
 	public Result Delete(TId id, StorageVersion? expectedVersion)
 	{
+		var key = id.ToString() ?? string.Empty;
 		lock (_lock)
 		{
-			var key = id.ToString() ?? string.Empty;
-
 			if (!_entries.TryGetValue(id, out var existing))
 				return Result.Fail(StorageErrors.NotFound(_name, key));
 			if (expectedVersion.HasValue && existing.Version != expectedVersion.Value)

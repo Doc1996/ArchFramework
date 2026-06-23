@@ -1,17 +1,17 @@
 using Leva.Framework.Core;
 
-namespace Leva.Framework.Storage.InMemory;
+namespace Leva.Framework.Storage.Memory;
 
 /// <summary>
 /// Stores keyed models in memory for the lifetime of the owning provider instance.
 /// </summary>
-public sealed class InMemoryRepository<TId, TModel> : IRepository<TId, TModel>
+public sealed class MemoryRepository<TId, TModel> : IRepository<TId, TModel>
 	where TId : notnull
 {
 	private readonly string _name;
-	private readonly InMemoryRepositoryStore<TId, TModel> _store;
+	private readonly MemoryRepositoryStore<TId, TModel> _store;
 
-	internal InMemoryRepository(string name, InMemoryStorageDatabase database)
+	internal MemoryRepository(string name, MemoryStorageDatabase database)
 	{
 		ArgumentException.ThrowIfNullOrWhiteSpace(name);
 		ArgumentNullException.ThrowIfNull(database);
@@ -28,17 +28,17 @@ public sealed class InMemoryRepository<TId, TModel> : IRepository<TId, TModel>
 	)
 	{
 		token.ThrowIfCancellationRequested();
-		var entry = _store.Save(id, model, expectedVersion);
-		return Task.FromResult(entry);
+		var storedEntry = _store.Save(id, model, expectedVersion);
+		return Task.FromResult(storedEntry);
 	}
 
 	public Task<Result<StorageEntry<TModel>>> LoadAsync(TId id, CancellationToken token = default)
 	{
 		token.ThrowIfCancellationRequested();
-		var entry = _store.Load(id);
+		var storedEntry = _store.Load(id);
 
-		if (entry.HasValue)
-			return Task.FromResult(Result<StorageEntry<TModel>>.Ok(entry.Value));
+		if (storedEntry.HasValue)
+			return Task.FromResult(Result<StorageEntry<TModel>>.Ok(storedEntry.Value));
 
 		var key = id.ToString() ?? string.Empty;
 		var error = StorageErrors.NotFound(_name, key);
@@ -48,8 +48,8 @@ public sealed class InMemoryRepository<TId, TModel> : IRepository<TId, TModel>
 	public Task<Result<IReadOnlyDictionary<TId, StorageEntry<TModel>>>> LoadAllAsync(CancellationToken token = default)
 	{
 		token.ThrowIfCancellationRequested();
-		var entries = _store.LoadAll();
-		return Task.FromResult(Result<IReadOnlyDictionary<TId, StorageEntry<TModel>>>.Ok(entries));
+		var storedEntries = _store.LoadAll();
+		return Task.FromResult(Result<IReadOnlyDictionary<TId, StorageEntry<TModel>>>.Ok(storedEntries));
 	}
 
 	public Task<Result<bool>> ExistsAsync(TId id, CancellationToken token = default)

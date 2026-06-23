@@ -1,4 +1,4 @@
-namespace Leva.Framework.Engine;
+namespace Leva.Framework.Core;
 
 /// <summary>
 /// Groups runtime log entries by broad engine area.

@@ -20,7 +20,7 @@ Future libraries should plug into the same architecture without forcing infrastr
 
 ```text
 Leva.Framework.Storage            future
-Leva.Framework.Storage.InMemory   future
+Leva.Framework.Storage.Memory     future
 Leva.Framework.Storage.Sqlite     future
 Leva.Framework.Notifications      future
 Leva.Framework.Authentication     future
