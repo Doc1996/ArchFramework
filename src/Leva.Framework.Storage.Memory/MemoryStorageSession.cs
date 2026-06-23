@@ -3,12 +3,12 @@ using Leva.Framework.Core;
 namespace Leva.Framework.Storage.Memory;
 
 /// <summary>
-/// Uses an isolated in-memory database copy until changes are committed or rolled back.
+/// Owns an isolated in-memory database copy until changes are committed or rolled back.
 /// </summary>
 public sealed class MemoryStorageSession : IStorageSession
 {
 	private readonly MemoryStorageDatabase _rootDatabase;
-	private bool _completed;
+	private bool _isCompleted;
 
 	internal MemoryStorageSession(MemoryStorageDatabase database)
 	{
@@ -18,34 +18,34 @@ public sealed class MemoryStorageSession : IStorageSession
 	}
 
 	internal MemoryStorageDatabase Database { get; }
-	internal bool IsCompleted => _completed;
+	internal bool IsCompleted => _isCompleted;
 
 	internal bool BelongsTo(MemoryStorageDatabase database) => ReferenceEquals(_rootDatabase, database);
 
 	public Task<Result> CommitAsync(CancellationToken token = default)
 	{
 		token.ThrowIfCancellationRequested();
-		if (_completed)
+		if (_isCompleted)
 			return CompletedResult("commit in-memory session");
 
 		_rootDatabase.ReplaceWith(Database);
-		_completed = true;
+		_isCompleted = true;
 		return Task.FromResult(Result.Ok());
 	}
 
 	public Task<Result> RollbackAsync(CancellationToken token = default)
 	{
 		token.ThrowIfCancellationRequested();
-		if (_completed)
+		if (_isCompleted)
 			return CompletedResult("rollback in-memory session");
 
-		_completed = true;
+		_isCompleted = true;
 		return Task.FromResult(Result.Ok());
 	}
 
 	public ValueTask DisposeAsync()
 	{
-		_completed = true;
+		_isCompleted = true;
 		return ValueTask.CompletedTask;
 	}
 

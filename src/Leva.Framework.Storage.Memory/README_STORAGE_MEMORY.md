@@ -41,4 +41,4 @@ The public repository and journal classes stay thin. They delegate storage behav
 ### Session implementation
 
 `MemoryStorageSession` - Holds an isolated provider copy until commit, rollback, or disposal.
-`IMemoryStoreBuffer` - Internal clonable buffer contract used by storage sessions.
+`IMemoryStoreBuffer` - Internal copyable buffer contract used by storage sessions.

@@ -33,7 +33,7 @@ public sealed class MemoryJournal<TEntry> : IJournal<TEntry>
 		if (limit is <= 0)
 			throw new ArgumentOutOfRangeException(nameof(limit), "Limit must be greater than zero.");
 
-		var storedEntries = _store.Read(afterVersion, limit);
-		return Task.FromResult(Result<IReadOnlyList<StorageEntry<TEntry>>>.Ok(storedEntries));
+		var entries = _store.Read(afterVersion, limit);
+		return Task.FromResult(Result<IReadOnlyList<StorageEntry<TEntry>>>.Ok(entries));
 	}
 }

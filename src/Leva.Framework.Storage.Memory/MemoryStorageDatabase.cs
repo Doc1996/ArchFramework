@@ -60,18 +60,29 @@ internal sealed class MemoryStorageDatabase
 	internal void ReplaceWith(MemoryStorageDatabase database)
 	{
 		ArgumentNullException.ThrowIfNull(database);
-		var replacement = database.Clone();
+		var copyDatabase = database.Clone();
 
 		lock (_lock)
 		{
-			_journals.Clear();
-			_repositories.Clear();
+			CopyStores(_journals, copyDatabase._journals);
+			CopyStores(_repositories, copyDatabase._repositories);
+		}
+	}
 
-			foreach (var journal in replacement._journals)
-				_journals[journal.Key] = journal.Value;
+	private static void CopyStores(
+		Dictionary<string, IMemoryStoreBuffer> target,
+		Dictionary<string, IMemoryStoreBuffer> source
+	)
+	{
+		foreach (var key in target.Keys.Except(source.Keys).ToArray())
+			target.Remove(key);
 
-			foreach (var repository in replacement._repositories)
-				_repositories[repository.Key] = repository.Value;
+		foreach (var store in source)
+		{
+			if (target.TryGetValue(store.Key, out var existing))
+				existing.CopyFrom(store.Value);
+			else
+				target[store.Key] = store.Value.Clone();
 		}
 	}
 

@@ -4,13 +4,13 @@
     <Project Path="src/Leva.Framework.Engine/Leva.Framework.Engine.csproj" />
     <Project Path="src/Leva.Framework.Fakes/Leva.Framework.Fakes.csproj" />
     <Project Path="src/Leva.Framework.Storage/Leva.Framework.Storage.csproj" />
-    <Project Path="src/Leva.Framework.Storage.FileSystem/Leva.Framework.Storage.FileSystem.csproj" />
-    <Project Path="src/Leva.Framework.Storage.InMemory/Leva.Framework.Storage.InMemory.csproj" />
-    <Project Path="src/Leva.Framework.Storage.Sqlite/Leva.Framework.Storage.Sqlite.csproj" />
+    <Project Path="src/Leva.Framework.Storage.Memory/Leva.Framework.Storage.Memory.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Leva.Framework.Core.Tests/Leva.Framework.Core.Tests.csproj" />
     <Project Path="tests/Leva.Framework.Engine.Tests/Leva.Framework.Engine.Tests.csproj" />
     <Project Path="tests/Leva.Framework.Fakes.Tests/Leva.Framework.Fakes.Tests.csproj" />
+    <Project Path="tests/Leva.Framework.Storage.Tests/Leva.Framework.Storage.Tests.csproj" />
+    <Project Path="tests/Leva.Framework.Storage.Memory.Tests/Leva.Framework.Storage.Memory.Tests.csproj" />
   </Folder>
 </Solution>

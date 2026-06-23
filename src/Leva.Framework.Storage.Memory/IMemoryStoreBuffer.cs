@@ -1,9 +1,11 @@
 namespace Leva.Framework.Storage.Memory;
 
 /// <summary>
-/// Defines a clonable in-memory store buffer used to isolate storage session changes.
+/// Defines an in-memory store buffer that can be copied for storage sessions.
 /// </summary>
 internal interface IMemoryStoreBuffer
 {
 	IMemoryStoreBuffer Clone();
+
+	void CopyFrom(IMemoryStoreBuffer source);
 }

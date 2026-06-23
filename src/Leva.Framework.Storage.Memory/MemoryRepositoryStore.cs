@@ -3,7 +3,7 @@ using Leva.Framework.Core;
 namespace Leva.Framework.Storage.Memory;
 
 /// <summary>
-/// Holds the mutable in-memory state for one repository and can be cloned for storage sessions.
+/// Holds the mutable in-memory buffer for one repository and can be copied for storage sessions.
 /// </summary>
 internal sealed class MemoryRepositoryStore<TId, TModel> : IMemoryStoreBuffer
 	where TId : notnull
@@ -12,7 +12,7 @@ internal sealed class MemoryRepositoryStore<TId, TModel> : IMemoryStoreBuffer
 	private readonly Dictionary<TId, StorageEntry<TModel>> _entries = new();
 	private readonly string _name;
 
-	public MemoryRepositoryStore(string name)
+	internal MemoryRepositoryStore(string name)
 	{
 		ArgumentException.ThrowIfNullOrWhiteSpace(name);
 		_name = name;
@@ -23,11 +23,24 @@ internal sealed class MemoryRepositoryStore<TId, TModel> : IMemoryStoreBuffer
 		var buffer = new MemoryRepositoryStore<TId, TModel>(_name);
 		lock (_lock)
 		{
-			foreach (var item in _entries)
-				buffer._entries[item.Key] = item.Value;
+			foreach (var entry in _entries)
+				buffer._entries[entry.Key] = entry.Value;
 		}
 
 		return buffer;
+	}
+
+	public void CopyFrom(IMemoryStoreBuffer source)
+	{
+		var sourceBuffer = (MemoryRepositoryStore<TId, TModel>)source;
+		var entries = sourceBuffer.LoadAll();
+
+		lock (_lock)
+		{
+			_entries.Clear();
+			foreach (var entry in entries)
+				_entries[entry.Key] = entry.Value;
+		}
 	}
 
 	public Result<StorageEntry<TModel>> Save(TId id, TModel model, StorageVersion? expectedVersion)
