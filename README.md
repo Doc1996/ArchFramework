@@ -4,7 +4,7 @@ ArchFramework is a clean .NET framework for event-driven, state-machine applicat
 
 ## Architecture summary
 
-ArchFramework keeps important application behavior out of random services, UI callbacks, and uncontrolled background code. Work enters the runtime as typed events, flows through a deterministic dispatcher, reaches the active state or routine, can fall back to behaviors, and only then applies requested transitions. This makes the application easier to reason about, test, trace, and recover.
+ArchFramework keeps important application behavior out of random services, UI callbacks, and uncontrolled background code. Work enters the runtime as typed events, flows through a deterministic dispatcher, reaches the active state or routine, can fall back to behaviors, and only then applies requested transitions. This makes the application easier to reason about, test, log, and recover.
 
 The framework is split into small libraries. `Leva.Framework.Core` defines the shared vocabulary. `Leva.Framework.Engine` implements the runtime. `Leva.Framework.Fakes` provides reusable test doubles. Future infrastructure libraries should stay separate, for example storage, notifications, authentication, and presentation adapters.
 
@@ -13,7 +13,7 @@ The framework is split into small libraries. `Leva.Framework.Core` defines the s
 ```text
 Leva.Framework.Core   -> shared contracts, IDs, entries, results, snapshots
 Leva.Framework.Engine -> event queue, dispatcher, state machine, boards, logs
-Leva.Framework.Fakes  -> fake clocks, events, queues, states, routines, traces
+Leva.Framework.Fakes  -> fake clocks, events, queues, states, routines, logs
 ```
 
 Future libraries should plug into the same architecture without forcing infrastructure into Core or Engine.
@@ -67,7 +67,7 @@ An event is queued, dequeued by the loop, dispatched through global runtime hook
 
 ## Access model
 
-States, routines, and behaviors should receive narrow typed access objects instead of the full runtime `Context`. The context owns runtime services and wiring. Application logic should only see the capabilities it is allowed to use, such as transition, tracing, views, data, policies, navigation, or notifications depending on the application.
+States, routines, and behaviors should receive narrow typed access objects instead of the full runtime `Context`. The context owns runtime services and wiring. Application logic should only see the capabilities it is allowed to use, such as transition, logging, views, data, policies, navigation, or notifications depending on the application.
 
 This keeps states smaller and easier to test. A state that only needs navigation and transitions should not receive storage, notifications, device control, or unrelated services.
 
@@ -80,11 +80,11 @@ AlarmBoard   -> currently active alarms and faults
 StatusBoard  -> latest-known status values
 CommandBoard -> tracked command lifecycle entries
 RuntimeLog   -> chronological runtime history as LogEntry values
-TraceSink    -> diagnostic trace output
+LogSink    -> diagnostic log output
 Snapshot     -> durable recovery state
 ```
 
-Boards answer what is true now. The runtime log answers what happened over time. Trace sinks receive diagnostic output. Snapshots capture recovery data that can later be stored and restored by the host or a future storage library.
+Boards answer what is true now. The runtime log answers what happened over time. Log sinks receive diagnostic output. Snapshots capture recovery data that can later be stored and restored by the host or a future storage library.
 
 ## Project guides
 

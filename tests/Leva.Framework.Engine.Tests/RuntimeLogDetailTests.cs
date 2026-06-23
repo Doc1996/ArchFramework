@@ -10,7 +10,7 @@ public sealed class RuntimeLogDetailTests
 	[Fact]
 	public void Add_MergesDictionaryDetails()
 	{
-		var runtimeLog = new RuntimeLog(new FakeClock(), new FakeTraceSink());
+		var runtimeLog = new RuntimeLog(new FakeClock(), new FakeLogSink());
 		var details = new Dictionary<string, object?> { ["A"] = 1, ["B"] = "two" };
 		var logEntry = runtimeLog.Add(LogCategory.Event, "Message.", details);
 
@@ -21,7 +21,7 @@ public sealed class RuntimeLogDetailTests
 	[Fact]
 	public void Add_NormalizesIdValues()
 	{
-		var runtimeLog = new RuntimeLog(new FakeClock(), new FakeTraceSink());
+		var runtimeLog = new RuntimeLog(new FakeClock(), new FakeLogSink());
 		var commandId = CommandId.New();
 		var logEntry = runtimeLog.Add(LogCategory.Command, "Command.", commandId);
 
@@ -29,25 +29,25 @@ public sealed class RuntimeLogDetailTests
 	}
 
 	[Fact]
-	public void Add_UsesExplicitTraceLevelInMirroredTraceEntry()
+	public void Add_UsesExplicitLogLevelInMirroredLogEntry()
 	{
-		var traceSink = new FakeTraceSink();
-		var runtimeLog = new RuntimeLog(new FakeClock(), traceSink);
-		runtimeLog.Add(LogCategory.Alarm, TraceLevel.Error, "Alarm.");
+		var logSink = new FakeLogSink();
+		var runtimeLog = new RuntimeLog(new FakeClock(), logSink);
+		runtimeLog.Add(LogCategory.Alarm, LogLevel.Error, "Alarm.");
 
-		Assert.Equal(TraceLevel.Error, Assert.Single(runtimeLog.LogEntries).Level);
-		Assert.Equal(TraceLevel.Error, Assert.Single(traceSink.TraceEntries).Level);
+		Assert.Equal(LogLevel.Error, Assert.Single(runtimeLog.LogEntries).Level);
+		Assert.Equal(LogLevel.Error, Assert.Single(logSink.LogEntries).Level);
 	}
 
 	[Fact]
 	public void Clear_RemovesLogEntriesOnly()
 	{
-		var traceSink = new FakeTraceSink();
-		var runtimeLog = new RuntimeLog(new FakeClock(), traceSink);
+		var logSink = new FakeLogSink();
+		var runtimeLog = new RuntimeLog(new FakeClock(), logSink);
 		runtimeLog.Add(LogCategory.Event, "Message.");
 		runtimeLog.Clear();
 
 		Assert.Empty(runtimeLog.LogEntries);
-		Assert.NotEmpty(traceSink.TraceEntries);
+		Assert.NotEmpty(logSink.LogEntries);
 	}
 }

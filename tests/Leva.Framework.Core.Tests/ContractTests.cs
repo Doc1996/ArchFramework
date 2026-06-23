@@ -29,7 +29,7 @@ public sealed class ContractTests
 	private sealed class TestAccess : IAccess
 	{
 		public ITransition Transition { get; } = new TestTransition();
-		public ITraceSink TraceSink { get; } = new TestTraceSink();
+		public ILogSink LogSink { get; } = new TestLogSink();
 	}
 
 	private sealed class TestTransition : ITransition
@@ -39,9 +39,9 @@ public sealed class ContractTests
 		public void Reenter(string? reason = null) { }
 	}
 
-	private sealed class TestTraceSink : ITraceSink
+	private sealed class TestLogSink : ILogSink
 	{
-		public void Write(TraceEntry traceEntry) { }
+		public void Write(LogEntry logEntry) { }
 
 		public void Clear() { }
 	}

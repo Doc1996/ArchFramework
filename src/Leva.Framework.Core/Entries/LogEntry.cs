@@ -1,9 +1,9 @@
 namespace Leva.Framework.Core;
 
 /// <summary>
-/// Describes how important a diagnostic trace entry is.
+/// Describes how important a runtime log entry is.
 /// </summary>
-public enum TraceLevel
+public enum LogLevel
 {
 	Debug,
 	Info,
@@ -12,12 +12,13 @@ public enum TraceLevel
 }
 
 /// <summary>
-/// Represents one diagnostic trace entry sent to a trace sink.
+/// Represents one structured runtime log entry sent to a log sink.
 /// </summary>
-public sealed record TraceEntry(
+public sealed record LogEntry(
 	string Source,
 	string Message,
-	TraceLevel Level,
+	LogCategory Category,
+	LogLevel Level,
 	DateTimeOffset CreatedAt,
 	IReadOnlyDictionary<string, object?>? Properties = null
 );

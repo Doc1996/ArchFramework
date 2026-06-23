@@ -6,6 +6,6 @@
 
 `IdTests` - Verifies generated runtime IDs and named IDs.
 `CoreValueTests` - Verifies priority ordering, default runtime IDs, and entry properties.
-`EntryTests` - Verifies alarm, command, status, trace, and snapshot records.
+`EntryTests` - Verifies alarm, command, status, log, and snapshot records.
 `ResultTests` - Verifies success and failure result values.
 `ContractTests` - Verifies that the basic Core interfaces can be implemented and used together.

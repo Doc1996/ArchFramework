@@ -15,7 +15,7 @@ internal static class TestContextBuilder
 	{
 		var builder = new ContextBuilder()
 			.WithClock(fake.Clock)
-			.WithTraceSink(fake.TraceSink)
+			.WithLogSink(fake.LogSink)
 			.WithEventQueue(fake.EventQueue);
 
 		if (alarmSupervisor is not null)

@@ -53,9 +53,11 @@ public sealed class FakeRuntimeTests
 	{
 		var context = new FakeContext();
 		context.Access.Transition.To(new StateId("Ready"));
-		context.Access.TraceSink.Write(new TraceEntry("Test", "Message", TraceLevel.Info, context.Clock.UtcNow));
+		context.Access.LogSink.Write(
+			new LogEntry("Test", "Message", LogCategory.Event, LogLevel.Info, context.Clock.UtcNow)
+		);
 
 		Assert.Single(context.Transition.TransitionEntries);
-		Assert.Single(context.TraceSink.TraceEntries);
+		Assert.Single(context.LogSink.LogEntries);
 	}
 }

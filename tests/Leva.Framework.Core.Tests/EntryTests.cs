@@ -45,15 +45,15 @@ public sealed class EntryTests
 	}
 
 	[Fact]
-	public void TraceEntry_StoresDiagnosticItem()
+	public void LogEntry_StoresDiagnosticItem()
 	{
 		var createdAt = DateTimeOffset.UtcNow;
-		var traceEntry = new TraceEntry("Source", "Message", TraceLevel.Info, createdAt);
+		var logEntry = new LogEntry("Source", "Message", LogCategory.Event, LogLevel.Info, createdAt);
 
-		Assert.Equal("Source", traceEntry.Source);
-		Assert.Equal("Message", traceEntry.Message);
-		Assert.Equal(TraceLevel.Info, traceEntry.Level);
-		Assert.Equal(createdAt, traceEntry.CreatedAt);
+		Assert.Equal("Source", logEntry.Source);
+		Assert.Equal("Message", logEntry.Message);
+		Assert.Equal(LogLevel.Info, logEntry.Level);
+		Assert.Equal(createdAt, logEntry.CreatedAt);
 	}
 
 	[Fact]

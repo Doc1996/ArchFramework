@@ -27,12 +27,12 @@ public sealed class DispatcherAndRoutineTests
 	public async Task Dispatcher_StopsWhenAlarmSupervisorHandlesEvent()
 	{
 		var clock = new FakeClock();
-		var traceSink = new FakeTraceSink();
-		var runtimeLog = new RuntimeLog(clock, traceSink);
+		var logSink = new FakeLogSink();
+		var runtimeLog = new RuntimeLog(clock, logSink);
 		var alarmBoard = new AlarmBoard(clock, runtimeLog);
 		var alarmSupervisor = new FakeAlarmSupervisor(alarmBoard, (_, _, _) => Task.FromResult(true));
 		var state = new FakeState(new StateId("Ready"), handle: (_, _, _) => Task.FromResult(true));
-		var fake = new FakeContext(clock: clock, traceSink: traceSink);
+		var fake = new FakeContext(clock: clock, logSink: logSink);
 		var context = TestContextBuilder.Create(fake, [state], alarmSupervisor: alarmSupervisor);
 
 		await context.StateMachine.StartAsync(state.Id);

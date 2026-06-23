@@ -73,7 +73,7 @@ public sealed class StateMachineTests
 	{
 		var builder = new ContextBuilder()
 			.WithClock(fake.Clock)
-			.WithTraceSink(fake.TraceSink)
+			.WithLogSink(fake.LogSink)
 			.WithEventQueue(fake.EventQueue);
 
 		foreach (var state in states)

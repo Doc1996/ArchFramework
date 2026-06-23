@@ -4,7 +4,7 @@
 
 ## Purpose and dependencies
 
-Engine turns Core contracts into deterministic runtime behavior. It owns event queueing, dispatching, transition draining, state execution, routine execution, fallback behavior execution, alarms, statuses, commands, runtime history, tracing, and snapshot creation/loading. `Leva.Framework.Engine` depends on `Leva.Framework.Core`. Engine must not depend on Fakes, Storage implementations, UI providers, notification providers, authentication providers, database providers, devices, or application projects.
+Engine turns Core contracts into deterministic runtime behavior. It owns event queueing, dispatching, transition draining, state execution, routine execution, fallback behavior execution, alarms, statuses, commands, runtime history, logging, and snapshot creation/loading. `Leva.Framework.Engine` depends on `Leva.Framework.Core`. Engine must not depend on Fakes, Storage implementations, UI providers, notification providers, authentication providers, database providers, devices, or application projects.
 
 ```text
 Leva.Framework.Engine
@@ -43,7 +43,7 @@ AlarmBoard   -> active alarms
 StatusBoard  -> latest statuses
 CommandBoard -> tracked commands
 RuntimeLog   -> chronological LogEntry history
-TraceSink    -> diagnostic output
+LogSink      -> diagnostic output
 Context      -> runtime composition root
 ```
 
@@ -54,7 +54,7 @@ The engine stays application-independent. Applications provide concrete states, 
 ### Composition and runtime execution
 
 `Context` - Main runtime composition object that owns engine services and exposes controlled runtime capabilities to the host.
-`ContextBuilder` - Builds a `Context` from clocks, trace sinks, queues, supervisors, updaters, state bindings, and behavior bindings.
+`ContextBuilder` - Builds a `Context` from clocks, log sinks, queues, supervisors, updaters, state bindings, and behavior bindings.
 `SystemClock` - Production `IClock` implementation based on UTC system time.
 
 ### Events and dispatching
@@ -89,13 +89,13 @@ The engine stays application-independent. Applications provide concrete states, 
 `CommandBoard` - Tracks command lifecycle entries and exposes safe snapshots.
 `CommandHandle` - Handle returned for a tracked command so caller code can complete, fail, cancel, or timeout it.
 
-### Runtime logging and tracing
+### Runtime logging
 
-`RuntimeLog` - Stores chronological runtime history and mirrors entries to an `ITraceSink`.
-`LogEntry` - Represents one structured runtime log entry.
-`LogCategory` - Groups runtime log entries by broad engine area.
-`MemoryTraceSink` - Thread-safe in-memory trace sink for diagnostics and tests.
-`NullTraceSink` - Trace sink implementation that intentionally ignores trace entries.
+`RuntimeLog` - Stores chronological runtime history and mirrors entries to an `ILogSink`.
+`LogEntry` - Core value representing one structured runtime log entry.
+`LogCategory` - Core value that groups runtime log entries by broad framework area.
+`MemoryLogSink` - Thread-safe in-memory log sink for diagnostics and tests.
+`NullLogSink` - Log sink implementation that intentionally ignores log entries.
 
 ### Snapshot support
 

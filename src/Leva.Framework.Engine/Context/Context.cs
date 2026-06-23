@@ -7,7 +7,7 @@ namespace Leva.Framework.Engine;
 /// </summary>
 public sealed class Context(
 	IClock clock,
-	ITraceSink traceSink,
+	ILogSink logSink,
 	RuntimeLog runtimeLog,
 	IEventQueue eventQueue,
 	StateMachine stateMachine,
@@ -25,7 +25,7 @@ public sealed class Context(
 	private const string CommandsKey = "Commands";
 
 	public IClock Clock { get; } = clock;
-	public ITraceSink TraceSink { get; } = traceSink;
+	public ILogSink LogSink { get; } = logSink;
 	public RuntimeLog RuntimeLog { get; } = runtimeLog;
 	public IEventQueue EventQueue { get; } = eventQueue;
 	public StateMachine StateMachine { get; } = stateMachine;

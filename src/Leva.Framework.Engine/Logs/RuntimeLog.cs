@@ -6,30 +6,28 @@ using Leva.Framework.Core;
 namespace Leva.Framework.Engine;
 
 /// <summary>
-/// Stores the structured in-memory engine history and mirrors each entry to the configured trace sink.
+/// Stores structured in-memory engine history and mirrors each entry to the configured log sink.
 /// </summary>
-public sealed class RuntimeLog(IClock clock, ITraceSink traceSink)
+public sealed class RuntimeLog(IClock clock, ILogSink logSink)
 {
 	private readonly SyncList<LogEntry> _logEntries = new();
 	public IReadOnlyList<LogEntry> LogEntries => _logEntries.List();
 
 	public LogEntry Add(LogCategory category, string message, params object?[] details) =>
-		AddEntry(category, TraceLevel.Info, message, GetCallerSource(), details);
+		AddEntry(category, LogLevel.Info, message, GetCallerSource(), details);
 
-	public LogEntry Add(LogCategory category, TraceLevel level, string message, params object?[] details) =>
+	public LogEntry Add(LogCategory category, LogLevel level, string message, params object?[] details) =>
 		AddEntry(category, level, message, GetCallerSource(), details);
 
 	public void Clear() => _logEntries.Clear();
 
-	private LogEntry AddEntry(LogCategory category, TraceLevel level, string message, string source, object?[] details)
+	private LogEntry AddEntry(LogCategory category, LogLevel level, string message, string source, object?[] details)
 	{
 		var properties = CreateProperties(details);
 		var logEntry = new LogEntry(source, message, category, level, clock.UtcNow, properties);
 		_logEntries.Add(logEntry);
 
-		traceSink.Write(
-			new TraceEntry(logEntry.Source, logEntry.Message, logEntry.Level, logEntry.CreatedAt, logEntry.Properties)
-		);
+		logSink.Write(logEntry);
 		return logEntry;
 	}
 

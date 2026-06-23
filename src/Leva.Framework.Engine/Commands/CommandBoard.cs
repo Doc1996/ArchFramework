@@ -98,7 +98,7 @@ public sealed class CommandBoard(IClock clock, RuntimeLog runtimeLog)
 	{
 		runtimeLog.Add(
 			LogCategory.Command,
-			commandEntry.Status == CommandStatus.Failed ? TraceLevel.Error : TraceLevel.Info,
+			commandEntry.Status == CommandStatus.Failed ? LogLevel.Error : LogLevel.Info,
 			message,
 			new
 			{

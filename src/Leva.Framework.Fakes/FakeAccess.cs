@@ -3,22 +3,16 @@ using Leva.Framework.Core;
 namespace Leva.Framework.Fakes;
 
 /// <summary>
-/// Simple access object for tests that exposes transition and trace capabilities.
+/// Simple access object for tests that exposes transition and log capabilities.
 /// </summary>
-public sealed class FakeAccess : IAccess
+public sealed class FakeAccess(ITransition transition, ILogSink logSink) : IAccess
 {
 	public FakeAccess()
-		: this(new FakeTransition(), new FakeTraceSink()) { }
+		: this(new FakeTransition(), new FakeLogSink()) { }
 
 	public FakeAccess(IAccess access)
-		: this(access.Transition, access.TraceSink) { }
+		: this(access.Transition, access.LogSink) { }
 
-	public FakeAccess(ITransition transition, ITraceSink traceSink)
-	{
-		Transition = transition;
-		TraceSink = traceSink;
-	}
-
-	public ITransition Transition { get; }
-	public ITraceSink TraceSink { get; }
+	public ITransition Transition { get; } = transition;
+	public ILogSink LogSink { get; } = logSink;
 }

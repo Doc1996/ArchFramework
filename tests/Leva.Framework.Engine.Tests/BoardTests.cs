@@ -11,7 +11,7 @@ public sealed class BoardTests
 	public void AlarmBoard_RaisesAndClearsAlarms()
 	{
 		var clock = new FakeClock(new DateTimeOffset(2026, 1, 1, 0, 0, 0, TimeSpan.Zero));
-		var runtimeLog = new RuntimeLog(clock, new FakeTraceSink());
+		var runtimeLog = new RuntimeLog(clock, new FakeLogSink());
 		var board = new AlarmBoard(clock, runtimeLog);
 
 		var alarmId = AlarmId.New();
@@ -27,7 +27,7 @@ public sealed class BoardTests
 	[Fact]
 	public void StatusBoard_SetsGetsAndClearsStatus()
 	{
-		var runtimeLog = new RuntimeLog(new FakeClock(), new FakeTraceSink());
+		var runtimeLog = new RuntimeLog(new FakeClock(), new FakeLogSink());
 		var board = new StatusBoard(runtimeLog);
 
 		var statusEntry = new StatusEntry("Device", "Connected", true, DateTimeOffset.UtcNow);
@@ -43,7 +43,7 @@ public sealed class BoardTests
 	public void CommandBoard_StartsCompletesAndClearsCommand()
 	{
 		var clock = new FakeClock(new DateTimeOffset(2026, 1, 1, 0, 0, 0, TimeSpan.Zero));
-		var runtimeLog = new RuntimeLog(clock, new FakeTraceSink());
+		var runtimeLog = new RuntimeLog(clock, new FakeLogSink());
 		var board = new CommandBoard(clock, runtimeLog);
 
 		var commandId = CommandId.New();
@@ -61,9 +61,9 @@ public sealed class BoardTests
 	[Fact]
 	public void CommandBoard_FailStoresErrorAndLogsErrorLevel()
 	{
-		var traceSink = new FakeTraceSink();
+		var logSink = new FakeLogSink();
 		var clock = new FakeClock();
-		var runtimeLog = new RuntimeLog(clock, traceSink);
+		var runtimeLog = new RuntimeLog(clock, logSink);
 		var board = new CommandBoard(clock, runtimeLog);
 
 		var commandId = CommandId.New();
@@ -71,6 +71,6 @@ public sealed class BoardTests
 
 		Assert.Equal(CommandStatus.Failed, failed.Status);
 		Assert.Equal("MoveFailed", failed.Error?.Code);
-		Assert.Contains(traceSink.TraceEntries, traceEntry => traceEntry.Level == TraceLevel.Error);
+		Assert.Contains(logSink.LogEntries, logEntry => logEntry.Level == LogLevel.Error);
 	}
 }

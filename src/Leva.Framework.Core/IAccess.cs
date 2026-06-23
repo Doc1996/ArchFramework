@@ -6,5 +6,5 @@ namespace Leva.Framework.Core;
 public interface IAccess
 {
 	ITransition Transition { get; }
-	ITraceSink TraceSink { get; }
+	ILogSink LogSink { get; }
 }

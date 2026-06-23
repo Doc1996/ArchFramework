@@ -57,6 +57,6 @@ public sealed class EventQueueTests
 	private static EventQueue CreateQueue()
 	{
 		var clock = new FakeClock();
-		return new EventQueue(clock, new RuntimeLog(clock, new FakeTraceSink()));
+		return new EventQueue(clock, new RuntimeLog(clock, new FakeLogSink()));
 	}
 }

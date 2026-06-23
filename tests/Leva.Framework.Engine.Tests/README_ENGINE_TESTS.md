@@ -6,8 +6,8 @@
 
 `BoardTests` - Verifies basic alarm, status, and command board behavior.
 `BoardLifecycleTests` - Verifies board clear, clear-all, duplicate command, set, cancel, and timeout behavior.
-`RuntimeLogTests` - Verifies structured runtime logging and trace mirroring.
-`RuntimeLogDetailTests` - Verifies dictionary merge, ID normalization, explicit trace levels, and log clearing.
+`RuntimeLogTests` - Verifies structured runtime logging and log mirroring.
+`RuntimeLogDetailTests` - Verifies dictionary merge, ID normalization, explicit log levels, and log clearing.
 `EventQueueTests` - Verifies priority dequeueing, delayed enqueueing, and delayed cancellation.
 `EventQueueLifecycleTests` - Verifies queue waiting, cancellation, duplicate delayed events, external cancellation, and delayed priority.
 `StateMachineTests` - Verifies state entry, handling, and transitions.

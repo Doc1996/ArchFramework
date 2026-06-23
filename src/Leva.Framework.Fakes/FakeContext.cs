@@ -6,22 +6,22 @@ namespace Leva.Framework.Fakes;
 public sealed class FakeContext
 {
 	public FakeClock Clock { get; }
-	public FakeTraceSink TraceSink { get; }
+	public FakeLogSink LogSink { get; }
 	public FakeTransition Transition { get; }
 	public FakeAccess Access { get; }
 	public FakeEventQueue EventQueue { get; }
 
 	public FakeContext(
 		FakeClock? clock = null,
-		FakeTraceSink? traceSink = null,
+		FakeLogSink? logSink = null,
 		FakeTransition? transition = null,
 		FakeEventQueue? eventQueue = null
 	)
 	{
 		Clock = clock ?? new FakeClock();
-		TraceSink = traceSink ?? new FakeTraceSink();
+		LogSink = logSink ?? new FakeLogSink();
 		Transition = transition ?? new FakeTransition();
-		Access = new FakeAccess(Transition, TraceSink);
+		Access = new FakeAccess(Transition, LogSink);
 		EventQueue = eventQueue ?? new FakeEventQueue(Clock);
 	}
 }

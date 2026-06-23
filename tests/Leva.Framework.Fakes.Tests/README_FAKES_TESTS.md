@@ -6,7 +6,7 @@
 
 `FakeClockTests` - Verifies deterministic time control.
 `FakeTransitionTests` - Verifies captured transition requests and clearing.
-`FakeTraceSinkTests` - Verifies trace entry capture and clearing.
+`FakeLogSinkTests` - Verifies log entry capture and clearing.
 `FakeEventQueueTests` - Verifies basic deterministic queue behavior.
 `FakeEventQueueBehaviorTests` - Verifies priority ordering, async waiting, cancellation, delayed enqueue behavior, and clearing.
 `FakeRuntimeTests` - Verifies fake states, routines, behaviors, and complete fake contexts.

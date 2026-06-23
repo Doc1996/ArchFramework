@@ -18,7 +18,7 @@ future provider libraries
 
 ## Project overview
 
-Core is intentionally small and stable. A type belongs here only when it represents a framework-wide concept that many libraries can safely depend on. This includes contracts such as `IEvent`, `IState<TAccess>`, `IRoutine<TAccess>`, `IBehavior<TAccess>`, `ITransition`, and `ITraceSink`; identity values such as `StateId`, `RoutineId`, `EventId`, `CommandId`, `RequestId`, and `AlarmId`; and shared values such as `Result`, `Error`, runtime entries, and `Snapshot`.
+Core is intentionally small and stable. A type belongs here only when it represents a framework-wide concept that many libraries can safely depend on. This includes contracts such as `IEvent`, `IState<TAccess>`, `IRoutine<TAccess>`, `IBehavior<TAccess>`, `ITransition`, and `ILogSink`; identity values such as `StateId`, `RoutineId`, `EventId`, `CommandId`, `RequestId`, and `AlarmId`; and shared values such as `Result`, `Error`, runtime entries, and `Snapshot`.
 
 Core does not decide how events are queued, how states are executed, how data is stored, or how UI is shown. Those responsibilities belong to Engine, provider libraries, or applications. Core only defines the shape of the concepts so those layers can communicate cleanly.
 
@@ -34,11 +34,11 @@ Core does not decide how events are queued, how states are executed, how data is
 `IRoutine<TAccess>` - Defines a reusable multi-step workflow that can process events while active.
 `IBehavior<TAccess>` - Defines reusable fallback behavior for events not handled by the current state or routine.
 
-### Transitions, time, and tracing
+### Transitions, time, and logging
 
 `ITransition` - Allows runtime objects to request state changes without directly controlling the state machine.
 `IClock` - Provides runtime time through an abstraction so engine logic can be deterministic and replaceable in tests.
-`ITraceSink` - Receives diagnostic trace entries emitted by the runtime or infrastructure.
+`ILogSink` - Receives diagnostic log entries emitted by the runtime or infrastructure.
 
 ### Identity values
 
@@ -65,5 +65,5 @@ Core does not decide how events are queued, how states are executed, how data is
 `RoutineStatus` - Describes routine lifecycle state.
 `Snapshot` - Captures durable runtime state that can be stored and later used to resume execution safely.
 `StatusEntry` - Represents one latest-known status value with source, name, value, updated time, and optional properties.
-`TraceEntry` - Represents one diagnostic trace item with source, message, level, created time, and optional properties.
-`TraceLevel` - Defines diagnostic severity.
+`LogEntry` - Represents one diagnostic log item with source, message, category, level, created time, and optional properties.
+`LogLevel` - Defines diagnostic log severity.

@@ -11,7 +11,7 @@ public sealed class ContextBuilder
 	private readonly List<IBehaviorBinding> _behaviors = [];
 
 	private IClock _clock = new SystemClock();
-	private ITraceSink _traceSink = new NullTraceSink();
+	private ILogSink _logSink = new NullLogSink();
 	private IEventQueue? _eventQueue;
 	private IAlarmSupervisor? _alarmSupervisor;
 	private IStatusUpdater? _statusUpdater;
@@ -22,9 +22,9 @@ public sealed class ContextBuilder
 		return this;
 	}
 
-	public ContextBuilder WithTraceSink(ITraceSink traceSink)
+	public ContextBuilder WithLogSink(ILogSink logSink)
 	{
-		_traceSink = traceSink;
+		_logSink = logSink;
 		return this;
 	}
 
@@ -62,9 +62,9 @@ public sealed class ContextBuilder
 
 	public Context Build()
 	{
-		var runtimeLog = new RuntimeLog(_clock, _traceSink);
+		var runtimeLog = new RuntimeLog(_clock, _logSink);
 		var queuedTransition = new QueuedTransition(runtimeLog);
-		var runtimeAccess = new RuntimeAccess(queuedTransition, _traceSink);
+		var runtimeAccess = new RuntimeAccess(queuedTransition, _logSink);
 		var eventQueue = _eventQueue ?? new EventQueue(_clock, runtimeLog);
 		var alarmBoard = _alarmSupervisor?.AlarmBoard ?? new AlarmBoard(_clock, runtimeLog);
 		var statusBoard = _statusUpdater?.StatusBoard ?? new StatusBoard(runtimeLog);
@@ -88,7 +88,7 @@ public sealed class ContextBuilder
 
 		return new Context(
 			_clock,
-			_traceSink,
+			_logSink,
 			runtimeLog,
 			eventQueue,
 			stateMachine,
@@ -102,9 +102,9 @@ public sealed class ContextBuilder
 		);
 	}
 
-	private sealed class RuntimeAccess(ITransition transition, ITraceSink traceSink) : IAccess
+	private sealed class RuntimeAccess(ITransition transition, ILogSink logSink) : IAccess
 	{
 		public ITransition Transition { get; } = transition;
-		public ITraceSink TraceSink { get; } = traceSink;
+		public ILogSink LogSink { get; } = logSink;
 	}
 }

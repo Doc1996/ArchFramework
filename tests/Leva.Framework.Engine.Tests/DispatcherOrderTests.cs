@@ -12,8 +12,8 @@ public sealed class DispatcherOrderTests
 	{
 		var calls = new List<string>();
 		var clock = new FakeClock();
-		var traceSink = new FakeTraceSink();
-		var runtimeLog = new RuntimeLog(clock, traceSink);
+		var logSink = new FakeLogSink();
+		var runtimeLog = new RuntimeLog(clock, logSink);
 		var alarmBoard = new AlarmBoard(clock, runtimeLog);
 		var statusBoard = new StatusBoard(runtimeLog);
 
@@ -59,7 +59,7 @@ public sealed class DispatcherOrderTests
 				return Task.FromResult(true);
 			}
 		);
-		var fake = new FakeContext(clock: clock, traceSink: traceSink);
+		var fake = new FakeContext(clock: clock, logSink: logSink);
 		var context = TestContextBuilder.Create(fake, [state], [behavior], alarmSupervisor, statusUpdater);
 
 		await context.StateMachine.StartAsync(state.Id);

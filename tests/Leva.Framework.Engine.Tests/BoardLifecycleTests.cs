@@ -11,7 +11,7 @@ public sealed class BoardLifecycleTests
 	public void AlarmBoard_ClearMissing_ReturnsFalseAndDoesNotLogClear()
 	{
 		var clock = new FakeClock();
-		var runtimeLog = new RuntimeLog(clock, new FakeTraceSink());
+		var runtimeLog = new RuntimeLog(clock, new FakeLogSink());
 		var board = new AlarmBoard(clock, runtimeLog);
 		var cleared = board.Clear(AlarmId.New());
 
@@ -23,7 +23,7 @@ public sealed class BoardLifecycleTests
 	public void AlarmBoard_ClearAll_LogsOnlyWhenAlarmsExisted()
 	{
 		var clock = new FakeClock();
-		var runtimeLog = new RuntimeLog(clock, new FakeTraceSink());
+		var runtimeLog = new RuntimeLog(clock, new FakeLogSink());
 		var board = new AlarmBoard(clock, runtimeLog);
 
 		board.ClearAll();
@@ -39,7 +39,7 @@ public sealed class BoardLifecycleTests
 	[Fact]
 	public void StatusBoard_ClearAll_LogsOnlyWhenStatusesExisted()
 	{
-		var runtimeLog = new RuntimeLog(new FakeClock(), new FakeTraceSink());
+		var runtimeLog = new RuntimeLog(new FakeClock(), new FakeLogSink());
 		var board = new StatusBoard(runtimeLog);
 
 		board.ClearAll();
@@ -56,7 +56,7 @@ public sealed class BoardLifecycleTests
 	public void CommandBoard_ClearAll_LogsOnlyWhenCommandsExisted()
 	{
 		var clock = new FakeClock();
-		var runtimeLog = new RuntimeLog(clock, new FakeTraceSink());
+		var runtimeLog = new RuntimeLog(clock, new FakeLogSink());
 		var board = new CommandBoard(clock, runtimeLog);
 
 		board.Start(CommandId.New(), "Command");
@@ -80,7 +80,7 @@ public sealed class BoardLifecycleTests
 	public void CommandBoard_CancelAndTimeout_UpdateLifecycle()
 	{
 		var clock = new FakeClock();
-		var runtimeLog = new RuntimeLog(clock, new FakeTraceSink());
+		var runtimeLog = new RuntimeLog(clock, new FakeLogSink());
 		var board = new CommandBoard(clock, runtimeLog);
 		var cancelId = CommandId.New();
 		var timeoutId = CommandId.New();
@@ -99,7 +99,7 @@ public sealed class BoardLifecycleTests
 	public void CommandBoard_Set_ReplacesExistingEntry()
 	{
 		var clock = new FakeClock();
-		var runtimeLog = new RuntimeLog(clock, new FakeTraceSink());
+		var runtimeLog = new RuntimeLog(clock, new FakeLogSink());
 		var board = new CommandBoard(clock, runtimeLog);
 		var commandId = CommandId.New();
 		var first = new CommandEntry(commandId, "Command", CommandStatus.Started, clock.UtcNow, clock.UtcNow);
@@ -115,7 +115,7 @@ public sealed class BoardLifecycleTests
 	private static CommandBoard CreateCommandBoard(out RuntimeLog runtimeLog)
 	{
 		var clock = new FakeClock();
-		runtimeLog = new RuntimeLog(clock, new FakeTraceSink());
+		runtimeLog = new RuntimeLog(clock, new FakeLogSink());
 		return new CommandBoard(clock, runtimeLog);
 	}
 }
