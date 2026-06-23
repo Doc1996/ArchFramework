@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<ItemGroup>
+		<ProjectReference Include="../Leva.Framework.Core/Leva.Framework.Core.csproj" />
+		<ProjectReference Include="../Leva.Framework.Storage/Leva.Framework.Storage.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Data.Sqlite" />
+	</ItemGroup>
+</Project>

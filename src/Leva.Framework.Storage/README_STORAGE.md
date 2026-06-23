@@ -1,6 +1,6 @@
 # Leva.Framework.Storage
 
-`Leva.Framework.Storage` is the provider-neutral persistence contract layer of ArchFramework. It defines repositories, journals, storage sessions, stored entries, versions, and common storage errors used by future infrastructure libraries and applications.
+`Leva.Framework.Storage` is the provider-neutral persistence contract layer of ArchFramework. It defines repositories, journals, storage sessions, stored entries, versions, and common storage errors used by provider libraries and applications.
 
 ## Purpose and dependencies
 
@@ -12,7 +12,7 @@ Leva.Framework.Storage
   -> .NET base libraries
 
 Applications / hosts
-future storage providers
+storage providers
   -> Leva.Framework.Storage
   -> Leva.Framework.Core
 
@@ -22,15 +22,13 @@ Leva.Framework.Engine
 
 ## Project overview
 
-Storage is intentionally contracts-first. It defines what the framework expects from persistence while leaving implementation choices to provider libraries. An in-memory provider can keep values directly, a SQLite provider can use tables or serialized payloads, and another provider can use a remote service or distributed store.
+Storage is intentionally contracts-first. It defines what the framework expects from persistence while leaving implementation details to provider libraries. An in-memory provider can keep values directly, a file-system provider can use local JSON files, and a SQLite provider can use tables and provider-owned schema migration.
 
 Repositories are the general durable model store. They store keyed values, return stored values with provider metadata through `StorageEntry<T>`, and use optional expected versions for optimistic concurrency. Framework snapshots do not need a separate snapshot-store contract because they can be stored through a repository with a string key.
 
-Journals are append-only stores for durable history, audit trails, runtime records, or replayable entries. They are smaller than a full event-store abstraction. A journal appends records and reads them in provider-assigned version order, optionally after a known version and with a maximum count.
+Journals are append-only stores for durable history, audit trails, runtime records, or replayable entries. A journal appends records and reads them in provider-assigned version order, optionally after a known version and with a maximum count.
 
-Storage sessions are provider-owned operation boundaries. They allow providers to group related repository and journal work behind one commit or rollback decision without exposing database transactions, connections, or provider-specific objects. `CommitAsync` makes pending work durable, `RollbackAsync` abandons pending work, and `DisposeAsync` is cleanup; if a session is disposed without commit, the provider should abandon or roll back uncommitted work.
-
-`StorageVersion` represents a positive provider-assigned revision or sequence number. It has no `None` or `First` constant because missing expected versions are represented with nullable `StorageVersion`, and providers are free to choose their first persisted version.
+Storage sessions are provider-owned operation boundaries. They allow providers to group related repository and journal work behind one commit or rollback decision without exposing database transactions, connections, or provider-specific objects. `CommitAsync` makes pending work durable, `RollbackAsync` abandons pending work, and asynchronous disposal performs cleanup.
 
 ## Files and classes
 
