@@ -24,14 +24,11 @@ internal sealed class MemoryJournalStore<TEntry> : IMemoryStoreBuffer
 	public void CopyFrom(IMemoryStoreBuffer source)
 	{
 		var sourceBuffer = (MemoryJournalStore<TEntry>)source;
-		var entries = sourceBuffer.Read(null, null);
-		var nextVersion = sourceBuffer.GetNextVersion();
-
 		lock (_lock)
 		{
 			_entries.Clear();
-			_entries.AddRange(entries);
-			_nextVersion = nextVersion;
+			_entries.AddRange(sourceBuffer._entries);
+			_nextVersion = sourceBuffer._nextVersion;
 		}
 	}
 
@@ -60,11 +57,5 @@ internal sealed class MemoryJournalStore<TEntry> : IMemoryStoreBuffer
 
 			return query.ToArray();
 		}
-	}
-
-	private long GetNextVersion()
-	{
-		lock (_lock)
-			return _nextVersion;
 	}
 }
