@@ -59,6 +59,7 @@ public sealed class FileJournalTests
 		using var directory = new TestStorageDirectory();
 		var storage = CreateStorage(directory);
 		var journal = storage.CreateJournal<string>("events");
+
 		await journal.AppendAsync("first");
 		await journal.AppendAsync("second");
 
@@ -76,6 +77,5 @@ public sealed class FileJournalTests
 		await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => journal.ReadAsync(limit: 0));
 	}
 
-	private static FileStorageProvider CreateStorage(TestStorageDirectory directory) =>
-		new(new FileStorageOptions { RootPath = directory.Path });
+	private static FileStorageProvider CreateStorage(TestStorageDirectory directory) => new(directory.Path);
 }

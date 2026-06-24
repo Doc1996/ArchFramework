@@ -4,7 +4,10 @@ internal sealed class TestStorageDirectory : IDisposable
 {
 	public TestStorageDirectory()
 	{
-		Path = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "leva-storage-files-tests-" + Guid.NewGuid().ToString("N"));
+		Path = System.IO.Path.Combine(
+			System.IO.Path.GetTempPath(),
+			"leva-storage-files-tests-" + Guid.NewGuid().ToString("N")
+		);
 		Directory.CreateDirectory(Path);
 	}
 
@@ -17,9 +20,9 @@ internal sealed class TestStorageDirectory : IDisposable
 			if (Directory.Exists(Path))
 				Directory.Delete(Path, true);
 		}
-		catch
+		catch (Exception)
 		{
-			// Test cleanup should not hide the actual test failure.
+			// Ignore cleanup failure to preserve the original test failure.
 		}
 	}
 }

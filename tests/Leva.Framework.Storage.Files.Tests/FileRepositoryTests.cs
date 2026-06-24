@@ -118,6 +118,5 @@ public sealed class FileRepositoryTests
 		Assert.True(loaded.IsFailure);
 	}
 
-	private static FileStorageProvider CreateStorage(TestStorageDirectory directory) =>
-		new(new FileStorageOptions { RootPath = directory.Path });
+	private static FileStorageProvider CreateStorage(TestStorageDirectory directory) => new(directory.Path);
 }

@@ -17,7 +17,7 @@ public sealed class FileRepository<TId, TModel> : IRepository<TId, TModel>
 		_store = database.GetRepository<TId, TModel>(name);
 	}
 
-	public async Task<Result<StorageEntry<TModel>>> SaveAsync(
+	public Task<Result<StorageEntry<TModel>>> SaveAsync(
 		TId id,
 		TModel model,
 		StorageVersion? expectedVersion = null,
@@ -25,21 +25,19 @@ public sealed class FileRepository<TId, TModel> : IRepository<TId, TModel>
 	)
 	{
 		token.ThrowIfCancellationRequested();
-		return await _store.SaveAsync(id, model, expectedVersion, token);
+		return _store.SaveAsync(id, model, expectedVersion, token);
 	}
 
-	public async Task<Result<StorageEntry<TModel>>> LoadAsync(TId id, CancellationToken token = default)
+	public Task<Result<StorageEntry<TModel>>> LoadAsync(TId id, CancellationToken token = default)
 	{
 		token.ThrowIfCancellationRequested();
-		return await _store.LoadAsync(id, token);
+		return _store.LoadAsync(id, token);
 	}
 
-	public async Task<Result<IReadOnlyDictionary<TId, StorageEntry<TModel>>>> LoadAllAsync(
-		CancellationToken token = default
-	)
+	public Task<Result<IReadOnlyDictionary<TId, StorageEntry<TModel>>>> LoadAllAsync(CancellationToken token = default)
 	{
 		token.ThrowIfCancellationRequested();
-		return await _store.LoadAllAsync(token);
+		return _store.LoadAllAsync(token);
 	}
 
 	public Task<Result<bool>> ExistsAsync(TId id, CancellationToken token = default)
@@ -48,13 +46,9 @@ public sealed class FileRepository<TId, TModel> : IRepository<TId, TModel>
 		return Task.FromResult(_store.Exists(id));
 	}
 
-	public async Task<Result> DeleteAsync(
-		TId id,
-		StorageVersion? expectedVersion = null,
-		CancellationToken token = default
-	)
+	public Task<Result> DeleteAsync(TId id, StorageVersion? expectedVersion = null, CancellationToken token = default)
 	{
 		token.ThrowIfCancellationRequested();
-		return await _store.DeleteAsync(id, expectedVersion, token);
+		return _store.DeleteAsync(id, expectedVersion, token);
 	}
 }

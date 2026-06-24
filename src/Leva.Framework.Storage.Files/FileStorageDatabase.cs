@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Globalization;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 
@@ -94,16 +95,15 @@ internal sealed class FileStorageDatabase
 	public async Task<StorageEntry<T>> ReadEntryAsync<T>(string path, CancellationToken token)
 	{
 		await using var stream = File.OpenRead(path);
-		var record =
-			await JsonSerializer.DeserializeAsync<FileStorageRecord<T>>(stream, _jsonOptions, token)
+		var fileEntry =
+			await JsonSerializer.DeserializeAsync<FileStorageEntry<T>>(stream, _jsonOptions, token)
 			?? throw new InvalidOperationException("Storage file did not contain a valid entry.");
 
 		return new StorageEntry<T>(
-			record.Value,
-			new StorageVersion(record.Version),
-			record.CreatedAt,
-			record.UpdatedAt,
-			record.Properties
+			fileEntry.Value,
+			new StorageVersion(fileEntry.Version),
+			fileEntry.CreatedAt,
+			fileEntry.UpdatedAt
 		);
 	}
 
@@ -111,20 +111,12 @@ internal sealed class FileStorageDatabase
 	{
 		Directory.CreateDirectory(Path.GetDirectoryName(path)!);
 		var temporaryPath = path + "." + Guid.NewGuid().ToString("N") + ".tmp";
+		var fileEntry = new FileStorageEntry<T>(entry.Value, entry.Version.Value, entry.CreatedAt, entry.UpdatedAt);
 
 		try
 		{
-			var record = new FileStorageRecord<T>(
-				entry.Value,
-				entry.Version.Value,
-				entry.CreatedAt,
-				entry.UpdatedAt,
-				entry.Properties
-			);
-
 			await using (var stream = File.Create(temporaryPath))
-				await JsonSerializer.SerializeAsync(stream, record, _jsonOptions, token);
-
+				await JsonSerializer.SerializeAsync(stream, fileEntry, _jsonOptions, token);
 			File.Move(temporaryPath, path, true);
 		}
 		finally
@@ -141,13 +133,13 @@ internal sealed class FileStorageDatabase
 		where TId : notnull
 	{
 		ArgumentException.ThrowIfNullOrWhiteSpace(name);
-		return Path.Combine(RootPath, "repositories", Encode(GetRepositoryKey<TId, TModel>(name)));
+		return Path.Combine(RootPath, "repositories", Hash(GetRepositoryKey<TId, TModel>(name)));
 	}
 
 	private string GetJournalDirectory<TEntry>(string name)
 	{
 		ArgumentException.ThrowIfNullOrWhiteSpace(name);
-		return Path.Combine(RootPath, "journals", Encode(GetJournalKey<TEntry>(name)));
+		return Path.Combine(RootPath, "journals", Hash(GetJournalKey<TEntry>(name)));
 	}
 
 	private static void CopyDirectory(string source, string target)
@@ -176,6 +168,12 @@ internal sealed class FileStorageDatabase
 
 	private static string GetJournalKey<TEntry>(string name) => $"{name}|{typeof(TEntry).AssemblyQualifiedName}";
 
+	private static string Hash(string value)
+	{
+		var bytes = Encoding.UTF8.GetBytes(value);
+		return Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant();
+	}
+
 	private static string Encode(string value)
 	{
 		var bytes = Encoding.UTF8.GetBytes(value);
@@ -187,6 +185,7 @@ internal sealed class FileStorageDatabase
 		var base64 = value.Replace('-', '+').Replace('_', '/');
 		var padding = (4 - base64.Length % 4) % 4;
 		base64 = base64.PadRight(base64.Length + padding, '=');
+
 		return Encoding.UTF8.GetString(Convert.FromBase64String(base64));
 	}
 }

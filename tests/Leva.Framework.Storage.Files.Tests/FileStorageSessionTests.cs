@@ -99,6 +99,5 @@ public sealed class FileStorageSessionTests
 		Assert.Throws<ArgumentException>(() => secondStorage.CreateRepository<string, string>("items", session));
 	}
 
-	private static FileStorageProvider CreateStorage(TestStorageDirectory directory) =>
-		new(new FileStorageOptions { RootPath = directory.Path });
+	private static FileStorageProvider CreateStorage(TestStorageDirectory directory) => new(directory.Path);
 }

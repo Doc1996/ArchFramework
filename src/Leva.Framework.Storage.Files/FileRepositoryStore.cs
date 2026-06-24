@@ -32,10 +32,11 @@ internal sealed class FileRepositoryStore<TId, TModel>
 	{
 		try
 		{
+			token.ThrowIfCancellationRequested();
 			Directory.CreateDirectory(_directory);
 
 			var path = _database.GetRepositoryPath<TId, TModel>(_name, id);
-			var storageId = _database.ToKey(id);
+			var key = FileStorageDatabase.ToKey(id);
 			var utcNow = DateTimeOffset.UtcNow;
 
 			if (File.Exists(path))
@@ -43,20 +44,26 @@ internal sealed class FileRepositoryStore<TId, TModel>
 				var existing = await _database.ReadEntryAsync<TModel>(path, token);
 				if (expectedVersion.HasValue && existing.Version != expectedVersion.Value)
 					return Result<StorageEntry<TModel>>.Fail(
-						StorageErrors.VersionConflict(_name, storageId, expectedVersion.Value, existing.Version)
+						StorageErrors.VersionConflict(_name, key, expectedVersion.Value, existing.Version)
 					);
 
-				var entry = existing with { Value = model, Version = existing.Version.Next(), UpdatedAt = utcNow };
-				await _database.WriteEntryAsync(path, entry, token);
-				return Result<StorageEntry<TModel>>.Ok(entry);
+				var updatedEntry = existing with
+				{
+					Value = model,
+					Version = existing.Version.Next(),
+					UpdatedAt = utcNow,
+				};
+
+				await _database.WriteEntryAsync(path, updatedEntry, token);
+				return Result<StorageEntry<TModel>>.Ok(updatedEntry);
 			}
 
 			if (expectedVersion.HasValue)
-				return Result<StorageEntry<TModel>>.Fail(StorageErrors.NotFound(_name, storageId));
+				return Result<StorageEntry<TModel>>.Fail(StorageErrors.NotFound(_name, key));
 
-			var entry = new StorageEntry<TModel>(model, new StorageVersion(1), utcNow, utcNow);
-			await _database.WriteEntryAsync(path, entry, token);
-			return Result<StorageEntry<TModel>>.Ok(entry);
+			var newEntry = new StorageEntry<TModel>(model, new StorageVersion(1), utcNow, utcNow);
+			await _database.WriteEntryAsync(path, newEntry, token);
+			return Result<StorageEntry<TModel>>.Ok(newEntry);
 		}
 		catch (OperationCanceledException)
 		{
@@ -74,9 +81,10 @@ internal sealed class FileRepositoryStore<TId, TModel>
 	{
 		try
 		{
+			token.ThrowIfCancellationRequested();
 			var path = _database.GetRepositoryPath<TId, TModel>(_name, id);
 			if (!File.Exists(path))
-				return Result<StorageEntry<TModel>>.Fail(StorageErrors.NotFound(_name, _database.ToKey(id)));
+				return Result<StorageEntry<TModel>>.Fail(StorageErrors.NotFound(_name, FileStorageDatabase.ToKey(id)));
 
 			var entry = await _database.ReadEntryAsync<TModel>(path, token);
 			return Result<StorageEntry<TModel>>.Ok(entry);
@@ -97,6 +105,7 @@ internal sealed class FileRepositoryStore<TId, TModel>
 	{
 		try
 		{
+			token.ThrowIfCancellationRequested();
 			var entries = new Dictionary<TId, StorageEntry<TModel>>();
 			if (!Directory.Exists(_directory))
 				return Result<IReadOnlyDictionary<TId, StorageEntry<TModel>>>.Ok(entries);
@@ -104,8 +113,8 @@ internal sealed class FileRepositoryStore<TId, TModel>
 			foreach (var file in Directory.EnumerateFiles(_directory, "*.json"))
 			{
 				token.ThrowIfCancellationRequested();
-				var key = _database.GetFileKey(file);
-				entries[_database.FromKey<TId>(key)] = await _database.ReadEntryAsync<TModel>(file, token);
+				var key = FileStorageDatabase.GetFileKey(file);
+				entries[FileStorageDatabase.FromKey<TId>(key)] = await _database.ReadEntryAsync<TModel>(file, token);
 			}
 
 			return Result<IReadOnlyDictionary<TId, StorageEntry<TModel>>>.Ok(entries);
@@ -129,18 +138,19 @@ internal sealed class FileRepositoryStore<TId, TModel>
 	{
 		try
 		{
+			token.ThrowIfCancellationRequested();
 			var path = _database.GetRepositoryPath<TId, TModel>(_name, id);
-			var storageId = _database.ToKey(id);
+			var key = FileStorageDatabase.ToKey(id);
 
 			if (!File.Exists(path))
-				return Result.Fail(StorageErrors.NotFound(_name, storageId));
+				return Result.Fail(StorageErrors.NotFound(_name, key));
 
 			if (expectedVersion.HasValue)
 			{
 				var existing = await _database.ReadEntryAsync<TModel>(path, token);
 				if (existing.Version != expectedVersion.Value)
 					return Result.Fail(
-						StorageErrors.VersionConflict(_name, storageId, expectedVersion.Value, existing.Version)
+						StorageErrors.VersionConflict(_name, key, expectedVersion.Value, existing.Version)
 					);
 			}
 

@@ -27,7 +27,7 @@ The public repository and journal classes stay thin. They delegate storage behav
 
 `FileStorageProvider` - Creates repositories, journals, and storage sessions under one root directory.
 `FileStorageDatabase` - Owns file paths, serialization, key conversion, and directory copying for one provider instance.
-`FileStorageRecord<T>` - Represents the JSON record stored for one file storage entry.
+`FileStorageEntry<T>` - Represents one stored value in the file provider JSON format.
 
 ### Repository implementation
 

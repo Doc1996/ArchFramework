@@ -16,13 +16,13 @@ public sealed class FileJournal<TEntry> : IJournal<TEntry>
 		_store = database.GetJournal<TEntry>(name);
 	}
 
-	public async Task<Result<StorageEntry<TEntry>>> AppendAsync(TEntry entry, CancellationToken token = default)
+	public Task<Result<StorageEntry<TEntry>>> AppendAsync(TEntry entry, CancellationToken token = default)
 	{
 		token.ThrowIfCancellationRequested();
-		return await _store.AppendAsync(entry, token);
+		return _store.AppendAsync(entry, token);
 	}
 
-	public async Task<Result<IReadOnlyList<StorageEntry<TEntry>>>> ReadAsync(
+	public Task<Result<IReadOnlyList<StorageEntry<TEntry>>>> ReadAsync(
 		StorageVersion? afterVersion = null,
 		int? limit = null,
 		CancellationToken token = default
@@ -32,6 +32,6 @@ public sealed class FileJournal<TEntry> : IJournal<TEntry>
 		if (limit is <= 0)
 			throw new ArgumentOutOfRangeException(nameof(limit), "Limit must be greater than zero.");
 
-		return await _store.ReadAsync(afterVersion, limit, token);
+		return _store.ReadAsync(afterVersion, limit, token);
 	}
 }
