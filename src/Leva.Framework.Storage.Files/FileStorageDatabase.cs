@@ -36,7 +36,6 @@ internal sealed class FileStorageDatabase
 	public void ReplaceWith(FileStorageDatabase database)
 	{
 		ArgumentNullException.ThrowIfNull(database);
-
 		if (Directory.Exists(RootPath))
 			Directory.Delete(RootPath, true);
 
