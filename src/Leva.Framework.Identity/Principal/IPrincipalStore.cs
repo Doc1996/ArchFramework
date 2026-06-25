@@ -3,7 +3,7 @@ using Leva.Framework.Core;
 namespace Leva.Framework.Identity;
 
 /// <summary>
-/// Loads identities from provider-specific stores or account sources.
+/// Loads principals from provider-specific stores or account sources.
 /// </summary>
 public interface IPrincipalStore
 {

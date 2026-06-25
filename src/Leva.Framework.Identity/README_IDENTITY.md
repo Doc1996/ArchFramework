@@ -43,7 +43,7 @@ Audit records are separate from runtime logs. `AuditEntry` records security-rele
 `PrincipalClaim` - Represents one typed fact about a principal.
 `PrincipalRole` - Represents one role assigned to a principal.
 `PrincipalPermission` - Represents one precise capability assigned to a principal.
-`IPrincipalStore` - Loads identities from provider-specific stores or account sources.
+`IPrincipalStore` - Loads principals from provider-specific stores or account sources.
 
 ### Sessions
 

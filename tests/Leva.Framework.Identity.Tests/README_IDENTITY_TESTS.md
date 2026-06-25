@@ -1,6 +1,6 @@
 # Leva.Framework.Identity.Tests
 
-`Leva.Framework.Identity.Tests` verifies the provider-neutral identity contracts and services from `Leva.Framework.Identity`. These tests cover principal values, sessions, authentication, authorization, audit sinks, errors, and state-facing principal access.
+`Leva.Framework.Identity.Tests` verifies the provider-neutral principal contracts and services from `Leva.Framework.Identity`. These tests cover principal values, sessions, authentication, authorization, audit sinks, errors, and state-facing principal access.
 
 ## Coverage
 
