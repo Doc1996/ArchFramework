@@ -8,13 +8,13 @@ namespace Leva.Framework.Identity;
 public sealed class AuthenticationService
 {
 	private readonly IReadOnlyList<AuthenticationPolicy> _policies;
-	private readonly IdentitySessionService _sessionService;
+	private readonly PrincipalSessionService _sessionService;
 	private readonly IAuditSink _auditSink;
 	private readonly IClock? _clock;
 
 	public AuthenticationService(
 		IEnumerable<AuthenticationPolicy> policies,
-		IdentitySessionService sessionService,
+		PrincipalSessionService sessionService,
 		IAuditSink? auditSink = null,
 		IClock? clock = null
 	)
@@ -39,7 +39,7 @@ public sealed class AuthenticationService
 		var policy = _policies.FirstOrDefault(policy => policy.CanAuthenticate(request));
 		if (policy is null)
 		{
-			var error = IdentityErrors.NotFound($"authentication policy for '{request.Method}'");
+			var error = PrincipalErrors.NotFound($"authentication policy for '{request.Method}'");
 			WriteFailure(request.Method, error.Message);
 			return Result<AuthenticationResult>.Fail(error);
 		}
@@ -52,25 +52,25 @@ public sealed class AuthenticationService
 		}
 
 		var authentication = result.Value!;
-		if (!authentication.IsAuthenticated || authentication.Identity is null)
+		if (!authentication.IsAuthenticated || authentication.Principal is null)
 		{
 			WriteFailure(request.Method, authentication.Reason ?? "Authentication failed.");
 			return result;
 		}
 
-		var sessionResult = await _sessionService.CreateAsync(authentication.Identity, token);
+		var sessionResult = await _sessionService.CreateAsync(authentication.Principal, token);
 		if (sessionResult.IsFailure)
 		{
-			WriteFailure(request.Method, sessionResult.Error.Message, authentication.Identity.Id);
+			WriteFailure(request.Method, sessionResult.Error.Message, authentication.Principal.Id);
 			return Result<AuthenticationResult>.Fail(sessionResult.Error);
 		}
 
 		var finalResult = authentication.WithSession(sessionResult.Value!);
-		WriteSuccess(request.Method, authentication.Identity.Id, sessionResult.Value!.SessionId);
+		WriteSuccess(request.Method, authentication.Principal.Id, sessionResult.Value!.SessionId);
 		return Result<AuthenticationResult>.Ok(finalResult);
 	}
 
-	public async Task<Result> SignOutAsync(IdentitySessionId sessionId, CancellationToken token = default)
+	public async Task<Result> SignOutAsync(PrincipalSessionId sessionId, CancellationToken token = default)
 	{
 		token.ThrowIfCancellationRequested();
 		var result = await _sessionService.SignOutAsync(sessionId, token);
@@ -79,15 +79,15 @@ public sealed class AuthenticationService
 
 	private DateTimeOffset UtcNow => _clock?.UtcNow ?? DateTimeOffset.UtcNow;
 
-	private void WriteSuccess(AuthenticationMethod method, IdentityId identityId, IdentitySessionId sessionId) =>
-		_auditSink.Write(new AuditEntry(AuditAction.Authenticated, UtcNow, identityId, sessionId, method.ToString()));
+	private void WriteSuccess(AuthenticationMethod method, PrincipalId principalId, PrincipalSessionId sessionId) =>
+		_auditSink.Write(new AuditEntry(AuditAction.Authenticated, UtcNow, principalId, sessionId, method.ToString()));
 
-	private void WriteFailure(AuthenticationMethod method, string reason, IdentityId? identityId = null) =>
+	private void WriteFailure(AuthenticationMethod method, string reason, PrincipalId? principalId = null) =>
 		_auditSink.Write(
 			new AuditEntry(
 				AuditAction.AuthenticationFailed,
 				UtcNow,
-				identityId,
+				principalId,
 				Method: method.ToString(),
 				Reason: reason
 			)

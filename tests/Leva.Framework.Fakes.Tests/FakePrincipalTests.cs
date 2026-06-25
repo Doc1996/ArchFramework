@@ -4,30 +4,30 @@ using Xunit;
 
 namespace Leva.Framework.Fakes.Tests;
 
-public sealed class FakeIdentityTests
+public sealed class FakePrincipalTests
 {
 	[Fact]
-	public async Task FakeIdentityStore_LoadsByIdAndName()
+	public async Task FakePrincipalStore_LoadsByIdAndName()
 	{
-		var store = new FakeIdentityStore();
-		var identity = new Identity(new IdentityId("user-1"), "User One");
-		store.Add(identity, "user");
+		var store = new FakePrincipalStore();
+		var principal = new Principal(new PrincipalId("user-1"), "User One");
+		store.Add(principal, "user");
 
-		var byId = await store.LoadAsync(identity.Id);
+		var byId = await store.LoadAsync(principal.Id);
 		var byName = await store.FindByNameAsync("user");
 
-		Assert.Equal(identity, byId.Value);
-		Assert.Equal(identity, byName.Value);
+		Assert.Equal(principal, byId.Value);
+		Assert.Equal(principal, byName.Value);
 	}
 
 	[Fact]
-	public async Task FakeIdentitySessionStore_SavesLoadsAndDeletesSession()
+	public async Task FakePrincipalSessionStore_SavesLoadsAndDeletesSession()
 	{
-		var store = new FakeIdentitySessionStore();
-		var session = new IdentitySession(
-			new IdentitySessionId("session-1"),
-			new Identity(new IdentityId("user-1"), "User One"),
-			IdentitySessionStatus.Active,
+		var store = new FakePrincipalSessionStore();
+		var session = new PrincipalSession(
+			new PrincipalSessionId("session-1"),
+			new Principal(new PrincipalId("user-1"), "User One"),
+			PrincipalSessionStatus.Active,
 			DateTimeOffset.UtcNow,
 			DateTimeOffset.UtcNow
 		);
@@ -42,9 +42,9 @@ public sealed class FakeIdentityTests
 	}
 
 	[Fact]
-	public async Task FakeIdentitySessionSource_ReturnsConfiguredSessionOrError()
+	public async Task FakePrincipalSessionSource_ReturnsConfiguredSessionOrError()
 	{
-		var source = new FakeIdentitySessionSource();
+		var source = new FakePrincipalSessionSource();
 		var error = new Error("test", "failure");
 		source.Error = error;
 		var result = await source.GetSessionAsync();
@@ -80,7 +80,7 @@ public sealed class FakeIdentityTests
 			Result = Result<AuthorizationResult>.Ok(AuthorizationResult.Allowed(requirement)),
 		};
 
-		var request = new AuthorizationRequest(new Identity(new IdentityId("user-1"), "User One"), requirement);
+		var request = new AuthorizationRequest(new Principal(new PrincipalId("user-1"), "User One"), requirement);
 		var result = await policy.AuthorizeAsync(request);
 
 		Assert.True(result.Value!.IsAuthorized);

@@ -1,19 +1,19 @@
 # ArchFramework
 
-ArchFramework is a clean .NET framework for event-driven, state-machine applications. It provides reusable runtime structure for typed events, explicit states, routines, behaviors, controlled transitions, runtime memory, diagnostics, identity, storage, and recovery snapshots.
+ArchFramework is a clean .NET framework for event-driven, state-machine applications. It provides reusable runtime structure for typed events, explicit states, routines, behaviors, controlled transitions, runtime memory, diagnostics, principal, storage, and recovery snapshots.
 
 ## Architecture summary
 
 ArchFramework keeps important application behavior out of random services, UI callbacks, and uncontrolled background code. Work enters the runtime as typed events, flows through a deterministic dispatcher, reaches the active state or routine, can fall back to behaviors, and only then applies requested transitions. This makes the application easier to reason about, test, log, persist, secure, and recover.
 
-The framework is split into small libraries. `Leva.Framework.Core` defines the shared vocabulary. `Leva.Framework.Engine` implements the runtime. `Leva.Framework.Fakes` provides reusable test doubles. `Leva.Framework.Storage` defines provider-neutral persistence contracts. Storage provider libraries implement those contracts for memory, files, and SQLite. `Leva.Framework.Identity` defines provider-neutral identity, session, authentication, authorization, audit, and state-facing identity access concepts.
+The framework is split into small libraries. `Leva.Framework.Core` defines the shared vocabulary. `Leva.Framework.Engine` implements the runtime. `Leva.Framework.Fakes` provides reusable test doubles. `Leva.Framework.Storage` defines provider-neutral persistence contracts. Storage provider libraries implement those contracts for memory, files, and SQLite. `Leva.Framework.Identity` defines provider-neutral principal, session, authentication, authorization, audit, and state-facing principal access concepts.
 
 ## Library structure
 
 ```text
 Leva.Framework.Core           -> shared contracts, IDs, entries, results, snapshots
 Leva.Framework.Engine         -> event queue, dispatcher, state machine, boards, logs
-Leva.Framework.Fakes          -> fake clocks, events, queues, states, routines, identity, logs
+Leva.Framework.Fakes          -> fake clocks, events, queues, states, routines, principal, logs
 Leva.Framework.Storage        -> repository, journal, session, entry, version contracts
 Leva.Framework.Storage.Memory -> in-process storage provider
 Leva.Framework.Storage.Files  -> local JSON/file-system storage provider
@@ -83,7 +83,7 @@ An event is queued, dequeued by the loop, dispatched through global runtime hook
 
 ## Access model
 
-States, routines, and behaviors should receive narrow typed access objects instead of the full runtime `Context`. The context owns runtime services and wiring. Application logic should only see the capabilities it is allowed to use, such as transition, logging, identity, views, data, policies, navigation, or notifications depending on the application.
+States, routines, and behaviors should receive narrow typed access objects instead of the full runtime `Context`. The context owns runtime services and wiring. Application logic should only see the capabilities it is allowed to use, such as transition, logging, principal, views, data, policies, navigation, or notifications depending on the application.
 
 This keeps states smaller and easier to test. A state that only needs navigation and transitions should not receive storage, notifications, device control, or unrelated services.
 

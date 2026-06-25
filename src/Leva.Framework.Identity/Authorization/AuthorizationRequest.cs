@@ -1,12 +1,12 @@
 namespace Leva.Framework.Identity;
 
 /// <summary>
-/// Carries the identity, session, requirement, and optional contextual properties for authorization.
+/// Carries the principal, session, requirement, and optional contextual properties for authorization.
 /// </summary>
 public sealed record AuthorizationRequest(
-	Identity? Identity,
+	Principal? Principal,
 	AuthorizationRequirement Requirement,
-	IdentitySession? Session = null,
+	PrincipalSession? Session = null,
 	IReadOnlyDictionary<string, object?>? Properties = null
 )
 {

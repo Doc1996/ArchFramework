@@ -7,10 +7,10 @@ public sealed record AuthorizationRequirement(string Type, string Value)
 {
 	public static AuthorizationRequirement SignedIn { get; } = new("SignedIn", "true");
 
-	public static AuthorizationRequirement Permission(IdentityPermission permission) =>
+	public static AuthorizationRequirement Permission(PrincipalPermission permission) =>
 		new("Permission", permission.Value);
 
-	public static AuthorizationRequirement Role(IdentityRole role) => new("Role", role.Value);
+	public static AuthorizationRequirement Role(PrincipalRole role) => new("Role", role.Value);
 
 	public static AuthorizationRequirement Claim(string type, string value) => new($"Claim:{type}", value);
 

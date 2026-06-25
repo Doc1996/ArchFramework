@@ -1,7 +1,7 @@
 namespace Leva.Framework.Identity;
 
 /// <summary>
-/// Describes one security-relevant identity action.
+/// Describes one security-relevant principal action.
 /// </summary>
 public enum AuditAction
 {

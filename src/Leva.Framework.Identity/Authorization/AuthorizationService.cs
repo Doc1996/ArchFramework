@@ -32,8 +32,8 @@ public sealed class AuthorizationService
 		token.ThrowIfCancellationRequested();
 		ArgumentNullException.ThrowIfNull(request);
 
-		if (request.Identity is null)
-			return Deny(request, "Identity is not available.");
+		if (request.Principal is null)
+			return Deny(request, "Principal is not available.");
 
 		var policies = _policies.Where(policy => policy.CanAuthorize(request)).ToArray();
 		if (policies.Length == 0)
@@ -73,7 +73,7 @@ public sealed class AuthorizationService
 			new AuditEntry(
 				action,
 				UtcNow,
-				request.Identity?.Id,
+				request.Principal?.Id,
 				request.Session?.SessionId,
 				Requirement: request.Requirement.ToString(),
 				Reason: reason

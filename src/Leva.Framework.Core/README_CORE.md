@@ -57,9 +57,9 @@ Core does not decide how events are queued, how states are executed, how data is
 
 ### Runtime entries and values
 
-`AlarmEntry` - Represents one active alarm or fault with identity, message, level, blocking flag, raised time, and optional properties.
+`AlarmEntry` - Represents one active alarm or fault with principal, message, level, blocking flag, raised time, and optional properties.
 `AlarmLevel` - Defines alarm severity.
-`CommandEntry` - Represents one tracked command or external operation with identity, name, status, creation/update/completion times, optional error, optional state, and optional properties.
+`CommandEntry` - Represents one tracked command or external operation with principal, name, status, creation/update/completion times, optional error, optional state, and optional properties.
 `CommandStatus` - Describes the lifecycle state of a tracked command.
 `EventPriority` - Defines queue priority for events waiting in the engine queue.
 `RoutineStatus` - Describes routine lifecycle state.

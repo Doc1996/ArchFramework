@@ -13,21 +13,21 @@ public sealed class AuthenticationServiceTests
 		var unmatched = new FakeAuthenticationPolicy(new AuthenticationMethod("other"))
 		{
 			Result = Result<AuthenticationResult>.Ok(
-				AuthenticationResult.Succeeded(new Identity(new IdentityId("bad"), "Bad"))
+				AuthenticationResult.Succeeded(new Principal(new PrincipalId("bad"), "Bad"))
 			),
 		};
 
-		var identity = TestIdentity();
+		var principal = TestPrincipal();
 		var matched = new FakeAuthenticationPolicy(method)
 		{
-			Result = Result<AuthenticationResult>.Ok(AuthenticationResult.Succeeded(identity)),
+			Result = Result<AuthenticationResult>.Ok(AuthenticationResult.Succeeded(principal)),
 		};
 
-		var sessionStore = new FakeIdentitySessionStore();
+		var sessionStore = new FakePrincipalSessionStore();
 		var audit = new MemoryAuditSink();
 		var service = new AuthenticationService(
 			[unmatched, matched],
-			new IdentitySessionService(sessionStore, auditSink: audit),
+			new PrincipalSessionService(sessionStore, auditSink: audit),
 			audit
 		);
 
@@ -35,14 +35,14 @@ public sealed class AuthenticationServiceTests
 		var authentication = ResultAssert.Success(result);
 
 		Assert.True(authentication.IsAuthenticated);
-		Assert.Equal(identity, authentication.Identity);
+		Assert.Equal(principal, authentication.Principal);
 		Assert.NotNull(authentication.Session);
 
 		Assert.Equal(0, unmatched.AuthenticateCount);
 		Assert.Equal(1, matched.AuthenticateCount);
 		Assert.Contains(
 			audit.AuditEntries,
-			entry => entry.Action == AuditAction.Authenticated && entry.IdentityId == identity.Id
+			entry => entry.Action == AuditAction.Authenticated && entry.PrincipalId == principal.Id
 		);
 	}
 
@@ -51,13 +51,13 @@ public sealed class AuthenticationServiceTests
 	{
 		var service = new AuthenticationService(
 			[],
-			new IdentitySessionService(new FakeIdentitySessionStore()),
+			new PrincipalSessionService(new FakePrincipalSessionStore()),
 			new MemoryAuditSink()
 		);
 		var result = await service.AuthenticateAsync(new AuthenticationRequest(new AuthenticationMethod("missing")));
 
 		Assert.True(result.IsFailure);
-		Assert.Equal("identity.not_found", result.Error.Code);
+		Assert.Equal("principal.not_found", result.Error.Code);
 	}
 
 	[Fact]
@@ -67,12 +67,12 @@ public sealed class AuthenticationServiceTests
 		var audit = new MemoryAuditSink();
 		var policy = new FakeAuthenticationPolicy(method)
 		{
-			Result = Result<AuthenticationResult>.Fail(IdentityErrors.Unauthorized("bad credentials")),
+			Result = Result<AuthenticationResult>.Fail(PrincipalErrors.Unauthorized("bad credentials")),
 		};
 
 		var service = new AuthenticationService(
 			[policy],
-			new IdentitySessionService(new FakeIdentitySessionStore(), auditSink: audit),
+			new PrincipalSessionService(new FakePrincipalSessionStore(), auditSink: audit),
 			audit
 		);
 		var result = await service.AuthenticateAsync(new AuthenticationRequest(method, "user", "bad"));
@@ -87,17 +87,17 @@ public sealed class AuthenticationServiceTests
 	[Fact]
 	public async Task SignOutAsync_DelegatesToSessionService()
 	{
-		var sessionStore = new FakeIdentitySessionStore();
+		var sessionStore = new FakePrincipalSessionStore();
 		var audit = new MemoryAuditSink();
-		var sessionService = new IdentitySessionService(sessionStore, auditSink: audit);
+		var sessionService = new PrincipalSessionService(sessionStore, auditSink: audit);
 
-		var session = ResultAssert.Success(await sessionService.CreateAsync(TestIdentity()));
+		var session = ResultAssert.Success(await sessionService.CreateAsync(TestPrincipal()));
 		var authentication = new AuthenticationService([], sessionService, audit);
 		var result = await authentication.SignOutAsync(session.SessionId);
 
 		ResultAssert.Success(result);
-		Assert.Equal(IdentitySessionStatus.SignedOut, sessionStore.Sessions[session.SessionId].Status);
+		Assert.Equal(PrincipalSessionStatus.SignedOut, sessionStore.Sessions[session.SessionId].Status);
 	}
 
-	private static Identity TestIdentity() => new(new IdentityId("user-1"), "User One");
+	private static Principal TestPrincipal() => new(new PrincipalId("user-1"), "User One");
 }

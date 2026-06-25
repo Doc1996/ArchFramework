@@ -5,14 +5,14 @@ namespace Leva.Framework.Identity;
 /// </summary>
 public sealed record AuthenticationResult(
 	bool IsAuthenticated,
-	Identity? Identity = null,
-	IdentitySession? Session = null,
+	Principal? Principal = null,
+	PrincipalSession? Session = null,
 	string? Reason = null
 )
 {
-	public static AuthenticationResult Succeeded(Identity identity) => new(true, identity);
+	public static AuthenticationResult Succeeded(Principal principal) => new(true, principal);
 
 	public static AuthenticationResult Failed(string reason) => new(false, Reason: reason);
 
-	public AuthenticationResult WithSession(IdentitySession session) => this with { Session = session };
+	public AuthenticationResult WithSession(PrincipalSession session) => this with { Session = session };
 }

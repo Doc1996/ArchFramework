@@ -7,7 +7,7 @@ namespace Leva.Framework.Identity.Tests;
 public sealed class AuthorizationServiceTests
 {
 	[Fact]
-	public async Task AuthorizeAsync_ReturnsDeniedWhenIdentityIsMissing()
+	public async Task AuthorizeAsync_ReturnsDeniedWhenPrincipalIsMissing()
 	{
 		var service = new AuthorizationService([], new MemoryAuditSink());
 		var requirement = AuthorizationRequirement.SignedIn;
@@ -21,7 +21,7 @@ public sealed class AuthorizationServiceTests
 	[Fact]
 	public async Task AuthorizeAsync_RunsApplicablePoliciesUntilAuthorized()
 	{
-		var requirement = AuthorizationRequirement.Permission(new IdentityPermission("plans.edit"));
+		var requirement = AuthorizationRequirement.Permission(new PrincipalPermission("plans.edit"));
 		var first = new FakeAuthorizationPolicy
 		{
 			Result = Result<AuthorizationResult>.Ok(AuthorizationResult.Denied(requirement, "no")),
@@ -33,9 +33,9 @@ public sealed class AuthorizationServiceTests
 
 		var audit = new MemoryAuditSink();
 		var service = new AuthorizationService([first, second], audit);
-		var identity = new Identity(new IdentityId("user-1"), "User One");
+		var principal = new Principal(new PrincipalId("user-1"), "User One");
 
-		var result = await service.AuthorizeAsync(new AuthorizationRequest(identity, requirement));
+		var result = await service.AuthorizeAsync(new AuthorizationRequest(principal, requirement));
 		var authorization = ResultAssert.Success(result);
 
 		Assert.True(authorization.IsAuthorized);
@@ -44,14 +44,14 @@ public sealed class AuthorizationServiceTests
 
 		Assert.Contains(
 			audit.AuditEntries,
-			entry => entry.Action == AuditAction.Authorized && entry.IdentityId == identity.Id
+			entry => entry.Action == AuditAction.Authorized && entry.PrincipalId == principal.Id
 		);
 	}
 
 	[Fact]
 	public async Task AuthorizeAsync_DeniesWhenNoPolicyAllowsRequirement()
 	{
-		var requirement = AuthorizationRequirement.Role(new IdentityRole("admin"));
+		var requirement = AuthorizationRequirement.Role(new PrincipalRole("admin"));
 		var policy = new FakeAuthorizationPolicy
 		{
 			Result = Result<AuthorizationResult>.Ok(AuthorizationResult.Denied(requirement, "missing role")),
@@ -59,9 +59,9 @@ public sealed class AuthorizationServiceTests
 
 		var audit = new MemoryAuditSink();
 		var service = new AuthorizationService([policy], audit);
-		var identity = new Identity(new IdentityId("user-1"), "User One");
+		var principal = new Principal(new PrincipalId("user-1"), "User One");
 
-		var result = await service.AuthorizeAsync(new AuthorizationRequest(identity, requirement));
+		var result = await service.AuthorizeAsync(new AuthorizationRequest(principal, requirement));
 		var authorization = ResultAssert.Success(result);
 
 		Assert.False(authorization.IsAuthorized);
@@ -78,14 +78,14 @@ public sealed class AuthorizationServiceTests
 		var requirement = AuthorizationRequirement.SignedIn;
 		var policy = new FakeAuthorizationPolicy
 		{
-			Result = Result<AuthorizationResult>.Fail(IdentityErrors.Failed("authorize", "boom")),
+			Result = Result<AuthorizationResult>.Fail(PrincipalErrors.Failed("authorize", "boom")),
 		};
 
 		var service = new AuthorizationService([policy], new MemoryAuditSink());
-		var identity = new Identity(new IdentityId("user-1"), "User One");
-		var result = await service.AuthorizeAsync(new AuthorizationRequest(identity, requirement));
+		var principal = new Principal(new PrincipalId("user-1"), "User One");
+		var result = await service.AuthorizeAsync(new AuthorizationRequest(principal, requirement));
 
 		Assert.True(result.IsFailure);
-		Assert.Equal("identity.failed", result.Error.Code);
+		Assert.Equal("principal.failed", result.Error.Code);
 	}
 }

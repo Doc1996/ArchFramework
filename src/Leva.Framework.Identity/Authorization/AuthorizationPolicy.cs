@@ -3,7 +3,7 @@ using Leva.Framework.Core;
 namespace Leva.Framework.Identity;
 
 /// <summary>
-/// Evaluates whether an identity satisfies an authorization requirement.
+/// Evaluates whether a principal satisfies an authorization requirement.
 /// </summary>
 public abstract class AuthorizationPolicy
 {
