@@ -39,34 +39,21 @@ internal sealed class SqliteJournalStore<TEntry>
 			return await _database.UseConnectionAsync(
 				_session,
 				async (connection, transaction) =>
-				{
-					SqliteTransaction? localTransaction = null;
-					var activeTransaction = transaction;
-
-					try
-					{
-						if (activeTransaction is null)
+					await UseTransactionAsync(
+						connection,
+						transaction,
+						async activeTransaction =>
 						{
-							localTransaction = (SqliteTransaction)await connection.BeginTransactionAsync(token);
-							activeTransaction = localTransaction;
-						}
+							var version = await GetNextVersionAsync(connection, activeTransaction, token);
+							var utcNow = DateTimeOffset.UtcNow;
+							var entry = new StorageEntry<TEntry>(value, version, utcNow, utcNow);
 
-						var version = await GetNextVersionAsync(connection, activeTransaction, token);
-						var utcNow = DateTimeOffset.UtcNow;
-						var entry = new StorageEntry<TEntry>(value, version, utcNow, utcNow);
+							await InsertAsync(connection, activeTransaction, entry, token);
 
-						await InsertAsync(connection, activeTransaction, entry, token);
-						if (localTransaction is not null)
-							await localTransaction.CommitAsync(token);
-
-						return Result<StorageEntry<TEntry>>.Ok(entry);
-					}
-					finally
-					{
-						if (localTransaction is not null)
-							await localTransaction.DisposeAsync();
-					}
-				},
+							return Result<StorageEntry<TEntry>>.Ok(entry);
+						},
+						token
+					),
 				token
 			);
 		}
@@ -91,7 +78,6 @@ internal sealed class SqliteJournalStore<TEntry>
 		try
 		{
 			token.ThrowIfCancellationRequested();
-
 			return await _database.UseConnectionAsync(
 				_session,
 				async (connection, transaction) =>
@@ -127,6 +113,23 @@ internal sealed class SqliteJournalStore<TEntry>
 				StorageErrors.Failed($"read SQLite journal '{_name}'", ex.Message)
 			);
 		}
+	}
+
+	private static async Task<TResult> UseTransactionAsync<TResult>(
+		SqliteConnection connection,
+		SqliteTransaction? transaction,
+		Func<SqliteTransaction, Task<TResult>> action,
+		CancellationToken token
+	)
+	{
+		if (transaction is not null)
+			return await action(transaction);
+
+		await using var localTransaction = (SqliteTransaction)await connection.BeginTransactionAsync(token);
+		var result = await action(localTransaction);
+
+		await localTransaction.CommitAsync(token);
+		return result;
 	}
 
 	private async Task<StorageVersion> GetNextVersionAsync(

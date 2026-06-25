@@ -22,7 +22,7 @@ internal sealed class TestStorageDirectory : IDisposable
 		}
 		catch (Exception)
 		{
-			// Ignore cleanup failure to preserve the original test failure.
+			// Ignore cleanup failure to preserve the original failure.
 		}
 	}
 }
