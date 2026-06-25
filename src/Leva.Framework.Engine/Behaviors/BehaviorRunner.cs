@@ -33,6 +33,7 @@ public sealed class BehaviorRunner
 				return true;
 			}
 		}
+
 		return false;
 	}
 }

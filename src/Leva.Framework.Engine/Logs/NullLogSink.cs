@@ -3,7 +3,7 @@ using Leva.Framework.Core;
 namespace Leva.Framework.Engine;
 
 /// <summary>
-/// Discarding log sink used as the default when no diagnostics output is configured.
+/// Log sink implementation that intentionally ignores log entries.
 /// </summary>
 public sealed class NullLogSink : ILogSink
 {

@@ -3,6 +3,7 @@
     <Project Path="src/Leva.Framework.Core/Leva.Framework.Core.csproj" />
     <Project Path="src/Leva.Framework.Engine/Leva.Framework.Engine.csproj" />
     <Project Path="src/Leva.Framework.Fakes/Leva.Framework.Fakes.csproj" />
+    <Project Path="src/Leva.Framework.Identity/Leva.Framework.Identity.csproj" />
     <Project Path="src/Leva.Framework.Storage/Leva.Framework.Storage.csproj" />
     <Project Path="src/Leva.Framework.Storage.Files/Leva.Framework.Storage.Files.csproj" />
     <Project Path="src/Leva.Framework.Storage.Memory/Leva.Framework.Storage.Memory.csproj" />
