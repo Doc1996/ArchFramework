@@ -4,7 +4,7 @@ namespace Leva.Framework.Identity;
 /// Represents one established identity session with lifecycle status and timestamps.
 /// </summary>
 public sealed record IdentitySession(
-	IdentitySessionId SesionId,
+	IdentitySessionId SessionId,
 	Identity Identity,
 	IdentitySessionStatus Status,
 	DateTimeOffset CreatedAt,

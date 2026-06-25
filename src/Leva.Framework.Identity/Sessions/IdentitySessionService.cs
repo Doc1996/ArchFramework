@@ -7,21 +7,21 @@ namespace Leva.Framework.Identity;
 /// </summary>
 public sealed class IdentitySessionService
 {
-	private readonly IdentitySessionStore _sessions;
+	private readonly IIdentitySessionStore _sessionStore;
 	private readonly IdentitySessionPolicy _policy;
 	private readonly IAuditSink _auditSink;
 	private readonly IClock? _clock;
 
 	public IdentitySessionService(
-		IdentitySessionStore sessions,
+		IIdentitySessionStore sessionStore,
 		IdentitySessionPolicy? policy = null,
 		IAuditSink? auditSink = null,
 		IClock? clock = null
 	)
 	{
-		ArgumentNullException.ThrowIfNull(sessions);
+		ArgumentNullException.ThrowIfNull(sessionStore);
 
-		_sessions = sessions;
+		_sessionStore = sessionStore;
 		_policy = policy ?? new IdentitySessionPolicy();
 		_auditSink = auditSink ?? NullAuditSink.Instance;
 		_clock = clock;
@@ -33,7 +33,7 @@ public sealed class IdentitySessionService
 		ArgumentNullException.ThrowIfNull(identity);
 
 		var session = _policy.Create(identity, UtcNow);
-		var result = await _sessions.SaveAsync(session, token);
+		var result = await _sessionStore.SaveAsync(session, token);
 
 		if (result.IsSuccess)
 			Write(AuditAction.SessionCreated, session);
@@ -46,7 +46,7 @@ public sealed class IdentitySessionService
 	)
 	{
 		token.ThrowIfCancellationRequested();
-		var result = await _sessions.LoadAsync(sessionId, token);
+		var result = await _sessionStore.LoadAsync(sessionId, token);
 
 		if (result.IsFailure || result.Value is null)
 			return result;
@@ -56,7 +56,7 @@ public sealed class IdentitySessionService
 			return result;
 
 		var expired = _policy.Expire(session, UtcNow);
-		await _sessions.SaveAsync(expired, token);
+		await _sessionStore.SaveAsync(expired, token);
 
 		Write(AuditAction.SessionExpired, expired);
 		return Result<IdentitySession?>.Ok(null);
@@ -68,7 +68,7 @@ public sealed class IdentitySessionService
 	)
 	{
 		token.ThrowIfCancellationRequested();
-		var result = await _sessions.LoadAsync(sessionId, token);
+		var result = await _sessionStore.LoadAsync(sessionId, token);
 
 		if (result.IsFailure)
 			return Result<IdentitySession>.Fail(result.Error);
@@ -76,7 +76,7 @@ public sealed class IdentitySessionService
 			return Result<IdentitySession>.Fail(IdentityErrors.NotFound("identity session", sessionId.ToString()));
 
 		var signedOut = _policy.SignOut(result.Value, UtcNow);
-		var save = await _sessions.SaveAsync(signedOut, token);
+		var save = await _sessionStore.SaveAsync(signedOut, token);
 
 		if (save.IsSuccess)
 			Write(AuditAction.SignedOut, signedOut);
@@ -89,7 +89,7 @@ public sealed class IdentitySessionService
 	)
 	{
 		token.ThrowIfCancellationRequested();
-		var result = await _sessions.LoadAsync(sessionId, token);
+		var result = await _sessionStore.LoadAsync(sessionId, token);
 
 		if (result.IsFailure)
 			return Result<IdentitySession>.Fail(result.Error);
@@ -97,7 +97,7 @@ public sealed class IdentitySessionService
 			return Result<IdentitySession>.Fail(IdentityErrors.NotFound("identity session", sessionId.ToString()));
 
 		var expired = _policy.Expire(result.Value, UtcNow);
-		var save = await _sessions.SaveAsync(expired, token);
+		var save = await _sessionStore.SaveAsync(expired, token);
 
 		if (save.IsSuccess)
 			Write(AuditAction.SessionExpired, expired);
@@ -107,7 +107,7 @@ public sealed class IdentitySessionService
 	public async Task<Result> DeleteAsync(IdentitySessionId sessionId, CancellationToken token = default)
 	{
 		token.ThrowIfCancellationRequested();
-		var result = await _sessions.DeleteAsync(sessionId, token);
+		var result = await _sessionStore.DeleteAsync(sessionId, token);
 
 		if (result.IsSuccess)
 			Write(AuditAction.SessionDeleted, sessionId: sessionId);
@@ -117,5 +117,5 @@ public sealed class IdentitySessionService
 	private DateTimeOffset UtcNow => _clock?.UtcNow ?? DateTimeOffset.UtcNow;
 
 	private void Write(AuditAction action, IdentitySession? session = null, IdentitySessionId? sessionId = null) =>
-		_auditSink.Write(new AuditEntry(action, UtcNow, session?.Identity.Id, session?.Id ?? sessionId));
+		_auditSink.Write(new AuditEntry(action, UtcNow, session?.Identity.Id, session?.SessionId ?? sessionId));
 }

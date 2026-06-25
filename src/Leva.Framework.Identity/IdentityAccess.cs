@@ -7,20 +7,20 @@ namespace Leva.Framework.Identity;
 /// </summary>
 public sealed class IdentityAccess
 {
-	private readonly IdentitySessionResolver _sessions;
+	private readonly IdentitySessionSource _sessionSource;
 	private readonly AuthorizationService _authorization;
 
-	public IdentityAccess(IdentitySessionResolver sessions, AuthorizationService authorization)
+	public IdentityAccess(IdentitySessionSource sessionSource, AuthorizationService authorization)
 	{
-		ArgumentNullException.ThrowIfNull(sessions);
+		ArgumentNullException.ThrowIfNull(sessionSource);
 		ArgumentNullException.ThrowIfNull(authorization);
 
-		_sessions = sessions;
+		_sessionSource = sessionSource;
 		_authorization = authorization;
 	}
 
 	public Task<Result<IdentitySession?>> GetSessionAsync(CancellationToken token = default) =>
-		_sessions.GetSessionAsync(token);
+		_sessionSource.GetSessionAsync(token);
 
 	public async Task<Result<Identity?>> GetIdentityAsync(CancellationToken token = default)
 	{

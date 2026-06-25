@@ -8,22 +8,22 @@ namespace Leva.Framework.Identity;
 public sealed class AuthenticationService
 {
 	private readonly IReadOnlyList<AuthenticationPolicy> _policies;
-	private readonly IdentitySessionService _sessions;
+	private readonly IdentitySessionService _sessionService;
 	private readonly IAuditSink _auditSink;
 	private readonly IClock? _clock;
 
 	public AuthenticationService(
 		IEnumerable<AuthenticationPolicy> policies,
-		IdentitySessionService sessions,
+		IdentitySessionService sessionService,
 		IAuditSink? auditSink = null,
 		IClock? clock = null
 	)
 	{
 		ArgumentNullException.ThrowIfNull(policies);
-		ArgumentNullException.ThrowIfNull(sessions);
+		ArgumentNullException.ThrowIfNull(sessionService);
 
 		_policies = policies.ToArray();
-		_sessions = sessions;
+		_sessionService = sessionService;
 		_auditSink = auditSink ?? NullAuditSink.Instance;
 		_clock = clock;
 	}
@@ -58,7 +58,7 @@ public sealed class AuthenticationService
 			return result;
 		}
 
-		var sessionResult = await _sessions.CreateAsync(authentication.Identity, token);
+		var sessionResult = await _sessionService.CreateAsync(authentication.Identity, token);
 		if (sessionResult.IsFailure)
 		{
 			WriteFailure(request.Method, sessionResult.Error.Message, authentication.Identity.Id);
@@ -66,14 +66,14 @@ public sealed class AuthenticationService
 		}
 
 		var finalResult = authentication.WithSession(sessionResult.Value!);
-		WriteSuccess(request.Method, authentication.Identity.Id, sessionResult.Value!.Id);
+		WriteSuccess(request.Method, authentication.Identity.Id, sessionResult.Value!.SessionId);
 		return Result<AuthenticationResult>.Ok(finalResult);
 	}
 
 	public async Task<Result> SignOutAsync(IdentitySessionId sessionId, CancellationToken token = default)
 	{
 		token.ThrowIfCancellationRequested();
-		var result = await _sessions.SignOutAsync(sessionId, token);
+		var result = await _sessionService.SignOutAsync(sessionId, token);
 		return result.IsSuccess ? Result.Ok() : Result.Fail(result.Error);
 	}
 

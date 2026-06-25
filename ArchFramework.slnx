@@ -13,6 +13,7 @@
     <Project Path="tests/Leva.Framework.Core.Tests/Leva.Framework.Core.Tests.csproj" />
     <Project Path="tests/Leva.Framework.Engine.Tests/Leva.Framework.Engine.Tests.csproj" />
     <Project Path="tests/Leva.Framework.Fakes.Tests/Leva.Framework.Fakes.Tests.csproj" />
+    <Project Path="tests/Leva.Framework.Identity.Tests/Leva.Framework.Identity.Tests.csproj" />
     <Project Path="tests/Leva.Framework.Storage.Tests/Leva.Framework.Storage.Tests.csproj" />
     <Project Path="tests/Leva.Framework.Storage.Files.Tests/Leva.Framework.Storage.Files.Tests.csproj" />
     <Project Path="tests/Leva.Framework.Storage.Memory.Tests/Leva.Framework.Storage.Memory.Tests.csproj" />

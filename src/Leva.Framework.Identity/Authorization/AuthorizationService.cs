@@ -74,7 +74,7 @@ public sealed class AuthorizationService
 				action,
 				UtcNow,
 				request.Identity?.Id,
-				request.Session?.Id,
+				request.Session?.SessionId,
 				Requirement: request.Requirement.ToString(),
 				Reason: reason
 			)

@@ -28,7 +28,7 @@ Identity is intentionally provider-neutral. It defines who an identity is, how a
 
 Authentication and authorization are separate concepts. Authentication establishes identity through an `AuthenticationMethod` and `AuthenticationPolicy`. Authorization checks whether an established identity satisfies an `AuthorizationRequirement` through an `AuthorizationPolicy`. `AuthenticationService` and `AuthorizationService` are framework-owned orchestration classes that coordinate policies, sessions, results, and audit output.
 
-Sessions represent active signed-in identity state. `IdentitySessionService` creates, loads, signs out, expires, and deletes sessions using `IdentitySessionStore` and `IdentitySessionPolicy`. Provider libraries decide where identities and sessions are stored. A memory provider can keep them in process, a local provider can use application storage and password hashing, an ASP.NET Core provider can resolve the current session from web context, and later Google or JWT providers can plug in without changing this library.
+Sessions represent active signed-in identity state. `IdentitySessionService` creates, loads, signs out, expires, and deletes sessions using `IIdentitySessionStore` and `IdentitySessionPolicy`. Provider libraries decide where identities and sessions are stored. A memory provider can keep them in process, a local provider can use application storage and password hashing, an ASP.NET Core provider can resolve the current session from web context, and later Google or JWT providers can plug in without changing this library.
 
 Identity keeps profile data minimal. `Identity` contains identity ID, display name, email, roles, permissions, and claims. Application-specific profile fields such as phone number, address, age, avatar, locale, or preferences should live in application models or provider-specific claims, not in the framework identity model.
 
@@ -43,7 +43,7 @@ Audit records are separate from runtime logs. `AuditEntry` records security-rele
 `IdentityClaim` - Represents one typed fact about an identity.
 `IdentityRole` - Represents one role assigned to an identity.
 `IdentityPermission` - Represents one precise capability assigned to an identity.
-`IdentityStore` - Loads identities from provider-specific stores or account sources.
+`IIdentityStore` - Loads identities from provider-specific stores or account sources.
 
 ### Sessions
 
@@ -51,9 +51,9 @@ Audit records are separate from runtime logs. `AuditEntry` records security-rele
 `IdentitySession` - Represents an established identity session with identity, status, creation time, optional expiration time, and optional sign-out time.
 `IdentitySessionStatus` - Describes identity session lifecycle state.
 `IdentitySessionPolicy` - Creates session IDs, calculates expiration times, and checks whether sessions are expired.
-`IdentitySessionStore` - Stores and loads identity sessions without exposing provider-specific storage details.
+`IIdentitySessionStore` - Stores and loads identity sessions without exposing provider-specific storage details.
 `IdentitySessionService` - Creates, loads, signs out, expires, and deletes identity sessions.
-`IdentitySessionResolver` - Resolves the current identity session from the host or provider-specific execution context.
+`IdentitySessionSource` - Resolves the current identity session from the host or provider-specific execution context.
 
 ### Authentication
 

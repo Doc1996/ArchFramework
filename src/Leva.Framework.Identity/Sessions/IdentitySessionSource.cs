@@ -3,9 +3,9 @@ using Leva.Framework.Core;
 namespace Leva.Framework.Identity;
 
 /// <summary>
-/// Resolves the current identity session from a host-specific execution context.
+/// Provides the current identity session from a host-specific source.
 /// </summary>
-public abstract class IdentitySessionResolver
+public abstract class IdentitySessionSource
 {
 	public abstract Task<Result<IdentitySession?>> GetSessionAsync(CancellationToken token = default);
 }

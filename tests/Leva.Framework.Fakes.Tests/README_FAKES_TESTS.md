@@ -11,3 +11,4 @@
 `FakeEventQueueBehaviorTests` - Verifies priority ordering, async waiting, cancellation, delayed enqueue behavior, and clearing.
 `FakeRuntimeTests` - Verifies fake states, routines, behaviors, and complete fake contexts.
 `FakeContextTests` - Verifies default fake wiring, provided fake instances, and engine integration.
+`FakeIdentityTests` - Verifies identity stores, session stores, session sources, authentication policies, and authorization policies.
