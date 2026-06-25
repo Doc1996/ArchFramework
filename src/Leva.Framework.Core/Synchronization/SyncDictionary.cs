@@ -1,9 +1,9 @@
-namespace Leva.Framework.Engine;
+namespace Leva.Framework.Core;
 
 /// <summary>
-/// Provides a small thread-safe dictionary helper for engine-owned runtime collections.
+/// Provides a small thread-safe dictionary helper for synchronized framework collections.
 /// </summary>
-internal sealed class SyncDictionary<TKey, TValue>
+public sealed class SyncDictionary<TKey, TValue>
 	where TKey : notnull
 {
 	private readonly Lock _lock = new();

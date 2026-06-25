@@ -1,23 +1,25 @@
 # Leva.Framework.Fakes
 
-`Leva.Framework.Fakes` provides reusable test doubles for Core and Engine. It helps tests assemble deterministic runtime scenarios without duplicating production engine behavior.
+`Leva.Framework.Fakes` provides reusable test doubles for Core, Engine, and provider-neutral framework libraries. It helps tests assemble deterministic runtime scenarios without duplicating production engine behavior.
 
 ## Purpose and dependencies
 
-Fakes exist for unit tests, integration-style framework tests, demos, and application tests that need predictable clocks, queues, events, logs, transitions, states, routines, behaviors, status updates, alarms, or a ready-made fake context. `Leva.Framework.Fakes` may depend on Core and Engine because it is a testing support library for those projects. Engine must never depend on Fakes. Fakes should not depend on application projects, UI providers, storage providers, notification providers, authentication providers, or external infrastructure.
+Fakes exist for unit tests, integration-style framework tests, demos, and application tests that need predictable clocks, queues, events, logs, transitions, states, routines, behaviors, status updates, alarms, identity sources, authentication policies, authorization policies, or a ready-made fake context. `Leva.Framework.Fakes` may depend on Core, Engine, and Identity because it is a testing support library for those projects. Engine and Identity must never depend on Fakes. Fakes should not depend on application projects, UI providers, storage providers, notification providers, concrete authentication providers, or external infrastructure.
 
 ```text
 Leva.Framework.Fakes
   -> Leva.Framework.Engine
+  -> Leva.Framework.Identity
   -> Leva.Framework.Core
 
 Leva.Framework.Engine
+Leva.Framework.Identity
   -> Leva.Framework.Core
 ```
 
 ## Project overview
 
-Fakes are intentionally small and observable. They expose what happened in a test: captured log entries, transition requests, queued events, current fake time, handler calls, enter/exit counts, status updates, alarm calls, and configured return behavior.
+Fakes are intentionally small and observable. They expose what happened in a test: captured log entries, transition requests, queued events, current fake time, handler calls, enter/exit counts, status updates, alarm calls, identity/session lookups, policy calls, and configured return behavior.
 
 Use focused fakes when testing one component. For example, use `FakeClock` for time-dependent tests, `FakeTransition` for transition-request tests, `FakeLogSink` for log-output tests, and `FakeEventQueue` for queue behavior. Use `FakeContext` when a test needs convenient fake wiring and manual composition would distract from the test purpose.
 
@@ -49,3 +51,11 @@ Fakes should not become a second engine. If a fake starts reproducing too much p
 ### Context helper
 
 `FakeContext` - Provides ready-to-use fake clock, log sink, transition, access, and event queue wiring for tests.
+
+### Identity fakes
+
+`FakeIdentityStore` - In-memory identity store fake for tests.
+`FakeIdentitySessionStore` - In-memory identity session store fake for tests.
+`FakeIdentitySessionSource` - Configurable current identity session source fake for tests.
+`FakeAuthenticationPolicy` - Configurable authentication policy fake with call tracking.
+`FakeAuthorizationPolicy` - Configurable authorization policy fake with call tracking and simple policy matching.

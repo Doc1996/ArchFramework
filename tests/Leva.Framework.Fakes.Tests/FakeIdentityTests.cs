@@ -10,7 +10,7 @@ public sealed class FakeIdentityTests
 	public async Task FakeIdentityStore_LoadsByIdAndName()
 	{
 		var store = new FakeIdentityStore();
-		var identity = new IdentityModel(new IdentityId("user-1"), "User One");
+		var identity = new Identity(new IdentityId("user-1"), "User One");
 		store.Add(identity, "user");
 
 		var byId = await store.LoadAsync(identity.Id);
@@ -26,7 +26,7 @@ public sealed class FakeIdentityTests
 		var store = new FakeIdentitySessionStore();
 		var session = new IdentitySession(
 			new IdentitySessionId("session-1"),
-			new IdentityModel(new IdentityId("user-1"), "User One"),
+			new Identity(new IdentityId("user-1"), "User One"),
 			IdentitySessionStatus.Active,
 			DateTimeOffset.UtcNow,
 			DateTimeOffset.UtcNow

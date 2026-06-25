@@ -1,6 +1,6 @@
 # Leva.Framework.Core
 
-`Leva.Framework.Core` is the shared vocabulary layer of ArchFramework. It defines stable contracts, IDs, result types, entries, snapshots, and small value objects used by the rest of the framework.
+`Leva.Framework.Core` is the shared vocabulary layer of ArchFramework. It defines stable contracts, IDs, result types, entries, snapshots, synchronization helpers, and small value objects used by the rest of the framework.
 
 ## Purpose and dependencies
 
@@ -18,7 +18,7 @@ future provider libraries
 
 ## Project overview
 
-Core is intentionally small and stable. A type belongs here only when it represents a framework-wide concept that many libraries can safely depend on. This includes contracts such as `IEvent`, `IState<TAccess>`, `IRoutine<TAccess>`, `IBehavior<TAccess>`, `ITransition`, and `ILogSink`; identity values such as `StateId`, `RoutineId`, `EventId`, `CommandId`, `RequestId`, and `AlarmId`; and shared values such as `Result`, `Error`, runtime entries, and `Snapshot`.
+Core is intentionally small and stable. A type belongs here only when it represents a framework-wide concept that many libraries can safely depend on. This includes contracts such as `IEvent`, `IState<TAccess>`, `IRoutine<TAccess>`, `IBehavior<TAccess>`, `ITransition`, and `ILogSink`; identity values such as `StateId`, `RoutineId`, `EventId`, `CommandId`, `RequestId`, and `AlarmId`; and shared values such as `Result`, `Error`, runtime entries, `Snapshot`, and small synchronization helpers.
 
 Core does not decide how events are queued, how states are executed, how data is stored, or how UI is shown. Those responsibilities belong to Engine, provider libraries, or applications. Core only defines the shape of the concepts so those layers can communicate cleanly.
 
@@ -67,3 +67,8 @@ Core does not decide how events are queued, how states are executed, how data is
 `StatusEntry` - Represents one latest-known status value with source, name, value, updated time, and optional properties.
 `LogEntry` - Represents one diagnostic log item with source, message, category, level, created time, and optional properties.
 `LogLevel` - Defines diagnostic log severity.
+
+### Synchronization helpers
+
+`SyncList<T>` - Small synchronized list helper used by framework libraries that need safe snapshots of in-memory collections.
+`SyncDictionary<TKey, TValue>` - Small synchronized dictionary helper used by framework libraries that need safe snapshots of keyed in-memory collections.

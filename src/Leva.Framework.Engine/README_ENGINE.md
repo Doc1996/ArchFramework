@@ -102,7 +102,3 @@ The engine stays application-independent. Applications provide concrete states, 
 `Context.CreateSnapshot` - Captures current state ID, active alarms, statuses, commands, and optional host data into a `Snapshot`.
 `Context.LoadSnapshotAsync` - Restores alarms, statuses, commands, and state-machine position from a `Snapshot`.
 
-### Synchronization helpers
-
-`SyncList<T>` - Small synchronized list helper used by engine internals.
-`SyncDictionary<TKey, TValue>` - Small synchronized dictionary helper used by engine internals.

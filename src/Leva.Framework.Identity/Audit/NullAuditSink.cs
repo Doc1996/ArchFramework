@@ -7,5 +7,5 @@ public sealed class NullAuditSink : IAuditSink
 {
 	public void Write(AuditEntry auditEntry) { }
 
-	public void Clear();
+	public void Clear() { }
 }

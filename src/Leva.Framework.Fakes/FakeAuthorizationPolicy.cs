@@ -10,10 +10,10 @@ public sealed class FakeAuthorizationPolicy : AuthorizationPolicy
 {
 	public int AuthorizeCount { get; private set; }
 	public AuthorizationRequest? LastRequest { get; private set; }
-	public Func<AuthorizationRequest, bool> CanAuthorizeHandler { get; set; } = _ => true;
+	public bool CanAuthorizeResult { get; set; } = true;
 	public Result<AuthorizationResult>? Result { get; set; }
 
-	public override bool CanAuthorize(AuthorizationRequest request) => CanAuthorizeHandler(request);
+	public override bool CanAuthorize(AuthorizationRequest request) => CanAuthorizeResult;
 
 	public override Task<Result<AuthorizationResult>> AuthorizeAsync(
 		AuthorizationRequest request,
@@ -24,8 +24,9 @@ public sealed class FakeAuthorizationPolicy : AuthorizationPolicy
 		AuthorizeCount++;
 		LastRequest = request;
 
-		return Task.FromResult(
-			Result ?? Result<AuthorizationResult>.Ok(AuthorizationResult.Denied(request.Requirement, "Not configured."))
-		);
+		return Task.FromResult(Result ?? NotConfigured(request.Requirement));
 	}
+
+	private static Result<AuthorizationResult> NotConfigured(AuthorizationRequirement requirement) =>
+		Result<AuthorizationResult>.Ok(AuthorizationResult.Denied(requirement, "Not configured."));
 }

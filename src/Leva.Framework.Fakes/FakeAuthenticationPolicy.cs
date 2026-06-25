@@ -8,12 +8,11 @@ namespace Leva.Framework.Fakes;
 /// </summary>
 public sealed class FakeAuthenticationPolicy(AuthenticationMethod method) : AuthenticationPolicy
 {
-	public override AuthenticationMethod Method { get; } = method;
 	public int AuthenticateCount { get; private set; }
 	public AuthenticationRequest? LastRequest { get; private set; }
+	public Result<AuthenticationResult>? Result { get; set; }
 
-	public Result<AuthenticationResult> Result { get; set; } =
-		Result<AuthenticationResult>.Ok(AuthenticationResult.Failed("Not configured."));
+	public override AuthenticationMethod Method { get; } = method;
 
 	public override Task<Result<AuthenticationResult>> AuthenticateAsync(
 		AuthenticationRequest request,
@@ -24,6 +23,9 @@ public sealed class FakeAuthenticationPolicy(AuthenticationMethod method) : Auth
 		AuthenticateCount++;
 		LastRequest = request;
 
-		return Task.FromResult(Result);
+		return Task.FromResult(Result ?? NotConfigured());
 	}
+
+	private static Result<AuthenticationResult> NotConfigured() =>
+		Result<AuthenticationResult>.Ok(AuthenticationResult.Failed("Not configured."));
 }

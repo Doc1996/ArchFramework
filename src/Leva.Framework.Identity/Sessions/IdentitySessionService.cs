@@ -23,7 +23,7 @@ public sealed class IdentitySessionService
 
 		_sessionStore = sessionStore;
 		_policy = policy ?? new IdentitySessionPolicy();
-		_auditSink = auditSink ?? NullAuditSink.Instance;
+		_auditSink = auditSink ?? new NullAuditSink();
 		_clock = clock;
 	}
 

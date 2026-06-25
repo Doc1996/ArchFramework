@@ -1,36 +1,41 @@
 # ArchFramework
 
-ArchFramework is a clean .NET framework for event-driven, state-machine applications. It provides reusable runtime structure for typed events, explicit states, routines, behaviors, controlled transitions, runtime memory, diagnostics, and recovery snapshots.
+ArchFramework is a clean .NET framework for event-driven, state-machine applications. It provides reusable runtime structure for typed events, explicit states, routines, behaviors, controlled transitions, runtime memory, diagnostics, identity, storage, and recovery snapshots.
 
 ## Architecture summary
 
-ArchFramework keeps important application behavior out of random services, UI callbacks, and uncontrolled background code. Work enters the runtime as typed events, flows through a deterministic dispatcher, reaches the active state or routine, can fall back to behaviors, and only then applies requested transitions. This makes the application easier to reason about, test, log, and recover.
+ArchFramework keeps important application behavior out of random services, UI callbacks, and uncontrolled background code. Work enters the runtime as typed events, flows through a deterministic dispatcher, reaches the active state or routine, can fall back to behaviors, and only then applies requested transitions. This makes the application easier to reason about, test, log, persist, secure, and recover.
 
-The framework is split into small libraries. `Leva.Framework.Core` defines the shared vocabulary. `Leva.Framework.Engine` implements the runtime. `Leva.Framework.Fakes` provides reusable test doubles. Future infrastructure libraries should stay separate, for example storage, notifications, authentication, and presentation adapters.
+The framework is split into small libraries. `Leva.Framework.Core` defines the shared vocabulary. `Leva.Framework.Engine` implements the runtime. `Leva.Framework.Fakes` provides reusable test doubles. `Leva.Framework.Storage` defines provider-neutral persistence contracts. Storage provider libraries implement those contracts for memory, files, and SQLite. `Leva.Framework.Identity` defines provider-neutral identity, session, authentication, authorization, audit, and state-facing identity access concepts.
 
 ## Library structure
 
 ```text
-Leva.Framework.Core   -> shared contracts, IDs, entries, results, snapshots
-Leva.Framework.Engine -> event queue, dispatcher, state machine, boards, logs
-Leva.Framework.Fakes  -> fake clocks, events, queues, states, routines, logs
+Leva.Framework.Core           -> shared contracts, IDs, entries, results, snapshots
+Leva.Framework.Engine         -> event queue, dispatcher, state machine, boards, logs
+Leva.Framework.Fakes          -> fake clocks, events, queues, states, routines, identity, logs
+Leva.Framework.Storage        -> repository, journal, session, entry, version contracts
+Leva.Framework.Storage.Memory -> in-process storage provider
+Leva.Framework.Storage.Files  -> local JSON/file-system storage provider
+Leva.Framework.Storage.Sqlite -> local SQLite storage provider
+Leva.Framework.Identity       -> identities, sessions, authentication, authorization, audit
 ```
 
 Future libraries should plug into the same architecture without forcing infrastructure into Core or Engine.
 
 ```text
-Leva.Framework.Storage            future
-Leva.Framework.Storage.Memory     future
-Leva.Framework.Storage.Sqlite     future
-Leva.Framework.Notifications      future
-Leva.Framework.Authentication     future
-Leva.Framework.Presentation       future
-Leva.Framework.Presentation.Blazor future
+Leva.Framework.Identity.Memory      future
+Leva.Framework.Identity.Local       future
+Leva.Framework.Identity.AspNetCore  future
+Leva.Framework.Identity.Google      future
+Leva.Framework.Identity.Jwt         future
+Leva.Framework.Notifications        future
+Leva.Framework.Presentation.Blazor  future
 ```
 
 ## Dependency direction
 
-Dependencies move inward toward Core. Core depends only on .NET. Engine depends on Core. Fakes depends on Engine and Core because it is a testing support library. Applications and future provider libraries may depend on selected framework libraries, but Core and Engine should not depend on applications, UI providers, storage providers, notification providers, authentication providers, devices, databases, or web frameworks.
+Dependencies move inward toward Core. Core depends only on .NET. Engine depends on Core. Storage depends on Core. Identity depends on Core. Provider libraries depend on their contract libraries and Core. Fakes depends on Core, Engine, and Identity because it is a testing support library. Applications and future provider libraries may depend on selected framework libraries, but Core and Engine should not depend on applications, UI providers, storage providers, notification providers, identity providers, devices, databases, or web frameworks.
 
 ```text
 Leva.Framework.Core
@@ -39,11 +44,22 @@ Leva.Framework.Core
 Leva.Framework.Engine
   -> Leva.Framework.Core
 
-Leva.Framework.Fakes
-  -> Leva.Framework.Engine
+Leva.Framework.Storage
+Leva.Framework.Identity
   -> Leva.Framework.Core
 
-Applications / future providers
+Leva.Framework.Storage.Memory
+Leva.Framework.Storage.Files
+Leva.Framework.Storage.Sqlite
+  -> Leva.Framework.Storage
+  -> Leva.Framework.Core
+
+Leva.Framework.Fakes
+  -> Leva.Framework.Engine
+  -> Leva.Framework.Identity
+  -> Leva.Framework.Core
+
+Applications / providers
   -> selected framework libraries
 ```
 
@@ -67,7 +83,7 @@ An event is queued, dequeued by the loop, dispatched through global runtime hook
 
 ## Access model
 
-States, routines, and behaviors should receive narrow typed access objects instead of the full runtime `Context`. The context owns runtime services and wiring. Application logic should only see the capabilities it is allowed to use, such as transition, logging, views, data, policies, navigation, or notifications depending on the application.
+States, routines, and behaviors should receive narrow typed access objects instead of the full runtime `Context`. The context owns runtime services and wiring. Application logic should only see the capabilities it is allowed to use, such as transition, logging, identity, views, data, policies, navigation, or notifications depending on the application.
 
 This keeps states smaller and easier to test. A state that only needs navigation and transitions should not receive storage, notifications, device control, or unrelated services.
 
@@ -80,20 +96,22 @@ AlarmBoard   -> currently active alarms and faults
 StatusBoard  -> latest-known status values
 CommandBoard -> tracked command lifecycle entries
 RuntimeLog   -> chronological runtime history as LogEntry values
-LogSink    -> diagnostic log output
+LogSink      -> diagnostic log output
 Snapshot     -> durable recovery state
 ```
 
-Boards answer what is true now. The runtime log answers what happened over time. Log sinks receive diagnostic output. Snapshots capture recovery data that can later be stored and restored by the host or a future storage library.
+Boards answer what is true now. The runtime log answers what happened over time. Log sinks receive diagnostic output. Snapshots capture recovery data that can later be stored and restored by the host or a storage library. Identity audit sinks separately record security-relevant identity actions.
 
 ## Project guides
 
 ```text
-README.md         -> architecture and repository overview
-README_CORE.md    -> Core purpose, dependencies, overview, files and classes
-README_ENGINE.md  -> Engine purpose, dependencies, overview, files and classes
-README_FAKES.md   -> Fakes purpose, dependencies, overview, files and classes
-README_*_TESTS.md -> focused test coverage summaries
+README.md                   -> architecture and repository overview
+README_CORE.md              -> Core purpose, dependencies, overview, files and classes
+README_ENGINE.md            -> Engine purpose, dependencies, overview, files and classes
+README_FAKES.md             -> Fakes purpose, dependencies, overview, files and classes
+README_STORAGE*.md          -> Storage contracts and provider library guides
+README_IDENTITY.md          -> Identity purpose, dependencies, overview, files and classes
+README_*_TESTS.md           -> focused test coverage summaries
 ```
 
 ## Build and test

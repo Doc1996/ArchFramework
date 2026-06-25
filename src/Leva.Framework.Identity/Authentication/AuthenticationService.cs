@@ -24,7 +24,7 @@ public sealed class AuthenticationService
 
 		_policies = policies.ToArray();
 		_sessionService = sessionService;
-		_auditSink = auditSink ?? NullAuditSink.Instance;
+		_auditSink = auditSink ?? new NullAuditSink();
 		_clock = clock;
 	}
 

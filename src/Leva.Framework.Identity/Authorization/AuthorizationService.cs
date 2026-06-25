@@ -20,7 +20,7 @@ public sealed class AuthorizationService
 		ArgumentNullException.ThrowIfNull(policies);
 
 		_policies = policies.ToArray();
-		_auditSink = auditSink ?? NullAuditSink.Instance;
+		_auditSink = auditSink ?? new NullAuditSink();
 		_clock = clock;
 	}
 
