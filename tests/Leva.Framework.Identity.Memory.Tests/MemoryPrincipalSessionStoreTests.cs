@@ -20,10 +20,10 @@ public sealed class MemoryPrincipalSessionStoreTests
 	}
 
 	[Fact]
-	public void Clear_RemovesAllSessions()
+	public async Task Clear_RemovesAllSessions()
 	{
 		var store = new MemoryPrincipalSessionStore();
-		ResultAssert.Success(store.SaveAsync(TestSession()).GetAwaiter().GetResult());
+		ResultAssert.Success(await store.SaveAsync(TestSession()));
 
 		store.Clear();
 		Assert.Empty(store.Sessions);
