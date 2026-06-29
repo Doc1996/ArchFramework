@@ -7,12 +7,17 @@ namespace Leva.Framework.Identity;
 /// </summary>
 public sealed class BuiltInAuthorizationPolicy : AuthorizationPolicy
 {
+	private const string RoleType = "Role";
+	private const string PermissionType = "Permission";
+	private const string ClaimPrefix = "Claim:";
+
 	public override bool CanAuthorize(AuthorizationRequest request)
 	{
+		ArgumentNullException.ThrowIfNull(request);
 		return request.Requirement == AuthorizationRequirement.SignedIn
-			|| request.Requirement.Type == "Role"
-			|| request.Requirement.Type == "Permission"
-			|| request.Requirement.Type.StartsWith("Claim:", StringComparison.Ordinal);
+			|| request.Requirement.Type == RoleType
+			|| request.Requirement.Type == PermissionType
+			|| IsClaimRequirement(request.Requirement);
 	}
 
 	public override Task<Result<AuthorizationResult>> AuthorizeAsync(
@@ -33,11 +38,11 @@ public sealed class BuiltInAuthorizationPolicy : AuthorizationPolicy
 			return AuthorizationResult.Denied(request.Requirement, "Principal is not available.");
 
 		if (request.Requirement == AuthorizationRequirement.SignedIn)
-			return request.Session is { Status: AuthSessionStatus.Active }
+			return request.Session is { SessionStatus: AuthSessionStatus.Active }
 				? AuthorizationResult.Allowed(request.Requirement)
 				: AuthorizationResult.Denied(request.Requirement, "Principal is not signed in.");
 
-		if (request.Requirement.Type == "Role")
+		if (request.Requirement.Type == RoleType)
 			return HasRole(request.Principal, request.Requirement.Value)
 				? AuthorizationResult.Allowed(request.Requirement)
 				: AuthorizationResult.Denied(
@@ -45,7 +50,7 @@ public sealed class BuiltInAuthorizationPolicy : AuthorizationPolicy
 					$"Principal does not have role '{request.Requirement.Value}'."
 				);
 
-		if (request.Requirement.Type == "Permission")
+		if (request.Requirement.Type == PermissionType)
 			return HasPermission(request.Principal, request.Requirement.Value)
 				? AuthorizationResult.Allowed(request.Requirement)
 				: AuthorizationResult.Denied(
@@ -53,19 +58,24 @@ public sealed class BuiltInAuthorizationPolicy : AuthorizationPolicy
 					$"Principal does not have permission '{request.Requirement.Value}'."
 				);
 
-		if (request.Requirement.Type.StartsWith("Claim:", StringComparison.Ordinal))
-			return HasClaim(request.Principal, request.Requirement.Type[6..], request.Requirement.Value)
+		if (IsClaimRequirement(request.Requirement))
+		{
+			var claimType = GetClaimType(request.Requirement);
+			return HasClaim(request.Principal, claimType, request.Requirement.Value)
 				? AuthorizationResult.Allowed(request.Requirement)
-				: AuthorizationResult.Denied(
-					request.Requirement,
-					$"Principal does not have claim '{request.Requirement}'."
-				);
+				: AuthorizationResult.Denied(request.Requirement, $"Principal does not have claim '{claimType}'.");
+		}
 
 		return AuthorizationResult.Denied(
 			request.Requirement,
 			$"Requirement '{request.Requirement}' is not supported."
 		);
 	}
+
+	private static bool IsClaimRequirement(AuthorizationRequirement requirement) =>
+		requirement.Type.StartsWith(ClaimPrefix, StringComparison.Ordinal);
+
+	private static string GetClaimType(AuthorizationRequirement requirement) => requirement.Type[ClaimPrefix.Length..];
 
 	private static bool HasRole(Principal principal, string value) =>
 		principal.Roles.Any(role => string.Equals(role.Value, value, StringComparison.Ordinal));
@@ -74,5 +84,8 @@ public sealed class BuiltInAuthorizationPolicy : AuthorizationPolicy
 		principal.Permissions.Any(permission => string.Equals(permission.Value, value, StringComparison.Ordinal));
 
 	private static bool HasClaim(Principal principal, string type, string value) =>
-		principal.Claims.Any(claim => claim.Type == type && claim.Value == value);
+		principal.Claims.Any(claim =>
+			string.Equals(claim.Type, type, StringComparison.Ordinal)
+			&& string.Equals(claim.Value, value, StringComparison.Ordinal)
+		);
 }

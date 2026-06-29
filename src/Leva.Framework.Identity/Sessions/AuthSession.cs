@@ -6,11 +6,11 @@ namespace Leva.Framework.Identity;
 public sealed record AuthSession(
 	AuthSessionId SessionId,
 	Principal Principal,
-	AuthSessionStatus Status,
+	AuthSessionStatus SessionStatus,
 	DateTimeOffset CreatedAt,
 	DateTimeOffset UpdatedAt,
 	DateTimeOffset? ExpiresAt = null
 )
 {
-	public bool IsActive => Status == AuthSessionStatus.Active;
+	public bool IsActive => SessionStatus == AuthSessionStatus.Active;
 }

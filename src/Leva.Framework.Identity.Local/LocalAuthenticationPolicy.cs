@@ -58,7 +58,7 @@ public sealed class LocalAuthenticationPolicy : AuthenticationPolicy
 			return Result<AuthenticationResult>.Fail(principal.Error);
 
 		return principal.Value is null
-			? Succeeded(AuthenticationResult.Failed("Principal was not found."))
+			? Succeeded(AuthenticationResult.Failed("Principal is not available."))
 			: Succeeded(AuthenticationResult.Succeeded(principal.Value));
 	}
 

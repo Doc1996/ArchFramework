@@ -7,7 +7,17 @@ public sealed class SyncDictionary<TKey, TValue>
 	where TKey : notnull
 {
 	private readonly Lock _lock = new();
-	private readonly Dictionary<TKey, TValue> _items = [];
+	private readonly Dictionary<TKey, TValue> _items;
+
+	public SyncDictionary()
+	{
+		_items = new Dictionary<TKey, TValue>();
+	}
+
+	public SyncDictionary(IEqualityComparer<TKey>? comparer)
+	{
+		_items = new Dictionary<TKey, TValue>(comparer);
+	}
 
 	public IReadOnlyList<KeyValuePair<TKey, TValue>> Items()
 	{
@@ -52,6 +62,12 @@ public sealed class SyncDictionary<TKey, TValue>
 	{
 		lock (_lock)
 			return _items.TryGetValue(key, out value);
+	}
+
+	public TValue? GetOrDefault(TKey key)
+	{
+		lock (_lock)
+			return _items.TryGetValue(key, out var value) ? value : default;
 	}
 
 	public bool Remove(TKey key)

@@ -7,25 +7,15 @@ namespace Leva.Framework.Identity.Local;
 /// </summary>
 public sealed class MemoryLocalCredentialStore : ILocalCredentialStore
 {
-	private readonly Lock _lock = new();
-	private readonly Dictionary<string, LocalCredential> _credentials = new(StringComparer.OrdinalIgnoreCase);
-
-	public IReadOnlyList<LocalCredential> Credentials
-	{
-		get
-		{
-			lock (_lock)
-				return _credentials.Values.ToList();
-		}
-	}
+	private readonly SyncDictionary<string, LocalCredential> _credentials = new(StringComparer.OrdinalIgnoreCase);
+	public IReadOnlyList<LocalCredential> Credentials => _credentials.Values();
 
 	public Task<Result<LocalCredential>> SaveAsync(LocalCredential credential, CancellationToken token = default)
 	{
 		token.ThrowIfCancellationRequested();
 		ArgumentNullException.ThrowIfNull(credential);
 
-		lock (_lock)
-			_credentials[credential.Name] = credential;
+		_credentials.Set(credential.Name, credential);
 		return Task.FromResult(Result<LocalCredential>.Ok(credential));
 	}
 
@@ -33,12 +23,7 @@ public sealed class MemoryLocalCredentialStore : ILocalCredentialStore
 	{
 		token.ThrowIfCancellationRequested();
 		ArgumentException.ThrowIfNullOrWhiteSpace(name);
-
-		lock (_lock)
-		{
-			_credentials.TryGetValue(name, out var credential);
-			return Task.FromResult(Result<LocalCredential?>.Ok(credential));
-		}
+		return Task.FromResult(Result<LocalCredential?>.Ok(_credentials.GetOrDefault(name)));
 	}
 
 	public Task<Result> DeleteAsync(string name, CancellationToken token = default)
@@ -46,14 +31,9 @@ public sealed class MemoryLocalCredentialStore : ILocalCredentialStore
 		token.ThrowIfCancellationRequested();
 		ArgumentException.ThrowIfNullOrWhiteSpace(name);
 
-		lock (_lock)
-			_credentials.Remove(name);
+		_credentials.Remove(name);
 		return Task.FromResult(Result.Ok());
 	}
 
-	public void Clear()
-	{
-		lock (_lock)
-			_credentials.Clear();
-	}
+	public void Clear() => _credentials.Clear();
 }

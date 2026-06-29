@@ -70,8 +70,8 @@ public sealed class BuiltInAuthorizationPolicyTests
 		new(
 			new PrincipalId("principal-1"),
 			"User One",
-			Roles: [new PrincipalRole("admin")],
-			Permissions: [new PrincipalPermission("plans.edit")],
+			Roles: new HashSet<PrincipalRole> { new("admin") },
+			Permissions: new HashSet<PrincipalPermission> { new("plans.edit") },
 			Claims: [new PrincipalClaim("department", "planning")]
 		);
 

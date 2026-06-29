@@ -35,7 +35,7 @@ public sealed class PrincipalAccess
 		var session = await GetSessionAsync(token);
 		return session.IsFailure
 			? Result<bool>.Fail(session.Error)
-			: Result<bool>.Ok(session.Value is { Status: AuthSessionStatus.Active });
+			: Result<bool>.Ok(session.Value is { SessionStatus: AuthSessionStatus.Active });
 	}
 
 	public async Task<Result<AuthorizationResult>> RequireAsync(

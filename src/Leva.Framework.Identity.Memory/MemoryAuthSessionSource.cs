@@ -7,6 +7,7 @@ namespace Leva.Framework.Identity.Memory;
 /// </summary>
 public sealed class MemoryAuthSessionSource : AuthSessionSource
 {
+	private readonly Lock _lock = new();
 	private readonly AuthSessionService _sessionService;
 	private AuthSessionId? _sessionId;
 
@@ -16,16 +17,34 @@ public sealed class MemoryAuthSessionSource : AuthSessionSource
 		_sessionService = sessionService;
 	}
 
-	public AuthSessionId? SessionId => _sessionId;
+	public AuthSessionId? SessionId
+	{
+		get
+		{
+			lock (_lock)
+				return _sessionId;
+		}
+	}
 
-	public void SetSession(AuthSessionId sessionId) => _sessionId = sessionId;
+	public void SetSession(AuthSessionId sessionId)
+	{
+		lock (_lock)
+			_sessionId = sessionId;
+	}
 
-	public void ClearSession() => _sessionId = null;
+	public void ClearSession()
+	{
+		lock (_lock)
+			_sessionId = null;
+	}
 
 	public override Task<Result<AuthSession?>> GetSessionAsync(CancellationToken token = default)
 	{
-		return _sessionId.HasValue
-			? _sessionService.LoadAsync(_sessionId.Value, token)
+		token.ThrowIfCancellationRequested();
+		var sessionId = SessionId;
+
+		return sessionId.HasValue
+			? _sessionService.LoadAsync(sessionId.Value, token)
 			: Task.FromResult(Result<AuthSession?>.Ok(null));
 	}
 }

@@ -9,6 +9,5 @@ public interface IAuthSessionStore
 {
 	Task<Result<AuthSession>> SaveAsync(AuthSession session, CancellationToken token = default);
 	Task<Result<AuthSession?>> LoadAsync(AuthSessionId sessionId, CancellationToken token = default);
-
 	Task<Result> DeleteAsync(AuthSessionId sessionId, CancellationToken token = default);
 }

@@ -23,14 +23,14 @@ public sealed class FakeAuthSessionStore : IAuthSessionStore
 	public Task<Result<AuthSession?>> LoadAsync(AuthSessionId sessionId, CancellationToken token = default)
 	{
 		token.ThrowIfCancellationRequested();
-		_sessions.TryGetValue(id, out var session);
+		_sessions.TryGetValue(sessionId, out var session);
 		return Task.FromResult(Result<AuthSession?>.Ok(session));
 	}
 
 	public Task<Result> DeleteAsync(AuthSessionId sessionId, CancellationToken token = default)
 	{
 		token.ThrowIfCancellationRequested();
-		_sessions.Remove(id);
+		_sessions.Remove(sessionId);
 		return Task.FromResult(Result.Ok());
 	}
 }

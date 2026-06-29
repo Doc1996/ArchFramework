@@ -97,7 +97,7 @@ public sealed class AuthenticationServiceTests
 		var result = await authentication.SignOutAsync(session.SessionId);
 
 		ResultAssert.Success(result);
-		Assert.Equal(AuthSessionStatus.SignedOut, sessionStore.Sessions[session.SessionId].Status);
+		Assert.Equal(AuthSessionStatus.SignedOut, sessionStore.Sessions[session.SessionId].SessionStatus);
 	}
 
 	private static Principal TestPrincipal() => new(new PrincipalId("user-1"), "User One");

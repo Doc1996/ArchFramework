@@ -26,7 +26,6 @@ public sealed class LocalSecretProtector
 	public LocalCredentialSecret Protect(string secret)
 	{
 		ArgumentException.ThrowIfNullOrWhiteSpace(secret);
-
 		var salt = RandomNumberGenerator.GetBytes(_saltSize);
 		var value = Protect(secret, salt, _iterations, _secretSize);
 

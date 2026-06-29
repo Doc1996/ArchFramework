@@ -7,49 +7,30 @@ namespace Leva.Framework.Identity.Memory;
 /// </summary>
 public sealed class MemoryAuthSessionStore : IAuthSessionStore
 {
-	private readonly Lock _lock = new();
-	private readonly Dictionary<AuthSessionId, AuthSession> _sessions = [];
-
-	public IReadOnlyList<AuthSession> Sessions
-	{
-		get
-		{
-			lock (_lock)
-				return _sessions.Values.ToList();
-		}
-	}
+	private readonly SyncDictionary<AuthSessionId, AuthSession> _sessions = new();
+	public IReadOnlyList<AuthSession> Sessions => _sessions.Values();
 
 	public Task<Result<AuthSession>> SaveAsync(AuthSession session, CancellationToken token = default)
 	{
 		token.ThrowIfCancellationRequested();
 		ArgumentNullException.ThrowIfNull(session);
 
-		lock (_lock)
-			_sessions[session.SessionId] = session;
+		_sessions.Set(session.SessionId, session);
 		return Task.FromResult(Result<AuthSession>.Ok(session));
 	}
 
 	public Task<Result<AuthSession?>> LoadAsync(AuthSessionId sessionId, CancellationToken token = default)
 	{
 		token.ThrowIfCancellationRequested();
-		lock (_lock)
-		{
-			_sessions.TryGetValue(id, out var session);
-			return Task.FromResult(Result<AuthSession?>.Ok(session));
-		}
+		return Task.FromResult(Result<AuthSession?>.Ok(_sessions.GetOrDefault(sessionId)));
 	}
 
 	public Task<Result> DeleteAsync(AuthSessionId sessionId, CancellationToken token = default)
 	{
 		token.ThrowIfCancellationRequested();
-		lock (_lock)
-			_sessions.Remove(id);
+		_sessions.Remove(sessionId);
 		return Task.FromResult(Result.Ok());
 	}
 
-	public void Clear()
-	{
-		lock (_lock)
-			_sessions.Clear();
-	}
+	public void Clear() => _sessions.Clear();
 }

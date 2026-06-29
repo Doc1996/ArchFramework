@@ -29,13 +29,13 @@ public class AuthSessionPolicy(TimeSpan? lifetime = null)
 	public virtual AuthSession Expire(AuthSession session, DateTimeOffset utcNow)
 	{
 		ArgumentNullException.ThrowIfNull(session);
-		return session with { Status = AuthSessionStatus.Expired, UpdatedAt = utcNow };
+		return session with { SessionStatus = AuthSessionStatus.Expired, UpdatedAt = utcNow };
 	}
 
 	public virtual AuthSession SignOut(AuthSession session, DateTimeOffset utcNow)
 	{
 		ArgumentNullException.ThrowIfNull(session);
-		return session with { Status = AuthSessionStatus.SignedOut, UpdatedAt = utcNow };
+		return session with { SessionStatus = AuthSessionStatus.SignedOut, UpdatedAt = utcNow };
 	}
 
 	protected virtual DateTimeOffset? GetExpiration(DateTimeOffset utcNow) =>

@@ -39,7 +39,7 @@ public sealed class AuthSessionServiceTests
 
 		Assert.True(result.IsSuccess);
 		Assert.Null(result.Value);
-		Assert.Equal(AuthSessionStatus.Expired, store.Sessions[session.SessionId].Status);
+		Assert.Equal(AuthSessionStatus.Expired, store.Sessions[session.SessionId].SessionStatus);
 		Assert.Contains(audit.AuditEntries, entry => entry.Action == AuditAction.SessionExpired);
 	}
 
@@ -54,7 +54,7 @@ public sealed class AuthSessionServiceTests
 		var result = await service.SignOutAsync(session.SessionId);
 		var signedOut = ResultAssert.Success(result);
 
-		Assert.Equal(AuthSessionStatus.SignedOut, signedOut.Status);
+		Assert.Equal(AuthSessionStatus.SignedOut, signedOut.SessionStatus);
 		Assert.False(signedOut.IsActive);
 		Assert.Contains(
 			audit.AuditEntries,

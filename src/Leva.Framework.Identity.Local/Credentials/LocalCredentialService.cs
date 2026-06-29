@@ -37,7 +37,6 @@ public sealed class LocalCredentialService
 
 		var utcNow = UtcNow;
 		var credential = new LocalCredential(name, principalId, _secretProtector.Protect(secret), true, utcNow, utcNow);
-
 		return await _credentials.SaveAsync(credential, token);
 	}
 
@@ -52,12 +51,11 @@ public sealed class LocalCredentialService
 		ArgumentException.ThrowIfNullOrWhiteSpace(secret);
 
 		var credential = await LoadRequiredAsync(name, token);
-		return credential.IsFailure
-			? Result<LocalCredential>.Fail(credential.Error)
-			: await _credentials.SaveAsync(
-				credential.Value!.ChangeSecret(_secretProtector.Protect(secret), UtcNow),
-				token
-			);
+		if (credential.IsFailure)
+			return Result<LocalCredential>.Fail(credential.Error);
+
+		var updated = credential.Value!.ChangeSecret(_secretProtector.Protect(secret), UtcNow);
+		return await _credentials.SaveAsync(updated, token);
 	}
 
 	public Task<Result<LocalCredential>> EnableAsync(string name, CancellationToken token = default) =>
@@ -87,6 +85,7 @@ public sealed class LocalCredentialService
 		var result = await _credentials.LoadByNameAsync(name, token);
 		if (result.IsFailure)
 			return Result<LocalCredential>.Fail(result.Error);
+
 		return result.Value is null
 			? Result<LocalCredential>.Fail(PrincipalErrors.NotFound("local credential", name))
 			: Result<LocalCredential>.Ok(result.Value);

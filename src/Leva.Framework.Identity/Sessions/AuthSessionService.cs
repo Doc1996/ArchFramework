@@ -40,10 +40,7 @@ public sealed class AuthSessionService
 		return result;
 	}
 
-	public async Task<Result<AuthSession?>> LoadAsync(
-		AuthSessionId sessionId,
-		CancellationToken token = default
-	)
+	public async Task<Result<AuthSession?>> LoadAsync(AuthSessionId sessionId, CancellationToken token = default)
 	{
 		token.ThrowIfCancellationRequested();
 		var result = await _sessionStore.LoadAsync(sessionId, token);
@@ -62,10 +59,7 @@ public sealed class AuthSessionService
 		return Result<AuthSession?>.Ok(null);
 	}
 
-	public async Task<Result<AuthSession>> SignOutAsync(
-		AuthSessionId sessionId,
-		CancellationToken token = default
-	)
+	public async Task<Result<AuthSession>> SignOutAsync(AuthSessionId sessionId, CancellationToken token = default)
 	{
 		token.ThrowIfCancellationRequested();
 		var result = await _sessionStore.LoadAsync(sessionId, token);
@@ -83,10 +77,7 @@ public sealed class AuthSessionService
 		return save;
 	}
 
-	public async Task<Result<AuthSession>> ExpireAsync(
-		AuthSessionId sessionId,
-		CancellationToken token = default
-	)
+	public async Task<Result<AuthSession>> ExpireAsync(AuthSessionId sessionId, CancellationToken token = default)
 	{
 		token.ThrowIfCancellationRequested();
 		var result = await _sessionStore.LoadAsync(sessionId, token);
