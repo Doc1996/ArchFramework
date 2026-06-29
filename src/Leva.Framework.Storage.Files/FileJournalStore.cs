@@ -10,6 +10,7 @@ internal sealed class FileJournalStore<TEntry>
 	private readonly string _name;
 	private readonly FileStorageDatabase _database;
 	private readonly string _directory;
+	private readonly FileStorageRunner _runner;
 
 	public FileJournalStore(string name, FileStorageDatabase database, string directory)
 	{
@@ -20,82 +21,71 @@ internal sealed class FileJournalStore<TEntry>
 		_name = name;
 		_database = database;
 		_directory = directory;
+		_runner = new($"file journal '{name}'");
 	}
 
-	public async Task<Result<StorageEntry<TEntry>>> AppendAsync(TEntry value, CancellationToken token)
-	{
-		try
-		{
-			token.ThrowIfCancellationRequested();
-			Directory.CreateDirectory(_directory);
+	internal Task<Result<StorageEntry<TEntry>>> AppendAsync(TEntry value, CancellationToken token) =>
+		_runner.RunAsync(
+			"append",
+			async () =>
+			{
+				Directory.CreateDirectory(_directory);
 
-			var latest = Directory.Exists(_directory)
-				? Directory
-					.EnumerateFiles(_directory, "*.json")
-					.Select(FileStorageDatabase.ParseVersion)
-					.Select(x => x.Value)
-					.DefaultIfEmpty(0)
-					.Max()
-				: 0;
+				var version = GetNextVersion();
+				var utcNow = DateTimeOffset.UtcNow;
+				var entry = new StorageEntry<TEntry>(value, version, utcNow, utcNow);
+				var path = _database.GetJournalPath<TEntry>(_name, version);
 
-			var version = new StorageVersion(latest + 1);
-			var utcNow = DateTimeOffset.UtcNow;
-			var entry = new StorageEntry<TEntry>(value, version, utcNow, utcNow);
+				await _database.WriteEntryAsync(path, entry, token);
+				return Result<StorageEntry<TEntry>>.Ok(entry);
+			},
+			token
+		);
 
-			await _database.WriteEntryAsync(_database.GetJournalPath<TEntry>(_name, version), entry, token);
-			return Result<StorageEntry<TEntry>>.Ok(entry);
-		}
-		catch (OperationCanceledException)
-		{
-			throw;
-		}
-		catch (Exception ex)
-		{
-			return Result<StorageEntry<TEntry>>.Fail(
-				StorageErrors.Failed($"append file journal '{_name}'", ex.Message)
-			);
-		}
-	}
-
-	public async Task<Result<IReadOnlyList<StorageEntry<TEntry>>>> ReadAsync(
+	internal Task<Result<IReadOnlyList<StorageEntry<TEntry>>>> ReadAsync(
 		StorageVersion? afterVersion,
 		int? limit,
 		CancellationToken token
-	)
-	{
-		try
-		{
-			token.ThrowIfCancellationRequested();
-			var entries = new List<StorageEntry<TEntry>>();
-			if (!Directory.Exists(_directory))
-				return Result<IReadOnlyList<StorageEntry<TEntry>>>.Ok(entries);
-
-			IEnumerable<(string Path, StorageVersion Version)> query = Directory
-				.EnumerateFiles(_directory, "*.json")
-				.Select(x => (Path: x, Version: FileStorageDatabase.ParseVersion(x)))
-				.Where(x => !afterVersion.HasValue || x.Version.Value > afterVersion.Value.Value)
-				.OrderBy(x => x.Version.Value);
-
-			if (limit.HasValue)
-				query = query.Take(limit.Value);
-
-			foreach (var file in query)
+	) =>
+		_runner.RunAsync(
+			"read",
+			async () =>
 			{
-				token.ThrowIfCancellationRequested();
-				entries.Add(await _database.ReadEntryAsync<TEntry>(file.Path, token));
-			}
+				var entries = new List<StorageEntry<TEntry>>();
+				if (!Directory.Exists(_directory))
+					return Result<IReadOnlyList<StorageEntry<TEntry>>>.Ok(entries);
 
-			return Result<IReadOnlyList<StorageEntry<TEntry>>>.Ok(entries);
-		}
-		catch (OperationCanceledException)
-		{
-			throw;
-		}
-		catch (Exception ex)
-		{
-			return Result<IReadOnlyList<StorageEntry<TEntry>>>.Fail(
-				StorageErrors.Failed($"read file journal '{_name}'", ex.Message)
-			);
-		}
+				foreach (var file in GetFiles(afterVersion, limit))
+				{
+					token.ThrowIfCancellationRequested();
+					entries.Add(await _database.ReadEntryAsync<TEntry>(file.Path, token));
+				}
+
+				return Result<IReadOnlyList<StorageEntry<TEntry>>>.Ok(entries);
+			},
+			token
+		);
+
+	private IEnumerable<(string Path, StorageVersion Version)> GetFiles(StorageVersion? afterVersion, int? limit)
+	{
+		var files = Directory
+			.EnumerateFiles(_directory, "*.json")
+			.Select(path => (Path: path, Version: FileStorageDatabase.ParseVersion(path)))
+			.Where(file => !afterVersion.HasValue || file.Version.Value > afterVersion.Value.Value)
+			.OrderBy(file => file.Version.Value);
+
+		return limit.HasValue ? files.Take(limit.Value) : files;
+	}
+
+	private StorageVersion GetNextVersion()
+	{
+		var latest = Directory
+			.EnumerateFiles(_directory, "*.json")
+			.Select(FileStorageDatabase.ParseVersion)
+			.Select(version => version.Value)
+			.DefaultIfEmpty(0)
+			.Max();
+
+		return new StorageVersion(latest + 1);
 	}
 }

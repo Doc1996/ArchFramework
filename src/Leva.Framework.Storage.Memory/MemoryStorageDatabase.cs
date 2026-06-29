@@ -9,7 +9,7 @@ internal sealed class MemoryStorageDatabase
 	private readonly Dictionary<string, object> _journals = new();
 	private readonly Dictionary<string, object> _repositories = new();
 
-	public MemoryRepositoryStore<TId, TValue> GetRepository<TId, TValue>(string name)
+	internal MemoryRepositoryStore<TId, TValue> GetRepository<TId, TValue>(string name)
 		where TId : notnull
 	{
 		ArgumentException.ThrowIfNullOrWhiteSpace(name);
@@ -26,7 +26,7 @@ internal sealed class MemoryStorageDatabase
 		}
 	}
 
-	public MemoryJournalStore<TEntry> GetJournal<TEntry>(string name)
+	internal MemoryJournalStore<TEntry> GetJournal<TEntry>(string name)
 	{
 		ArgumentException.ThrowIfNullOrWhiteSpace(name);
 		var key = GetJournalKey<TEntry>(name);
@@ -43,7 +43,9 @@ internal sealed class MemoryStorageDatabase
 	}
 
 	private static string GetRepositoryKey<TId, TValue>(string name) =>
-		$"{name}|{typeof(TId).AssemblyQualifiedName}|{typeof(TValue).AssemblyQualifiedName}";
+		$"{name}|{GetTypeKey<TId>()}|{GetTypeKey<TValue>()}";
 
-	private static string GetJournalKey<TEntry>(string name) => $"{name}|{typeof(TEntry).AssemblyQualifiedName}";
+	private static string GetJournalKey<TEntry>(string name) => $"{name}|{GetTypeKey<TEntry>()}";
+
+	private static string GetTypeKey<T>() => typeof(T).FullName ?? typeof(T).Name;
 }

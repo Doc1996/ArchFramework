@@ -7,11 +7,14 @@ using System.Text.Json;
 namespace Leva.Framework.Storage.Files;
 
 /// <summary>
-/// Owns file paths and serialization for one file storage provider instance.
+/// Owns file paths, serialization, and named stores for one file storage provider instance.
 /// </summary>
 internal sealed class FileStorageDatabase
 {
+	private readonly Lock _lock = new();
 	private readonly JsonSerializerOptions _jsonOptions;
+	private readonly Dictionary<string, object> _journals = new();
+	private readonly Dictionary<string, object> _repositories = new();
 
 	public FileStorageDatabase(string rootPath, JsonSerializerOptions? jsonOptions = null)
 	{
@@ -22,50 +25,49 @@ internal sealed class FileStorageDatabase
 
 	internal string RootPath { get; }
 
-	public FileRepositoryStore<TId, TValue> GetRepository<TId, TValue>(string name)
-		where TId : notnull => new(name, this, GetRepositoryDirectory<TId, TValue>(name));
+	internal FileRepositoryStore<TId, TValue> GetRepository<TId, TValue>(string name)
+		where TId : notnull
+	{
+		ArgumentException.ThrowIfNullOrWhiteSpace(name);
+		var key = GetRepositoryKey<TId, TValue>(name);
 
-	public FileJournalStore<TEntry> GetJournal<TEntry>(string name) =>
-		new(name, this, GetJournalDirectory<TEntry>(name));
+		lock (_lock)
+		{
+			if (_repositories.TryGetValue(key, out var existing))
+				return (FileRepositoryStore<TId, TValue>)existing;
 
-	public string GetRepositoryPath<TId, TValue>(string name, TId id)
+			var store = new FileRepositoryStore<TId, TValue>(name, this, GetRepositoryDirectory<TId, TValue>(name));
+			_repositories[key] = store;
+			return store;
+		}
+	}
+
+	internal FileJournalStore<TEntry> GetJournal<TEntry>(string name)
+	{
+		ArgumentException.ThrowIfNullOrWhiteSpace(name);
+		var key = GetJournalKey<TEntry>(name);
+
+		lock (_lock)
+		{
+			if (_journals.TryGetValue(key, out var existing))
+				return (FileJournalStore<TEntry>)existing;
+
+			var store = new FileJournalStore<TEntry>(name, this, GetJournalDirectory<TEntry>(name));
+			_journals[key] = store;
+			return store;
+		}
+	}
+
+	internal string GetRepositoryPath<TId, TValue>(string name, TId id)
 		where TId : notnull => Path.Combine(GetRepositoryDirectory<TId, TValue>(name), Encode(ToKey(id)) + ".json");
 
-	public string GetJournalPath<TEntry>(string name, StorageVersion version) =>
+	internal string GetJournalPath<TEntry>(string name, StorageVersion version) =>
 		Path.Combine(
 			GetJournalDirectory<TEntry>(name),
 			version.Value.ToString("D20", CultureInfo.InvariantCulture) + ".json"
 		);
 
-	public static string GetFileKey(string path) => Decode(Path.GetFileNameWithoutExtension(path));
-
-	public static string ToKey<TId>(TId id)
-		where TId : notnull
-	{
-		if (id is string value)
-			return value;
-
-		var converter = TypeDescriptor.GetConverter(typeof(TId));
-		if (converter.CanConvertTo(typeof(string)))
-			return converter.ConvertToInvariantString(id) ?? id.ToString() ?? string.Empty;
-
-		return id.ToString() ?? string.Empty;
-	}
-
-	public static TId FromKey<TId>(string key)
-		where TId : notnull
-	{
-		if (typeof(TId) == typeof(string))
-			return (TId)(object)key;
-
-		var converter = TypeDescriptor.GetConverter(typeof(TId));
-		if (converter.CanConvertFrom(typeof(string)))
-			return (TId)converter.ConvertFromInvariantString(key)!;
-
-		return (TId)Convert.ChangeType(key, typeof(TId), CultureInfo.InvariantCulture);
-	}
-
-	public async Task<StorageEntry<T>> ReadEntryAsync<T>(string path, CancellationToken token)
+	internal async Task<StorageEntry<T>> ReadEntryAsync<T>(string path, CancellationToken token)
 	{
 		await using var stream = File.OpenRead(path);
 		var fileEntry =
@@ -80,7 +82,7 @@ internal sealed class FileStorageDatabase
 		);
 	}
 
-	public async Task WriteEntryAsync<T>(string path, StorageEntry<T> entry, CancellationToken token)
+	internal async Task WriteEntryAsync<T>(string path, StorageEntry<T> entry, CancellationToken token)
 	{
 		Directory.CreateDirectory(Path.GetDirectoryName(path)!);
 		var temporaryPath = path + "." + Guid.NewGuid().ToString("N") + ".tmp";
@@ -99,26 +101,54 @@ internal sealed class FileStorageDatabase
 		}
 	}
 
-	public static StorageVersion ParseVersion(string path) =>
+	internal static string GetFileKey(string path) => Decode(Path.GetFileNameWithoutExtension(path));
+
+	internal static string ToKey<TId>(TId id)
+		where TId : notnull
+	{
+		if (id is string value)
+			return value;
+
+		var converter = TypeDescriptor.GetConverter(typeof(TId));
+		if (converter.CanConvertTo(typeof(string)))
+			return converter.ConvertToInvariantString(id)
+				?? throw new InvalidOperationException($"Could not convert '{typeof(TId).Name}' to a storage key.");
+
+		return id.ToString()
+			?? throw new InvalidOperationException($"Could not convert '{typeof(TId).Name}' to a storage key.");
+	}
+
+	internal static TId FromKey<TId>(string key)
+		where TId : notnull
+	{
+		if (typeof(TId) == typeof(string))
+			return (TId)(object)key;
+
+		var converter = TypeDescriptor.GetConverter(typeof(TId));
+		if (converter.CanConvertFrom(typeof(string)))
+			return (TId)(
+				converter.ConvertFromInvariantString(key)
+				?? throw new InvalidOperationException($"Could not convert storage key to '{typeof(TId).Name}'.")
+			);
+
+		return (TId)Convert.ChangeType(key, typeof(TId), CultureInfo.InvariantCulture);
+	}
+
+	internal static StorageVersion ParseVersion(string path) =>
 		new(long.Parse(Path.GetFileNameWithoutExtension(path), CultureInfo.InvariantCulture));
 
 	private string GetRepositoryDirectory<TId, TValue>(string name)
-		where TId : notnull
-	{
-		ArgumentException.ThrowIfNullOrWhiteSpace(name);
-		return Path.Combine(RootPath, "repositories", Hash(GetRepositoryKey<TId, TValue>(name)));
-	}
+		where TId : notnull => Path.Combine(RootPath, "repositories", Hash(GetRepositoryKey<TId, TValue>(name)));
 
-	private string GetJournalDirectory<TEntry>(string name)
-	{
-		ArgumentException.ThrowIfNullOrWhiteSpace(name);
-		return Path.Combine(RootPath, "journals", Hash(GetJournalKey<TEntry>(name)));
-	}
+	private string GetJournalDirectory<TEntry>(string name) =>
+		Path.Combine(RootPath, "journals", Hash(GetJournalKey<TEntry>(name)));
 
 	private static string GetRepositoryKey<TId, TValue>(string name) =>
-		$"{name}|{typeof(TId).AssemblyQualifiedName}|{typeof(TValue).AssemblyQualifiedName}";
+		$"{name}|{GetTypeKey<TId>()}|{GetTypeKey<TValue>()}";
 
-	private static string GetJournalKey<TEntry>(string name) => $"{name}|{typeof(TEntry).AssemblyQualifiedName}";
+	private static string GetJournalKey<TEntry>(string name) => $"{name}|{GetTypeKey<TEntry>()}";
+
+	private static string GetTypeKey<T>() => typeof(T).FullName ?? typeof(T).Name;
 
 	private static string Hash(string value)
 	{

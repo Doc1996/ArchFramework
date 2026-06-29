@@ -23,7 +23,7 @@ internal sealed class SqliteStorageDatabase
 
 	internal string DatabasePath { get; }
 
-	public async Task<SqliteConnection> OpenConnectionAsync(CancellationToken token)
+	internal async Task<SqliteConnection> OpenConnectionAsync(CancellationToken token)
 	{
 		var directory = Path.GetDirectoryName(DatabasePath);
 		if (!string.IsNullOrWhiteSpace(directory))
@@ -37,12 +37,13 @@ internal sealed class SqliteStorageDatabase
 		return connection;
 	}
 
-	public SqliteRepositoryStore<TId, TValue> GetRepository<TId, TValue>(string name)
+	internal SqliteRepositoryStore<TId, TValue> GetRepository<TId, TValue>(string name)
 		where TId : notnull => new(name, GetRepositoryName<TId, TValue>(name), this);
 
-	public SqliteJournalStore<TEntry> GetJournal<TEntry>(string name) => new(name, GetJournalName<TEntry>(name), this);
+	internal SqliteJournalStore<TEntry> GetJournal<TEntry>(string name) =>
+		new(name, GetJournalName<TEntry>(name), this);
 
-	public async Task<TResult> UseConnectionAsync<TResult>(
+	internal async Task<TResult> UseConnectionAsync<TResult>(
 		Func<SqliteConnection, Task<TResult>> action,
 		CancellationToken token
 	)
@@ -51,11 +52,13 @@ internal sealed class SqliteStorageDatabase
 		return await action(connection);
 	}
 
-	public string Serialize<T>(T value) => JsonSerializer.Serialize(value, _jsonOptions);
+	internal string Serialize<T>(T value) => JsonSerializer.Serialize(value, _jsonOptions);
 
-	public T Deserialize<T>(string json) => JsonSerializer.Deserialize<T>(json, _jsonOptions)!;
+	internal T Deserialize<T>(string json) =>
+		JsonSerializer.Deserialize<T>(json, _jsonOptions)
+		?? throw new InvalidOperationException("SQLite storage value could not be deserialized.");
 
-	public static string ToKey<TId>(TId id)
+	internal static string ToKey<TId>(TId id)
 		where TId : notnull
 	{
 		if (id is string value)
@@ -63,12 +66,14 @@ internal sealed class SqliteStorageDatabase
 
 		var converter = TypeDescriptor.GetConverter(typeof(TId));
 		if (converter.CanConvertTo(typeof(string)))
-			return converter.ConvertToInvariantString(id) ?? id.ToString() ?? string.Empty;
+			return converter.ConvertToInvariantString(id)
+				?? throw new InvalidOperationException($"Could not convert '{typeof(TId).Name}' to a storage key.");
 
-		return id.ToString() ?? string.Empty;
+		return id.ToString()
+			?? throw new InvalidOperationException($"Could not convert '{typeof(TId).Name}' to a storage key.");
 	}
 
-	public static TId FromKey<TId>(string key)
+	internal static TId FromKey<TId>(string key)
 		where TId : notnull
 	{
 		if (typeof(TId) == typeof(string))
@@ -76,28 +81,33 @@ internal sealed class SqliteStorageDatabase
 
 		var converter = TypeDescriptor.GetConverter(typeof(TId));
 		if (converter.CanConvertFrom(typeof(string)))
-			return (TId)converter.ConvertFromInvariantString(key)!;
+			return (TId)(
+				converter.ConvertFromInvariantString(key)
+				?? throw new InvalidOperationException($"Could not convert storage key to '{typeof(TId).Name}'.")
+			);
 
 		return (TId)Convert.ChangeType(key, typeof(TId), CultureInfo.InvariantCulture);
 	}
 
-	public static DateTimeOffset ReadTimestamp(string value) =>
+	internal static DateTimeOffset ReadTimestamp(string value) =>
 		DateTimeOffset.Parse(value, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
 
-	public static string WriteTimestamp(DateTimeOffset value) => value.ToString("O", CultureInfo.InvariantCulture);
+	internal static string WriteTimestamp(DateTimeOffset value) => value.ToString("O", CultureInfo.InvariantCulture);
 
 	private static string GetRepositoryName<TId, TValue>(string name)
 		where TId : notnull
 	{
 		ArgumentException.ThrowIfNullOrWhiteSpace(name);
-		return Hash($"{name}|{typeof(TId).AssemblyQualifiedName}|{typeof(TValue).AssemblyQualifiedName}");
+		return Hash($"{name}|{GetTypeKey<TId>()}|{GetTypeKey<TValue>()}");
 	}
 
 	private static string GetJournalName<TEntry>(string name)
 	{
 		ArgumentException.ThrowIfNullOrWhiteSpace(name);
-		return Hash($"{name}|{typeof(TEntry).AssemblyQualifiedName}");
+		return Hash($"{name}|{GetTypeKey<TEntry>()}");
 	}
+
+	private static string GetTypeKey<T>() => typeof(T).FullName ?? typeof(T).Name;
 
 	private static string Hash(string value)
 	{
