@@ -6,7 +6,7 @@ ArchFramework is a clean .NET framework for event-driven, state-machine applicat
 
 ArchFramework keeps important application behavior out of random services, UI callbacks, and uncontrolled background code. Work enters the runtime as typed events, flows through a deterministic dispatcher, reaches the active state or routine, can fall back to behaviors, and only then applies requested transitions. This makes the application easier to reason about, test, log, persist, secure, and recover.
 
-The framework is split into small libraries. `Leva.Framework.Core` defines the shared vocabulary. `Leva.Framework.Engine` implements the runtime. `Leva.Framework.Fakes` provides reusable test doubles. `Leva.Framework.Storage` defines provider-neutral persistence contracts. Storage provider libraries implement those contracts for memory, files, and SQLite. `Leva.Framework.Identity` defines provider-neutral principal, session, authentication, authorization, audit, and state-facing principal access concepts. `Leva.Framework.Identity.Memory` implements those contracts for in-memory tests, demos, and early applications.
+The framework is split into small libraries. `Leva.Framework.Core` defines the shared vocabulary. `Leva.Framework.Engine` implements the runtime. `Leva.Framework.Fakes` provides reusable test doubles. `Leva.Framework.Storage` defines provider-neutral persistence contracts. Storage provider libraries implement those contracts for memory, files, and SQLite. `Leva.Framework.Identity` defines provider-neutral principal, session, authentication, authorization, audit, and state-facing principal access concepts. `Leva.Framework.Identity.Memory` implements a complete in-memory identity provider for tests and demos.
 
 ## Library structure
 
@@ -14,7 +14,7 @@ The framework is split into small libraries. `Leva.Framework.Core` defines the s
 Leva.Framework.Core           -> shared contracts, IDs, entries, results, snapshots
 Leva.Framework.Engine         -> event queue, dispatcher, state machine, boards, logs
 Leva.Framework.Fakes          -> fake clocks, events, queues, states, routines, principal, logs
-Leva.Framework.Storage        -> repository, journal, session, entry, version contracts
+Leva.Framework.Storage        -> repository, journal, entry, version contracts
 Leva.Framework.Storage.Memory -> in-process storage provider
 Leva.Framework.Storage.Files  -> local JSON/file-system storage provider
 Leva.Framework.Storage.Sqlite -> local SQLite storage provider
@@ -25,10 +25,8 @@ Leva.Framework.Identity.Memory -> in-memory principal/session/auth provider
 Future libraries should plug into the same architecture without forcing infrastructure into Core or Engine.
 
 ```text
-Leva.Framework.Identity.Local       future
-Leva.Framework.Identity.AspNetCore  future
-Leva.Framework.Identity.Google      future
-Leva.Framework.Identity.Jwt         future
+Leva.Framework.Identity.Local       local/offline desktop provider
+Leva.Framework.Identity.AspNetCore  future web provider
 Leva.Framework.Notifications        future
 Leva.Framework.Presentation.Blazor  future
 ```

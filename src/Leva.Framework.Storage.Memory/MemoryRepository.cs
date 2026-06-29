@@ -5,7 +5,7 @@ namespace Leva.Framework.Storage.Memory;
 /// <summary>
 /// Stores keyed values in memory for the lifetime of the owning provider instance.
 /// </summary>
-public sealed class MemoryRepository<TId, TValue> : IRepository<TId, TValue>
+internal sealed class MemoryRepository<TId, TValue> : IRepository<TId, TValue>
 	where TId : notnull
 {
 	private readonly string _name;

@@ -13,7 +13,7 @@ internal sealed class FileRepositoryStore<TId, TValue>
 	private readonly string _directory;
 	private readonly FileStorageRunner _runner;
 
-	public FileRepositoryStore(string name, FileStorageDatabase database, string directory)
+	internal FileRepositoryStore(string name, FileStorageDatabase database, string directory)
 	{
 		ArgumentException.ThrowIfNullOrWhiteSpace(name);
 		ArgumentNullException.ThrowIfNull(database);
@@ -32,7 +32,7 @@ internal sealed class FileRepositoryStore<TId, TValue>
 		CancellationToken token
 	) =>
 		_runner.RunAsync(
-			"save",
+			"save value in",
 			async () =>
 			{
 				Directory.CreateDirectory(_directory);
@@ -40,17 +40,16 @@ internal sealed class FileRepositoryStore<TId, TValue>
 				var key = FileStorageDatabase.ToKey(id);
 				var utcNow = DateTimeOffset.UtcNow;
 
-				if (!File.Exists(path))
-					return await SaveNewAsync(path, key, value, expectedVersion, utcNow, token);
-
-				return await SaveExistingAsync(path, key, value, expectedVersion, utcNow, token);
+				return File.Exists(path)
+					? await SaveExistingAsync(path, key, value, expectedVersion, utcNow, token)
+					: await SaveNewAsync(path, key, value, expectedVersion, utcNow, token);
 			},
 			token
 		);
 
 	internal Task<Result<StorageEntry<TValue>>> LoadAsync(TId id, CancellationToken token) =>
 		_runner.RunAsync(
-			"load",
+			"load value from",
 			async () =>
 			{
 				var path = GetPath(id);
@@ -67,7 +66,7 @@ internal sealed class FileRepositoryStore<TId, TValue>
 
 	internal Task<Result<IReadOnlyDictionary<TId, StorageEntry<TValue>>>> LoadAllAsync(CancellationToken token) =>
 		_runner.RunAsync(
-			"load",
+			"load values from",
 			async () =>
 			{
 				var entries = new Dictionary<TId, StorageEntry<TValue>>();
@@ -80,7 +79,6 @@ internal sealed class FileRepositoryStore<TId, TValue>
 
 					var key = FileStorageDatabase.GetFileKey(file);
 					var id = FileStorageDatabase.FromKey<TId>(key);
-
 					entries[id] = await _database.ReadEntryAsync<TValue>(file, token);
 				}
 
@@ -90,11 +88,11 @@ internal sealed class FileRepositoryStore<TId, TValue>
 		);
 
 	internal Task<Result<bool>> ExistsAsync(TId id, CancellationToken token) =>
-		_runner.RunAsync("check", () => Task.FromResult(Result<bool>.Ok(File.Exists(GetPath(id)))), token);
+		_runner.RunAsync("check value in", () => Task.FromResult(Result<bool>.Ok(File.Exists(GetPath(id)))), token);
 
 	internal Task<Result> DeleteAsync(TId id, StorageVersion? expectedVersion, CancellationToken token) =>
 		_runner.RunAsync(
-			"delete",
+			"delete value from",
 			async () =>
 			{
 				var path = GetPath(id);

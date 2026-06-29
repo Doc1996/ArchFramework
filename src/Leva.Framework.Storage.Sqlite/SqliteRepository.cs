@@ -5,7 +5,7 @@ namespace Leva.Framework.Storage.Sqlite;
 /// <summary>
 /// Stores keyed values in SQLite under a named repository.
 /// </summary>
-public sealed class SqliteRepository<TId, TValue> : IRepository<TId, TValue>
+internal sealed class SqliteRepository<TId, TValue> : IRepository<TId, TValue>
 	where TId : notnull
 {
 	private readonly SqliteRepositoryStore<TId, TValue> _store;

@@ -9,7 +9,7 @@ internal sealed class FileStorageRunner(string source)
 {
 	private readonly SemaphoreSlim _asyncLock = new(1, 1);
 
-	public async Task<Result<TValue>> RunAsync<TValue>(
+	internal async Task<Result<TValue>> RunAsync<TValue>(
 		string operation,
 		Func<Task<Result<TValue>>> action,
 		CancellationToken token
@@ -35,7 +35,7 @@ internal sealed class FileStorageRunner(string source)
 		}
 	}
 
-	public async Task<Result> RunAsync(string operation, Func<Task<Result>> action, CancellationToken token)
+	internal async Task<Result> RunAsync(string operation, Func<Task<Result>> action, CancellationToken token)
 	{
 		await _asyncLock.WaitAsync(token);
 

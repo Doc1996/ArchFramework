@@ -12,7 +12,7 @@ internal sealed class FileJournalStore<TEntry>
 	private readonly string _directory;
 	private readonly FileStorageRunner _runner;
 
-	public FileJournalStore(string name, FileStorageDatabase database, string directory)
+	internal FileJournalStore(string name, FileStorageDatabase database, string directory)
 	{
 		ArgumentException.ThrowIfNullOrWhiteSpace(name);
 		ArgumentNullException.ThrowIfNull(database);
@@ -26,7 +26,7 @@ internal sealed class FileJournalStore<TEntry>
 
 	internal Task<Result<StorageEntry<TEntry>>> AppendAsync(TEntry value, CancellationToken token) =>
 		_runner.RunAsync(
-			"append",
+			"append entry to",
 			async () =>
 			{
 				Directory.CreateDirectory(_directory);
@@ -34,9 +34,8 @@ internal sealed class FileJournalStore<TEntry>
 				var version = GetNextVersion();
 				var utcNow = DateTimeOffset.UtcNow;
 				var entry = new StorageEntry<TEntry>(value, version, utcNow, utcNow);
-				var path = _database.GetJournalPath<TEntry>(_name, version);
 
-				await _database.WriteEntryAsync(path, entry, token);
+				await _database.WriteEntryAsync(_database.GetJournalPath<TEntry>(_name, version), entry, token);
 				return Result<StorageEntry<TEntry>>.Ok(entry);
 			},
 			token
@@ -48,7 +47,7 @@ internal sealed class FileJournalStore<TEntry>
 		CancellationToken token
 	) =>
 		_runner.RunAsync(
-			"read",
+			"read entries from",
 			async () =>
 			{
 				var entries = new List<StorageEntry<TEntry>>();

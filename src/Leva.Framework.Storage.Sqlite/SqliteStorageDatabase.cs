@@ -14,7 +14,7 @@ internal sealed class SqliteStorageDatabase
 {
 	private readonly JsonSerializerOptions _jsonOptions;
 
-	public SqliteStorageDatabase(string databasePath, JsonSerializerOptions? jsonOptions = null)
+	internal SqliteStorageDatabase(string databasePath, JsonSerializerOptions? jsonOptions = null)
 	{
 		ArgumentException.ThrowIfNullOrWhiteSpace(databasePath);
 		DatabasePath = Path.GetFullPath(databasePath);

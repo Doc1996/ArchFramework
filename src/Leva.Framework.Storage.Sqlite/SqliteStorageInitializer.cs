@@ -7,7 +7,7 @@ namespace Leva.Framework.Storage.Sqlite;
 /// </summary>
 internal static class SqliteStorageInitializer
 {
-	public static async Task InitializeAsync(SqliteConnection connection, CancellationToken token)
+	internal static async Task InitializeAsync(SqliteConnection connection, CancellationToken token)
 	{
 		ArgumentNullException.ThrowIfNull(connection);
 

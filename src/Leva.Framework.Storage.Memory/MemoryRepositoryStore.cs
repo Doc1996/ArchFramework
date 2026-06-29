@@ -18,7 +18,7 @@ internal sealed class MemoryRepositoryStore<TId, TValue>
 		_name = name;
 	}
 
-	public Result<StorageEntry<TValue>> Save(TId id, TValue value, StorageVersion? expectedVersion)
+	internal Result<StorageEntry<TValue>> Save(TId id, TValue value, StorageVersion? expectedVersion)
 	{
 		var key = id.ToString() ?? string.Empty;
 		lock (_lock)
@@ -45,25 +45,25 @@ internal sealed class MemoryRepositoryStore<TId, TValue>
 		}
 	}
 
-	public StorageEntry<TValue>? Load(TId id)
+	internal StorageEntry<TValue>? Load(TId id)
 	{
 		lock (_lock)
 			return _entries.TryGetValue(id, out var entry) ? entry : null;
 	}
 
-	public IReadOnlyDictionary<TId, StorageEntry<TValue>> LoadAll()
+	internal IReadOnlyDictionary<TId, StorageEntry<TValue>> LoadAll()
 	{
 		lock (_lock)
 			return new Dictionary<TId, StorageEntry<TValue>>(_entries);
 	}
 
-	public bool Exists(TId id)
+	internal bool Exists(TId id)
 	{
 		lock (_lock)
 			return _entries.ContainsKey(id);
 	}
 
-	public Result Delete(TId id, StorageVersion? expectedVersion)
+	internal Result Delete(TId id, StorageVersion? expectedVersion)
 	{
 		var key = id.ToString() ?? string.Empty;
 		lock (_lock)

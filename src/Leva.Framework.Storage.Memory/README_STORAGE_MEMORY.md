@@ -28,15 +28,15 @@ The provider is intentionally not durable. It is useful when a host needs the sa
 
 ### Provider composition
 
-`MemoryStorageProvider` - Creates repositories and journals for one in-memory provider instance.
+`MemoryStorageProvider` - Creates repository and journal contracts for one in-memory provider instance.
 `MemoryStorageDatabase` - Owns named in-memory repository and journal stores for one provider instance.
 
 ### Repository implementation
 
-`MemoryRepository<TId, TValue>` - Public repository implementation that delegates keyed value operations to a named in-memory store.
+`MemoryRepository<TId, TValue>` - Internal repository implementation that delegates keyed value operations to a named in-memory store.
 `MemoryRepositoryStore<TId, TValue>` - Holds repository entries, performs version checks, and returns snapshots of stored values.
 
 ### Journal implementation
 
-`MemoryJournal<TEntry>` - Public journal implementation that delegates append and read operations to a named in-memory store.
+`MemoryJournal<TEntry>` - Internal journal implementation that delegates append and read operations to a named in-memory store.
 `MemoryJournalStore<TEntry>` - Holds journal entries and assigns sequence versions.

@@ -9,8 +9,8 @@ public sealed class SqliteStorageProvider(string databasePath, JsonSerializerOpt
 {
 	private readonly SqliteStorageDatabase _database = new(databasePath, jsonOptions);
 
-	public SqliteRepository<TId, TValue> CreateRepository<TId, TValue>(string name)
-		where TId : notnull => new(name, _database);
+	public IRepository<TId, TValue> CreateRepository<TId, TValue>(string name)
+		where TId : notnull => new SqliteRepository<TId, TValue>(name, _database);
 
-	public SqliteJournal<TEntry> CreateJournal<TEntry>(string name) => new(name, _database);
+	public IJournal<TEntry> CreateJournal<TEntry>(string name) => new SqliteJournal<TEntry>(name, _database);
 }

@@ -5,7 +5,7 @@ namespace Leva.Framework.Storage.Sqlite;
 /// <summary>
 /// Stores append-only journal entries in SQLite under a named journal.
 /// </summary>
-public sealed class SqliteJournal<TEntry> : IJournal<TEntry>
+internal sealed class SqliteJournal<TEntry> : IJournal<TEntry>
 {
 	private readonly SqliteJournalStore<TEntry> _store;
 

@@ -5,7 +5,7 @@ namespace Leva.Framework.Storage.Files;
 /// <summary>
 /// Stores append-only journal entries as ordered JSON files under a named journal folder.
 /// </summary>
-public sealed class FileJournal<TEntry> : IJournal<TEntry>
+internal sealed class FileJournal<TEntry> : IJournal<TEntry>
 {
 	private readonly FileJournalStore<TEntry> _store;
 

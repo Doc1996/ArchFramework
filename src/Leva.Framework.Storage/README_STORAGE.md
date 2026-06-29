@@ -6,7 +6,7 @@
 
 Storage exists so framework-owned data can be persisted without coupling the framework to EF Core, SQLite, files, or any other concrete persistence technology. It is intended for snapshots, runtime journals, small keyed records, and provider-neutral framework persistence. Application domain data with relationships and rich queries should usually use EF Core directly in the application storage layer.
 
-`Leva.Framework.Storage` depends on `Leva.Framework.Core` so storage operations use the same `Result`, `Result<T>`, and `Error` model as the rest of the framework. Core must not depend on Storage, and Engine should not depend on Storage directly; hosts and infrastructure adapters should connect storage explicitly at the application boundary.
+`Leva.Framework.Storage` depends on `Leva.Framework.Core` so storage operations use the same `Result`, `Result<T>`, and `Error` values as the rest of the framework. Core must not depend on Storage, and Engine should not depend on Storage directly; hosts and infrastructure adapters should connect storage explicitly at the application boundary.
 
 ```text
 Leva.Framework.Storage

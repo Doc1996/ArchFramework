@@ -28,19 +28,20 @@ The provider is useful for local desktop tools, simple durable framework data, s
 
 ### Provider composition
 
-`FileStorageProvider` - Creates repositories and journals under one root directory.
-`FileStorageDatabase` - Owns root paths, key conversion, JSON serialization, and provider path generation.
+`FileStorageProvider` - Creates repository and journal contracts under one root directory.
+`FileStorageDatabase` - Owns root paths, key conversion, JSON serialization, provider path generation, and named store reuse.
 
 ### Repository implementation
 
-`FileRepository<TId, TValue>` - Public repository implementation that delegates keyed value operations to a named file store.
+`FileRepository<TId, TValue>` - Internal repository implementation that delegates keyed value operations to a named file store.
 `FileRepositoryStore<TId, TValue>` - Reads, writes, checks, lists, and deletes repository entries in the file system.
 
 ### Journal implementation
 
-`FileJournal<TEntry>` - Public journal implementation that delegates append and read operations to a named file store.
+`FileJournal<TEntry>` - Internal journal implementation that delegates append and read operations to a named file store.
 `FileJournalStore<TEntry>` - Appends journal entries to ordered JSON files and reads entries in version order.
 
-### File values
+### Shared file helpers
 
+`FileStorageRunner` - Serializes async file operations for one named store and converts unexpected exceptions to storage failures.
 `FileStorageEntry<T>` - JSON storage shape used by the file provider for stored values and metadata.

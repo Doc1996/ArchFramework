@@ -5,7 +5,7 @@ namespace Leva.Framework.Storage.Files;
 /// <summary>
 /// Stores keyed values as JSON files under a named repository folder.
 /// </summary>
-public sealed class FileRepository<TId, TValue> : IRepository<TId, TValue>
+internal sealed class FileRepository<TId, TValue> : IRepository<TId, TValue>
 	where TId : notnull
 {
 	private readonly FileRepositoryStore<TId, TValue> _store;

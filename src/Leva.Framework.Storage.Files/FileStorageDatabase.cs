@@ -16,7 +16,7 @@ internal sealed class FileStorageDatabase
 	private readonly Dictionary<string, object> _journals = new();
 	private readonly Dictionary<string, object> _repositories = new();
 
-	public FileStorageDatabase(string rootPath, JsonSerializerOptions? jsonOptions = null)
+	internal FileStorageDatabase(string rootPath, JsonSerializerOptions? jsonOptions = null)
 	{
 		ArgumentException.ThrowIfNullOrWhiteSpace(rootPath);
 		RootPath = Path.GetFullPath(rootPath);

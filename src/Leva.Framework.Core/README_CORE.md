@@ -40,7 +40,7 @@ Core does not decide how events are queued, how states are executed, how data is
 `IClock` - Provides runtime time through an abstraction so engine logic can be deterministic and replaceable in tests.
 `ILogSink` - Receives diagnostic log entries emitted by the runtime or infrastructure.
 
-### Identity values
+### Identifier values
 
 `AlarmId` - Identifies one alarm instance raised by the runtime or application.
 `CommandId` - Identifies one command issued by a state, routine, behavior, or application service.

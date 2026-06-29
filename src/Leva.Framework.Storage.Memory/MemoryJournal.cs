@@ -5,7 +5,7 @@ namespace Leva.Framework.Storage.Memory;
 /// <summary>
 /// Stores append-only journal entries in memory for the lifetime of the owning provider instance.
 /// </summary>
-public sealed class MemoryJournal<TEntry> : IJournal<TEntry>
+internal sealed class MemoryJournal<TEntry> : IJournal<TEntry>
 {
 	private readonly MemoryJournalStore<TEntry> _store;
 

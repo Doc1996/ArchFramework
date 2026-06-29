@@ -9,7 +9,7 @@ internal sealed class MemoryJournalStore<TEntry>
 	private readonly List<StorageEntry<TEntry>> _entries = [];
 	private long _nextVersion = 1;
 
-	public StorageEntry<TEntry> Append(TEntry value)
+	internal StorageEntry<TEntry> Append(TEntry value)
 	{
 		lock (_lock)
 		{
@@ -21,7 +21,7 @@ internal sealed class MemoryJournalStore<TEntry>
 		}
 	}
 
-	public IReadOnlyList<StorageEntry<TEntry>> Read(StorageVersion? afterVersion, int? limit)
+	internal IReadOnlyList<StorageEntry<TEntry>> Read(StorageVersion? afterVersion, int? limit)
 	{
 		lock (_lock)
 		{

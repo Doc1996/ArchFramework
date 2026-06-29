@@ -13,7 +13,7 @@ internal sealed class SqliteJournalStore<TEntry>
 	private readonly string _journalName;
 	private readonly SqliteStorageDatabase _database;
 
-	public SqliteJournalStore(string name, string journalName, SqliteStorageDatabase database)
+	internal SqliteJournalStore(string name, string journalName, SqliteStorageDatabase database)
 	{
 		ArgumentException.ThrowIfNullOrWhiteSpace(name);
 		ArgumentException.ThrowIfNullOrWhiteSpace(journalName);
@@ -24,7 +24,7 @@ internal sealed class SqliteJournalStore<TEntry>
 		_database = database;
 	}
 
-	public async Task<Result<StorageEntry<TEntry>>> AppendAsync(TEntry value, CancellationToken token)
+	internal async Task<Result<StorageEntry<TEntry>>> AppendAsync(TEntry value, CancellationToken token)
 	{
 		try
 		{
@@ -60,7 +60,7 @@ internal sealed class SqliteJournalStore<TEntry>
 		}
 	}
 
-	public async Task<Result<IReadOnlyList<StorageEntry<TEntry>>>> ReadAsync(
+	internal async Task<Result<IReadOnlyList<StorageEntry<TEntry>>>> ReadAsync(
 		StorageVersion? afterVersion,
 		int? limit,
 		CancellationToken token

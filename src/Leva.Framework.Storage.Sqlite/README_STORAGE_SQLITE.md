@@ -29,16 +29,16 @@ The provider is useful for durable local framework data when files are too loose
 
 ### Provider composition
 
-`SqliteStorageProvider` - Creates repositories and journals for one SQLite database file.
+`SqliteStorageProvider` - Creates repository and journal contracts for one SQLite database file.
 `SqliteStorageDatabase` - Owns database paths, connections, serialization, timestamp formatting, and key conversion.
 `SqliteStorageInitializer` - Creates the provider-owned SQLite schema when a database connection is opened.
 
 ### Repository implementation
 
-`SqliteRepository<TId, TValue>` - Public repository implementation that delegates keyed value operations to a named SQLite store.
+`SqliteRepository<TId, TValue>` - Internal repository implementation that delegates keyed value operations to a named SQLite store.
 `SqliteRepositoryStore<TId, TValue>` - Performs repository SQL operations, version checks, serialization, and row mapping.
 
 ### Journal implementation
 
-`SqliteJournal<TEntry>` - Public journal implementation that delegates append and read operations to a named SQLite store.
+`SqliteJournal<TEntry>` - Internal journal implementation that delegates append and read operations to a named SQLite store.
 `SqliteJournalStore<TEntry>` - Performs journal SQL operations, sequence version assignment, serialization, and row mapping.

@@ -14,7 +14,7 @@ internal sealed class SqliteRepositoryStore<TId, TValue>
 	private readonly string _repositoryName;
 	private readonly SqliteStorageDatabase _database;
 
-	public SqliteRepositoryStore(string name, string repositoryName, SqliteStorageDatabase database)
+	internal SqliteRepositoryStore(string name, string repositoryName, SqliteStorageDatabase database)
 	{
 		ArgumentException.ThrowIfNullOrWhiteSpace(name);
 		ArgumentException.ThrowIfNullOrWhiteSpace(repositoryName);
@@ -25,7 +25,7 @@ internal sealed class SqliteRepositoryStore<TId, TValue>
 		_database = database;
 	}
 
-	public async Task<Result<StorageEntry<TValue>>> SaveAsync(
+	internal async Task<Result<StorageEntry<TValue>>> SaveAsync(
 		TId id,
 		TValue value,
 		StorageVersion? expectedVersion,
@@ -60,7 +60,7 @@ internal sealed class SqliteRepositoryStore<TId, TValue>
 		}
 	}
 
-	public async Task<Result<StorageEntry<TValue>>> LoadAsync(TId id, CancellationToken token)
+	internal async Task<Result<StorageEntry<TValue>>> LoadAsync(TId id, CancellationToken token)
 	{
 		try
 		{
@@ -90,7 +90,7 @@ internal sealed class SqliteRepositoryStore<TId, TValue>
 		}
 	}
 
-	public async Task<Result<IReadOnlyDictionary<TId, StorageEntry<TValue>>>> LoadAllAsync(CancellationToken token)
+	internal async Task<Result<IReadOnlyDictionary<TId, StorageEntry<TValue>>>> LoadAllAsync(CancellationToken token)
 	{
 		try
 		{
@@ -134,7 +134,7 @@ internal sealed class SqliteRepositoryStore<TId, TValue>
 		}
 	}
 
-	public async Task<Result<bool>> ExistsAsync(TId id, CancellationToken token)
+	internal async Task<Result<bool>> ExistsAsync(TId id, CancellationToken token)
 	{
 		try
 		{
@@ -171,7 +171,7 @@ internal sealed class SqliteRepositoryStore<TId, TValue>
 		}
 	}
 
-	public async Task<Result> DeleteAsync(TId id, StorageVersion? expectedVersion, CancellationToken token)
+	internal async Task<Result> DeleteAsync(TId id, StorageVersion? expectedVersion, CancellationToken token)
 	{
 		try
 		{
