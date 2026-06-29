@@ -24,11 +24,11 @@ public sealed class AuthenticationServiceTests
 			Result = Result<AuthenticationResult>.Ok(AuthenticationResult.Succeeded(principal)),
 		};
 
-		var sessionStore = new FakePrincipalSessionStore();
+		var sessionStore = new FakeAuthSessionStore();
 		var audit = new MemoryAuditSink();
 		var service = new AuthenticationService(
 			[unmatched, matched],
-			new PrincipalSessionService(sessionStore, auditSink: audit),
+			new AuthSessionService(sessionStore, auditSink: audit),
 			audit
 		);
 
@@ -52,7 +52,7 @@ public sealed class AuthenticationServiceTests
 	{
 		var service = new AuthenticationService(
 			[],
-			new PrincipalSessionService(new FakePrincipalSessionStore()),
+			new AuthSessionService(new FakeAuthSessionStore()),
 			new MemoryAuditSink()
 		);
 		var result = await service.AuthenticateAsync(new AuthenticationRequest(new AuthenticationMethod("missing")));
@@ -73,7 +73,7 @@ public sealed class AuthenticationServiceTests
 
 		var service = new AuthenticationService(
 			[policy],
-			new PrincipalSessionService(new FakePrincipalSessionStore(), auditSink: audit),
+			new AuthSessionService(new FakeAuthSessionStore(), auditSink: audit),
 			audit
 		);
 		var result = await service.AuthenticateAsync(new AuthenticationRequest(method, "user", "bad"));
@@ -88,16 +88,16 @@ public sealed class AuthenticationServiceTests
 	[Fact]
 	public async Task SignOutAsync_DelegatesToSessionService()
 	{
-		var sessionStore = new FakePrincipalSessionStore();
+		var sessionStore = new FakeAuthSessionStore();
 		var audit = new MemoryAuditSink();
-		var sessionService = new PrincipalSessionService(sessionStore, auditSink: audit);
+		var sessionService = new AuthSessionService(sessionStore, auditSink: audit);
 
 		var session = ResultAssert.Success(await sessionService.CreateAsync(TestPrincipal()));
 		var authentication = new AuthenticationService([], sessionService, audit);
 		var result = await authentication.SignOutAsync(session.SessionId);
 
 		ResultAssert.Success(result);
-		Assert.Equal(PrincipalSessionStatus.SignedOut, sessionStore.Sessions[session.SessionId].Status);
+		Assert.Equal(AuthSessionStatus.SignedOut, sessionStore.Sessions[session.SessionId].Status);
 	}
 
 	private static Principal TestPrincipal() => new(new PrincipalId("user-1"), "User One");

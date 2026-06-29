@@ -10,13 +10,24 @@ public sealed class AuthorizationServiceTests
 	[Fact]
 	public async Task AuthorizeAsync_ReturnsDeniedWhenPrincipalIsMissing()
 	{
-		var service = new AuthorizationService([], new MemoryAuditSink());
+		var service = new AuthorizationService([new BuiltInAuthorizationPolicy()], new MemoryAuditSink());
 		var requirement = AuthorizationRequirement.SignedIn;
 		var result = await service.AuthorizeAsync(new AuthorizationRequest(null, requirement));
 		var authorization = ResultAssert.Success(result);
 
 		Assert.False(authorization.IsAuthorized);
 		Assert.Equal(requirement, authorization.Requirement);
+	}
+
+	[Fact]
+	public async Task AuthorizeAsync_ReturnsFailureWhenNoPolicyCanEvaluateRequirement()
+	{
+		var requirement = AuthorizationRequirement.SignedIn;
+		var service = new AuthorizationService([], new MemoryAuditSink());
+		var result = await service.AuthorizeAsync(new AuthorizationRequest(null, requirement));
+
+		Assert.True(result.IsFailure);
+		Assert.Equal("principal.not_found", result.Error.Code);
 	}
 
 	[Fact]

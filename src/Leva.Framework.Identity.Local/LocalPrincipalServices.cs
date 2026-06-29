@@ -5,20 +5,20 @@ namespace Leva.Framework.Identity.Local;
 /// </summary>
 public sealed class LocalPrincipalServices(
 	ILocalCredentialStore credentials,
-	ILocalSecretProtector secretProtector,
+	LocalSecretProtector secretProtector,
 	LocalCredentialService credentialService,
 	LocalAuthenticationPolicy authenticationPolicy
 )
 {
 	public ILocalCredentialStore Credentials { get; } = credentials;
-	public ILocalSecretProtector SecretProtector { get; } = secretProtector;
+	public LocalSecretProtector SecretProtector { get; } = secretProtector;
 	public LocalCredentialService CredentialService { get; } = credentialService;
 	public LocalAuthenticationPolicy AuthenticationPolicy { get; } = authenticationPolicy;
 
 	public static LocalPrincipalServices Create(
 		IPrincipalStore principals,
 		ILocalCredentialStore? credentials = null,
-		ILocalSecretProtector? secretProtector = null
+		LocalSecretProtector? secretProtector = null
 	)
 	{
 		ArgumentNullException.ThrowIfNull(principals);

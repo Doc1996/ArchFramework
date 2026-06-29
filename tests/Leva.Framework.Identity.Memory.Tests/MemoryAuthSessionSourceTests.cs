@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Leva.Framework.Identity.Memory.Tests;
 
-public sealed class MemoryPrincipalSessionSourceTests
+public sealed class MemoryAuthSessionSourceTests
 {
 	[Fact]
 	public async Task GetSessionAsync_ReturnsNullWhenNoSessionIsConfigured()

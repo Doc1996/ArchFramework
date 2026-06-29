@@ -3,39 +3,39 @@ namespace Leva.Framework.Identity;
 /// <summary>
 /// Creates sessions, computes expiration, and marks sessions expired or signed out.
 /// </summary>
-public class PrincipalSessionPolicy(TimeSpan? lifetime = null)
+public class AuthSessionPolicy(TimeSpan? lifetime = null)
 {
 	private readonly TimeSpan? _lifetime = lifetime ?? TimeSpan.FromHours(8);
 
-	public virtual PrincipalSession Create(Principal principal, DateTimeOffset utcNow)
+	public virtual AuthSession Create(Principal principal, DateTimeOffset utcNow)
 	{
 		ArgumentNullException.ThrowIfNull(principal);
-		return new PrincipalSession(
-			PrincipalSessionId.New(),
+		return new AuthSession(
+			AuthSessionId.New(),
 			principal,
-			PrincipalSessionStatus.Active,
+			AuthSessionStatus.Active,
 			utcNow,
 			utcNow,
 			GetExpiration(utcNow)
 		);
 	}
 
-	public virtual bool IsExpired(PrincipalSession session, DateTimeOffset utcNow)
+	public virtual bool IsExpired(AuthSession session, DateTimeOffset utcNow)
 	{
 		ArgumentNullException.ThrowIfNull(session);
 		return session.ExpiresAt.HasValue && session.ExpiresAt.Value <= utcNow;
 	}
 
-	public virtual PrincipalSession Expire(PrincipalSession session, DateTimeOffset utcNow)
+	public virtual AuthSession Expire(AuthSession session, DateTimeOffset utcNow)
 	{
 		ArgumentNullException.ThrowIfNull(session);
-		return session with { Status = PrincipalSessionStatus.Expired, UpdatedAt = utcNow };
+		return session with { Status = AuthSessionStatus.Expired, UpdatedAt = utcNow };
 	}
 
-	public virtual PrincipalSession SignOut(PrincipalSession session, DateTimeOffset utcNow)
+	public virtual AuthSession SignOut(AuthSession session, DateTimeOffset utcNow)
 	{
 		ArgumentNullException.ThrowIfNull(session);
-		return session with { Status = PrincipalSessionStatus.SignedOut, UpdatedAt = utcNow };
+		return session with { Status = AuthSessionStatus.SignedOut, UpdatedAt = utcNow };
 	}
 
 	protected virtual DateTimeOffset? GetExpiration(DateTimeOffset utcNow) =>

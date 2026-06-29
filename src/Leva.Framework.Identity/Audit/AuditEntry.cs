@@ -7,7 +7,7 @@ public sealed record AuditEntry(
 	AuditAction Action,
 	DateTimeOffset CreatedAt,
 	PrincipalId? PrincipalId = null,
-	PrincipalSessionId? SessionId = null,
+	AuthSessionId? SessionId = null,
 	string? Method = null,
 	string? Requirement = null,
 	string? Reason = null,

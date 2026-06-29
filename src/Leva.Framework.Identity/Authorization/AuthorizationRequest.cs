@@ -6,7 +6,7 @@ namespace Leva.Framework.Identity;
 public sealed record AuthorizationRequest(
 	Principal? Principal,
 	AuthorizationRequirement Requirement,
-	PrincipalSession? Session = null,
+	AuthSession? Session = null,
 	IReadOnlyDictionary<string, object?>? Properties = null
 )
 {

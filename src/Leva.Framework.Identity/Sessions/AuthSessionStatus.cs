@@ -1,9 +1,9 @@
 namespace Leva.Framework.Identity;
 
 /// <summary>
-/// Describes the lifecycle state of an principal session.
+/// Describes the lifecycle state of an auth session.
 /// </summary>
-public enum PrincipalSessionStatus
+public enum AuthSessionStatus
 {
 	Active,
 	Expired,

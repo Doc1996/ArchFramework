@@ -3,14 +3,14 @@ using Leva.Framework.Core;
 namespace Leva.Framework.Identity;
 
 /// <summary>
-/// State-facing principal capability that resolves the current session and performs authorization checks.
+/// State-facing principal capability that resolves the current auth session and performs authorization checks.
 /// </summary>
 public sealed class PrincipalAccess
 {
-	private readonly PrincipalSessionSource _sessionSource;
+	private readonly AuthSessionSource _sessionSource;
 	private readonly AuthorizationService _authorization;
 
-	public PrincipalAccess(PrincipalSessionSource sessionSource, AuthorizationService authorization)
+	public PrincipalAccess(AuthSessionSource sessionSource, AuthorizationService authorization)
 	{
 		ArgumentNullException.ThrowIfNull(sessionSource);
 		ArgumentNullException.ThrowIfNull(authorization);
@@ -19,7 +19,7 @@ public sealed class PrincipalAccess
 		_authorization = authorization;
 	}
 
-	public Task<Result<PrincipalSession?>> GetSessionAsync(CancellationToken token = default) =>
+	public Task<Result<AuthSession?>> GetSessionAsync(CancellationToken token = default) =>
 		_sessionSource.GetSessionAsync(token);
 
 	public async Task<Result<Principal?>> GetPrincipalAsync(CancellationToken token = default)
@@ -35,7 +35,7 @@ public sealed class PrincipalAccess
 		var session = await GetSessionAsync(token);
 		return session.IsFailure
 			? Result<bool>.Fail(session.Error)
-			: Result<bool>.Ok(session.Value is { Status: PrincipalSessionStatus.Active });
+			: Result<bool>.Ok(session.Value is { Status: AuthSessionStatus.Active });
 	}
 
 	public async Task<Result<AuthorizationResult>> RequireAsync(

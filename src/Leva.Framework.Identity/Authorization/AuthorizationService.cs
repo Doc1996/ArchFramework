@@ -34,7 +34,11 @@ public sealed class AuthorizationService
 
 		var policies = _policies.Where(policy => policy.CanAuthorize(request)).ToArray();
 		if (policies.Length == 0)
-			return Deny(request, $"No authorization policy can evaluate '{request.Requirement}'.");
+		{
+			var error = PrincipalErrors.NotFound($"authorization policy for '{request.Requirement}'");
+			Write(AuditAction.AuthorizationFailed, request, error.Message);
+			return Result<AuthorizationResult>.Fail(error);
+		}
 
 		var lastReason = "Authorization denied.";
 		foreach (var policy in policies)
@@ -53,17 +57,11 @@ public sealed class AuthorizationService
 			lastReason = authorization.Reason ?? lastReason;
 		}
 
-		return Deny(request, lastReason);
+		Write(AuditAction.AuthorizationFailed, request, lastReason);
+		return Result<AuthorizationResult>.Ok(AuthorizationResult.Denied(request.Requirement, lastReason));
 	}
 
 	private DateTimeOffset UtcNow => _clock?.UtcNow ?? DateTimeOffset.UtcNow;
-
-	private Result<AuthorizationResult> Deny(AuthorizationRequest request, string reason)
-	{
-		var result = AuthorizationResult.Denied(request.Requirement, reason);
-		Write(AuditAction.AuthorizationFailed, request, reason);
-		return Result<AuthorizationResult>.Ok(result);
-	}
 
 	private void Write(AuditAction action, AuthorizationRequest request, string? reason) =>
 		_auditSink.Write(

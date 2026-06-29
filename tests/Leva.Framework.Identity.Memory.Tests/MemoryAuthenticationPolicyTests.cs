@@ -13,7 +13,6 @@ public sealed class MemoryAuthenticationPolicyTests
 		principals.Add(principal, "user");
 
 		var policy = new MemoryAuthenticationPolicy(principals);
-		policy.Add("user", principal.Id);
 		var result = await policy.AuthenticateAsync(
 			new AuthenticationRequest(MemoryAuthenticationMethods.Principal, "user")
 		);
@@ -31,7 +30,6 @@ public sealed class MemoryAuthenticationPolicyTests
 		principals.Add(principal, "user");
 
 		var policy = new MemoryAuthenticationPolicy(principals);
-		policy.Add("user", principal.Id);
 		var result = await policy.AuthenticateAsync(
 			new AuthenticationRequest(MemoryAuthenticationMethods.Principal, "wrong")
 		);
@@ -48,7 +46,6 @@ public sealed class MemoryAuthenticationPolicyTests
 		var principal = new Principal(new PrincipalId("principal-1"), "User One");
 		services.Principals.Add(principal, "user");
 
-		services.AuthenticationPolicy.Add("user", principal.Id);
 		var result = await services.Authentication.AuthenticateAsync(
 			new AuthenticationRequest(MemoryAuthenticationMethods.Principal, "user")
 		);

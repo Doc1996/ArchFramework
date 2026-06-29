@@ -35,8 +35,7 @@ The local provider keeps account lifecycle concerns small. It supports local cre
 
 ### Secrets
 
-`ILocalSecretProtector` - Protects and verifies local credential secrets.
-`LocalSecretProtector` - PBKDF2-based local secret protector using .NET cryptography APIs.
+`LocalSecretProtector` - PBKDF2-based local secret protector that creates and verifies local credential secrets.
 
 ### Authentication
 

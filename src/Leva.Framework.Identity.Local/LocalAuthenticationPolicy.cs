@@ -9,12 +9,12 @@ public sealed class LocalAuthenticationPolicy : AuthenticationPolicy
 {
 	private readonly ILocalCredentialStore _credentials;
 	private readonly IPrincipalStore _principals;
-	private readonly ILocalSecretProtector _secretProtector;
+	private readonly LocalSecretProtector _secretProtector;
 
 	public LocalAuthenticationPolicy(
 		ILocalCredentialStore credentials,
 		IPrincipalStore principals,
-		ILocalSecretProtector? secretProtector = null,
+		LocalSecretProtector? secretProtector = null,
 		AuthenticationMethod? method = null
 	)
 	{

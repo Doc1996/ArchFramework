@@ -3,12 +3,12 @@ using Xunit;
 
 namespace Leva.Framework.Identity.Memory.Tests;
 
-public sealed class MemoryPrincipalSessionStoreTests
+public sealed class MemoryAuthSessionStoreTests
 {
 	[Fact]
 	public async Task SaveLoadAndDeleteAsync_StoresSessionInMemory()
 	{
-		var store = new MemoryPrincipalSessionStore();
+		var store = new MemoryAuthSessionStore();
 		var session = TestSession();
 
 		ResultAssert.Success(await store.SaveAsync(session));
@@ -23,19 +23,19 @@ public sealed class MemoryPrincipalSessionStoreTests
 	[Fact]
 	public async Task Clear_RemovesAllSessions()
 	{
-		var store = new MemoryPrincipalSessionStore();
+		var store = new MemoryAuthSessionStore();
 		ResultAssert.Success(await store.SaveAsync(TestSession()));
 
 		store.Clear();
 		Assert.Empty(store.Sessions);
 	}
 
-	private static PrincipalSession TestSession()
+	private static AuthSession TestSession()
 	{
 		return new(
-			new PrincipalSessionId("session-1"),
+			new AuthSessionId("session-1"),
 			new Principal(new PrincipalId("principal-1"), "User One"),
-			PrincipalSessionStatus.Active,
+			AuthSessionStatus.Active,
 			DateTimeOffset.UtcNow,
 			DateTimeOffset.UtcNow
 		);

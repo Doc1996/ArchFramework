@@ -1,6 +1,6 @@
 # Leva.Framework.Identity.Memory
 
-`Leva.Framework.Identity.Memory` is the in-memory provider implementation of `Leva.Framework.Identity`. It stores principals and sessions in process and authenticates configured principal names for tests, demos, samples, and early applications.
+`Leva.Framework.Identity.Memory` is the in-memory provider implementation of `Leva.Framework.Identity`. It stores principals and auth sessions in process and authenticates principal names for tests, demos, samples, and early applications.
 
 ## Purpose and dependencies
 
@@ -15,28 +15,28 @@ Leva.Framework.Identity.Memory
 
 ## Project overview
 
-The memory provider is intentionally simple. `MemoryPrincipalStore` keeps principals in memory. `MemoryPrincipalSessionStore` keeps sessions in memory. `MemoryAuthenticationPolicy` authenticates a configured name to a configured `PrincipalId` using the `memory.principal` method. It does not store passwords, secrets, reset tokens, email confirmation state, lockout state, or account lifecycle data.
+The memory provider is intentionally simple. `MemoryPrincipalStore` keeps principals in memory. `MemoryAuthSessionStore` keeps auth sessions in memory. `MemoryAuthenticationPolicy` authenticates a submitted name by resolving it through `IPrincipalStore` using the `memory.principal` method. It does not store passwords, secrets, reset tokens, email confirmation state, lockout state, or account lifecycle data.
 
-Authorization is not memory-specific. `MemoryPrincipalServices` uses the shared `PrincipalAuthorizationPolicy` from `Leva.Framework.Identity` for signed-in, role, permission, and claim checks. `MemoryPrincipalSessionSource` exposes one configured current session for tests, demos, and simple hosts.
+Authorization is not memory-specific. `MemoryPrincipalServices` uses the shared `BuiltInAuthorizationPolicy` from `Leva.Framework.Identity` for signed-in, role, permission, and claim checks. `MemoryAuthSessionSource` exposes one configured current auth session for tests, demos, and simple hosts.
 
-`MemoryPrincipalServices` is a small composition helper. It creates the memory stores, authentication policy, shared authorization policy, session service, authentication service, authorization service, session source, and principal access object while still leaving each individual object available for direct testing or manual wiring.
+`MemoryPrincipalServices` is a small composition helper. It creates the memory stores, authentication policy, shared authorization policy, auth session service, authentication service, authorization service, auth session source, and principal access object while still leaving each individual object available for direct testing or manual wiring.
 
 ## Files and classes
 
 ### Provider composition
 
-`MemoryPrincipalServices` - Groups the memory stores, policies, services, session source, and principal access object for quick setup.
+`MemoryPrincipalServices` - Groups the memory stores, policies, services, auth session source, and principal access object for quick setup.
 
 ### Principal storage
 
 `MemoryPrincipalStore` - Stores principals in memory and resolves them by id, display name, email, or configured names.
 
-### Session implementation
+### Auth session implementation
 
-`MemoryPrincipalSessionStore` - Stores principal sessions in memory and implements `IPrincipalSessionStore`.
-`MemoryPrincipalSessionSource` - Resolves the current principal session from a configured in-memory session id.
+`MemoryAuthSessionStore` - Stores auth sessions in memory and implements `IAuthSessionStore`.
+`MemoryAuthSessionSource` - Resolves the current auth session from a configured in-memory session id.
 
 ### Authentication implementation
 
 `MemoryAuthenticationMethods` - Defines the standard `memory.principal` authentication method.
-`MemoryAuthenticationPolicy` - Authenticates configured names by resolving them to existing principals.
+`MemoryAuthenticationPolicy` - Authenticates submitted names by resolving them through `IPrincipalStore`.

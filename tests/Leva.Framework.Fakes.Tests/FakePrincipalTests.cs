@@ -21,13 +21,13 @@ public sealed class FakePrincipalTests
 	}
 
 	[Fact]
-	public async Task FakePrincipalSessionStore_SavesLoadsAndDeletesSession()
+	public async Task FakeAuthSessionStore_SavesLoadsAndDeletesSession()
 	{
-		var store = new FakePrincipalSessionStore();
-		var session = new PrincipalSession(
-			new PrincipalSessionId("session-1"),
+		var store = new FakeAuthSessionStore();
+		var session = new AuthSession(
+			new AuthSessionId("session-1"),
 			new Principal(new PrincipalId("user-1"), "User One"),
-			PrincipalSessionStatus.Active,
+			AuthSessionStatus.Active,
 			DateTimeOffset.UtcNow,
 			DateTimeOffset.UtcNow
 		);
@@ -42,9 +42,9 @@ public sealed class FakePrincipalTests
 	}
 
 	[Fact]
-	public async Task FakePrincipalSessionSource_ReturnsConfiguredSessionOrError()
+	public async Task FakeAuthSessionSource_ReturnsConfiguredSessionOrError()
 	{
-		var source = new FakePrincipalSessionSource();
+		var source = new FakeAuthSessionSource();
 		var error = new Error("test", "failure");
 		source.Error = error;
 		var result = await source.GetSessionAsync();

@@ -19,7 +19,7 @@ Leva.Framework.Identity
 
 ## Project overview
 
-Fakes are intentionally small and observable. They expose what happened in a test: captured log entries, transition requests, queued events, current fake time, handler calls, enter/exit counts, status updates, alarm calls, identity/session lookups, policy calls, and configured return behavior.
+Fakes are intentionally small and observable. They expose what happened in a test: captured log entries, transition requests, queued events, current fake time, handler calls, enter/exit counts, status updates, alarm calls, identity/auth-session lookups, policy calls, and configured return behavior.
 
 The source files are grouped by the framework area they support: `Core`, `Engine`, and `Identity`. The namespace stays `Leva.Framework.Fakes` so tests can import one namespace and use all fakes.
 
@@ -51,7 +51,7 @@ Fakes should not become a second engine. If a fake starts reproducing too much p
 ### Identity fakes
 
 `FakePrincipalStore` - In-memory principal store fake for tests.
-`FakePrincipalSessionStore` - In-memory principal session store fake for tests.
-`FakePrincipalSessionSource` - Configurable current principal session source fake for tests.
+`FakeAuthSessionStore` - In-memory auth session store fake for tests.
+`FakeAuthSessionSource` - Configurable current auth session source fake for tests.
 `FakeAuthenticationPolicy` - Configurable authentication policy fake with call tracking.
 `FakeAuthorizationPolicy` - Configurable authorization policy fake with call tracking and simple policy matching.

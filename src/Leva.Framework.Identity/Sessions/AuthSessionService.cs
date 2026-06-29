@@ -3,18 +3,18 @@ using Leva.Framework.Core;
 namespace Leva.Framework.Identity;
 
 /// <summary>
-/// Creates, loads, signs out, expires, deletes, and audits principal sessions.
+/// Creates, loads, signs out, expires, deletes, and audits auth sessions.
 /// </summary>
-public sealed class PrincipalSessionService
+public sealed class AuthSessionService
 {
-	private readonly IPrincipalSessionStore _sessionStore;
-	private readonly PrincipalSessionPolicy _policy;
+	private readonly IAuthSessionStore _sessionStore;
+	private readonly AuthSessionPolicy _policy;
 	private readonly IAuditSink _auditSink;
 	private readonly IClock? _clock;
 
-	public PrincipalSessionService(
-		IPrincipalSessionStore sessionStore,
-		PrincipalSessionPolicy? policy = null,
+	public AuthSessionService(
+		IAuthSessionStore sessionStore,
+		AuthSessionPolicy? policy = null,
 		IAuditSink? auditSink = null,
 		IClock? clock = null
 	)
@@ -22,12 +22,12 @@ public sealed class PrincipalSessionService
 		ArgumentNullException.ThrowIfNull(sessionStore);
 
 		_sessionStore = sessionStore;
-		_policy = policy ?? new PrincipalSessionPolicy();
+		_policy = policy ?? new AuthSessionPolicy();
 		_auditSink = auditSink ?? new NullAuditSink();
 		_clock = clock;
 	}
 
-	public async Task<Result<PrincipalSession>> CreateAsync(Principal principal, CancellationToken token = default)
+	public async Task<Result<AuthSession>> CreateAsync(Principal principal, CancellationToken token = default)
 	{
 		token.ThrowIfCancellationRequested();
 		ArgumentNullException.ThrowIfNull(principal);
@@ -40,8 +40,8 @@ public sealed class PrincipalSessionService
 		return result;
 	}
 
-	public async Task<Result<PrincipalSession?>> LoadAsync(
-		PrincipalSessionId sessionId,
+	public async Task<Result<AuthSession?>> LoadAsync(
+		AuthSessionId sessionId,
 		CancellationToken token = default
 	)
 	{
@@ -59,11 +59,11 @@ public sealed class PrincipalSessionService
 		await _sessionStore.SaveAsync(expired, token);
 
 		Write(AuditAction.SessionExpired, expired);
-		return Result<PrincipalSession?>.Ok(null);
+		return Result<AuthSession?>.Ok(null);
 	}
 
-	public async Task<Result<PrincipalSession>> SignOutAsync(
-		PrincipalSessionId sessionId,
+	public async Task<Result<AuthSession>> SignOutAsync(
+		AuthSessionId sessionId,
 		CancellationToken token = default
 	)
 	{
@@ -71,9 +71,9 @@ public sealed class PrincipalSessionService
 		var result = await _sessionStore.LoadAsync(sessionId, token);
 
 		if (result.IsFailure)
-			return Result<PrincipalSession>.Fail(result.Error);
+			return Result<AuthSession>.Fail(result.Error);
 		if (result.Value is null)
-			return Result<PrincipalSession>.Fail(PrincipalErrors.NotFound("principal session", sessionId.ToString()));
+			return Result<AuthSession>.Fail(PrincipalErrors.NotFound("auth session", sessionId.ToString()));
 
 		var signedOut = _policy.SignOut(result.Value, UtcNow);
 		var save = await _sessionStore.SaveAsync(signedOut, token);
@@ -83,8 +83,8 @@ public sealed class PrincipalSessionService
 		return save;
 	}
 
-	public async Task<Result<PrincipalSession>> ExpireAsync(
-		PrincipalSessionId sessionId,
+	public async Task<Result<AuthSession>> ExpireAsync(
+		AuthSessionId sessionId,
 		CancellationToken token = default
 	)
 	{
@@ -92,9 +92,9 @@ public sealed class PrincipalSessionService
 		var result = await _sessionStore.LoadAsync(sessionId, token);
 
 		if (result.IsFailure)
-			return Result<PrincipalSession>.Fail(result.Error);
+			return Result<AuthSession>.Fail(result.Error);
 		if (result.Value is null)
-			return Result<PrincipalSession>.Fail(PrincipalErrors.NotFound("principal session", sessionId.ToString()));
+			return Result<AuthSession>.Fail(PrincipalErrors.NotFound("auth session", sessionId.ToString()));
 
 		var expired = _policy.Expire(result.Value, UtcNow);
 		var save = await _sessionStore.SaveAsync(expired, token);
@@ -104,7 +104,7 @@ public sealed class PrincipalSessionService
 		return save;
 	}
 
-	public async Task<Result> DeleteAsync(PrincipalSessionId sessionId, CancellationToken token = default)
+	public async Task<Result> DeleteAsync(AuthSessionId sessionId, CancellationToken token = default)
 	{
 		token.ThrowIfCancellationRequested();
 		var result = await _sessionStore.DeleteAsync(sessionId, token);
@@ -116,6 +116,6 @@ public sealed class PrincipalSessionService
 
 	private DateTimeOffset UtcNow => _clock?.UtcNow ?? DateTimeOffset.UtcNow;
 
-	private void Write(AuditAction action, PrincipalSession? session = null, PrincipalSessionId? sessionId = null) =>
+	private void Write(AuditAction action, AuthSession? session = null, AuthSessionId? sessionId = null) =>
 		_auditSink.Write(new AuditEntry(action, UtcNow, session?.Principal.Id, session?.SessionId ?? sessionId));
 }

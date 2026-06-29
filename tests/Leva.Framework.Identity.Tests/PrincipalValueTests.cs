@@ -13,9 +13,9 @@ public sealed class PrincipalValueTests
 	}
 
 	[Fact]
-	public void PrincipalSessionIdNew_CreatesNonEmptyValue()
+	public void AuthSessionIdNew_CreatesNonEmptyValue()
 	{
-		var id = PrincipalSessionId.New();
+		var id = AuthSessionId.New();
 		Assert.False(string.IsNullOrWhiteSpace(id.Value));
 		Assert.Equal(id.Value, id.ToString());
 	}

@@ -8,12 +8,12 @@ namespace Leva.Framework.Identity.Local;
 public sealed class LocalCredentialService
 {
 	private readonly ILocalCredentialStore _credentials;
-	private readonly ILocalSecretProtector _secretProtector;
+	private readonly LocalSecretProtector _secretProtector;
 	private readonly IClock? _clock;
 
 	public LocalCredentialService(
 		ILocalCredentialStore credentials,
-		ILocalSecretProtector? secretProtector = null,
+		LocalSecretProtector? secretProtector = null,
 		IClock? clock = null
 	)
 	{

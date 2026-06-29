@@ -5,7 +5,7 @@ namespace Leva.Framework.Identity.Local;
 /// <summary>
 /// Creates and verifies PBKDF2-SHA256 local credential secrets.
 /// </summary>
-public sealed class LocalSecretProtector : ILocalSecretProtector
+public sealed class LocalSecretProtector
 {
 	private const string Algorithm = "PBKDF2-SHA256";
 	private readonly int _iterations;

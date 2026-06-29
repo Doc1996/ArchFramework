@@ -8,13 +8,13 @@ namespace Leva.Framework.Identity;
 public sealed class AuthenticationService
 {
 	private readonly IReadOnlyList<AuthenticationPolicy> _policies;
-	private readonly PrincipalSessionService _sessionService;
+	private readonly AuthSessionService _sessionService;
 	private readonly IAuditSink _auditSink;
 	private readonly IClock? _clock;
 
 	public AuthenticationService(
 		IEnumerable<AuthenticationPolicy> policies,
-		PrincipalSessionService sessionService,
+		AuthSessionService sessionService,
 		IAuditSink? auditSink = null,
 		IClock? clock = null
 	)
@@ -70,7 +70,7 @@ public sealed class AuthenticationService
 		return Result<AuthenticationResult>.Ok(finalResult);
 	}
 
-	public async Task<Result> SignOutAsync(PrincipalSessionId sessionId, CancellationToken token = default)
+	public async Task<Result> SignOutAsync(AuthSessionId sessionId, CancellationToken token = default)
 	{
 		token.ThrowIfCancellationRequested();
 		var result = await _sessionService.SignOutAsync(sessionId, token);
@@ -79,7 +79,7 @@ public sealed class AuthenticationService
 
 	private DateTimeOffset UtcNow => _clock?.UtcNow ?? DateTimeOffset.UtcNow;
 
-	private void WriteSuccess(AuthenticationMethod method, PrincipalId principalId, PrincipalSessionId sessionId) =>
+	private void WriteSuccess(AuthenticationMethod method, PrincipalId principalId, AuthSessionId sessionId) =>
 		_auditSink.Write(new AuditEntry(AuditAction.Authenticated, UtcNow, principalId, sessionId, method.ToString()));
 
 	private void WriteFailure(AuthenticationMethod method, string reason, PrincipalId? principalId = null) =>

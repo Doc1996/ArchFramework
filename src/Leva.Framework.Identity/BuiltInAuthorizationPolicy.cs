@@ -1,11 +1,11 @@
 using Leva.Framework.Core;
 
-namespace Leva.Framework.Identity.Memory;
+namespace Leva.Framework.Identity;
 
 /// <summary>
 /// Authorizes signed-in, role, permission, and claim requirements from the principal model.
 /// </summary>
-public sealed class MemoryAuthorizationPolicy : AuthorizationPolicy
+public sealed class BuiltInAuthorizationPolicy : AuthorizationPolicy
 {
 	public override bool CanAuthorize(AuthorizationRequest request)
 	{
@@ -33,7 +33,7 @@ public sealed class MemoryAuthorizationPolicy : AuthorizationPolicy
 			return AuthorizationResult.Denied(request.Requirement, "Principal is not available.");
 
 		if (request.Requirement == AuthorizationRequirement.SignedIn)
-			return request.Session is { Status: PrincipalSessionStatus.Active }
+			return request.Session is { Status: AuthSessionStatus.Active }
 				? AuthorizationResult.Allowed(request.Requirement)
 				: AuthorizationResult.Denied(request.Requirement, "Principal is not signed in.");
 

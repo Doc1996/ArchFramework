@@ -10,7 +10,7 @@ public sealed class PrincipalAccessTests
 	[Fact]
 	public async Task GetSessionAsync_ReturnsCurrentSessionFromSource()
 	{
-		var source = new FakePrincipalSessionSource { Session = TestSession() };
+		var source = new FakeAuthSessionSource { Session = TestSession() };
 		var access = new PrincipalAccess(source, new AuthorizationService([], new MemoryAuditSink()));
 		var result = await access.GetSessionAsync();
 
@@ -23,7 +23,7 @@ public sealed class PrincipalAccessTests
 	{
 		var session = TestSession();
 		var access = new PrincipalAccess(
-			new FakePrincipalSessionSource { Session = session },
+			new FakeAuthSessionSource { Session = session },
 			new AuthorizationService([], new MemoryAuditSink())
 		);
 
@@ -35,7 +35,7 @@ public sealed class PrincipalAccessTests
 	public async Task IsSignedInAsync_ReturnsTrueForActiveSession()
 	{
 		var access = new PrincipalAccess(
-			new FakePrincipalSessionSource { Session = TestSession() },
+			new FakeAuthSessionSource { Session = TestSession() },
 			new AuthorizationService([], new MemoryAuditSink())
 		);
 
@@ -54,7 +54,7 @@ public sealed class PrincipalAccessTests
 		};
 
 		var access = new PrincipalAccess(
-			new FakePrincipalSessionSource { Session = session },
+			new FakeAuthSessionSource { Session = session },
 			new AuthorizationService([policy], new MemoryAuditSink())
 		);
 		var result = await access.RequireAsync(requirement);
@@ -67,7 +67,7 @@ public sealed class PrincipalAccessTests
 	public async Task RequireAsync_PropagatesSourceFailure()
 	{
 		var access = new PrincipalAccess(
-			new FakePrincipalSessionSource { Error = PrincipalErrors.Unavailable("test") },
+			new FakeAuthSessionSource { Error = PrincipalErrors.Unavailable("test") },
 			new AuthorizationService([], new MemoryAuditSink())
 		);
 		var result = await access.RequireAsync(AuthorizationRequirement.SignedIn);
@@ -76,12 +76,12 @@ public sealed class PrincipalAccessTests
 		Assert.Equal("principal.unavailable", result.Error.Code);
 	}
 
-	private static PrincipalSession TestSession()
+	private static AuthSession TestSession()
 	{
-		return new PrincipalSession(
-			new PrincipalSessionId("session-1"),
+		return new AuthSession(
+			new AuthSessionId("session-1"),
 			new Principal(new PrincipalId("user-1"), "User One"),
-			PrincipalSessionStatus.Active,
+			AuthSessionStatus.Active,
 			DateTimeOffset.UtcNow,
 			DateTimeOffset.UtcNow
 		);
