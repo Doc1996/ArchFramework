@@ -1,5 +1,4 @@
 using Leva.Framework.Core;
-using Xunit;
 
 namespace Leva.Framework.Testing;
 
@@ -8,11 +7,17 @@ namespace Leva.Framework.Testing;
 /// </summary>
 public static class ResultAssert
 {
-	public static void Success(Result result) => Assert.True(result.IsSuccess, result.Error.Message);
+	public static void Success(Result result)
+	{
+		if (result.IsFailure)
+			throw new ResultAssertionException(result.Error.Message);
+	}
 
 	public static TValue Success<TValue>(Result<TValue> result)
 	{
-		Assert.True(result.IsSuccess, result.Error.Message);
+		if (result.IsFailure)
+			throw new ResultAssertionException(result.Error.Message);
+
 		return result.Value!;
 	}
 }

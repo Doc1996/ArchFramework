@@ -29,7 +29,7 @@ The provider is useful for local desktop tools, simple durable framework data, s
 ### Provider composition
 
 `FileStorageProvider` - Creates repository and journal contracts under one root directory.
-`FileStorageDatabase` - Owns root paths, key conversion, JSON serialization, provider path generation, and named store reuse.
+`FileStorageDatabase` - Owns root directorys, key conversion, JSON serialization, provider path generation, and named store reuse.
 
 ### Repository implementation
 

@@ -34,7 +34,7 @@ Leva.Framework.Presentation.Blazor  future
 
 ## Dependency direction
 
-Dependencies move inward toward Core. Core depends only on .NET. Engine depends on Core. Storage depends on Core. Identity depends on Core. Provider libraries depend on their contract libraries and Core. Fakes depends on Core, Engine, and Identity because it is a testing support library. Testing depends on Core and xUnit because it is only used by test projects. Applications and future provider libraries may depend on selected framework libraries, but Core and Engine should not depend on applications, UI providers, storage providers, notification providers, identity providers, devices, databases, or web frameworks.
+Dependencies move inward toward Core. Core depends only on .NET. Engine depends on Core. Storage depends on Core. Identity depends on Core. Provider libraries depend on their contract libraries and Core. Fakes depends on Core, Engine, and Identity because it is a testing support library. Testing depends on Core and stays independent of a specific test runner. Applications and future provider libraries may depend on selected framework libraries, but Core and Engine should not depend on applications, UI providers, storage providers, notification providers, identity providers, devices, databases, or web frameworks.
 
 ```text
 Leva.Framework.Core
@@ -65,7 +65,6 @@ Leva.Framework.Fakes
 
 Leva.Framework.Testing
   -> Leva.Framework.Core
-  -> xUnit
 
 Applications / providers
   -> selected framework libraries

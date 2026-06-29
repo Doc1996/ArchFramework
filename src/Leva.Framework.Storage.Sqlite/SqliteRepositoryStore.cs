@@ -11,18 +11,18 @@ internal sealed class SqliteRepositoryStore<TId, TValue>
 	where TId : notnull
 {
 	private readonly string _name;
-	private readonly string _repositoryName;
 	private readonly SqliteStorageDatabase _database;
+	private readonly string _repositoryName;
 
-	internal SqliteRepositoryStore(string name, string repositoryName, SqliteStorageDatabase database)
+	internal SqliteRepositoryStore(string name, SqliteStorageDatabase database, string repositoryName)
 	{
 		ArgumentException.ThrowIfNullOrWhiteSpace(name);
-		ArgumentException.ThrowIfNullOrWhiteSpace(repositoryName);
 		ArgumentNullException.ThrowIfNull(database);
+		ArgumentException.ThrowIfNullOrWhiteSpace(repositoryName);
 
 		_name = name;
-		_repositoryName = repositoryName;
 		_database = database;
+		_repositoryName = repositoryName;
 	}
 
 	internal async Task<Result<StorageEntry<TValue>>> SaveAsync(

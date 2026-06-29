@@ -38,10 +38,10 @@ internal sealed class SqliteStorageDatabase
 	}
 
 	internal SqliteRepositoryStore<TId, TValue> GetRepository<TId, TValue>(string name)
-		where TId : notnull => new(name, GetRepositoryName<TId, TValue>(name), this);
+		where TId : notnull => new(name, this, GetRepositoryName<TId, TValue>(name));
 
 	internal SqliteJournalStore<TEntry> GetJournal<TEntry>(string name) =>
-		new(name, GetJournalName<TEntry>(name), this);
+		new(name, this, GetJournalName<TEntry>(name));
 
 	internal async Task<TResult> UseConnectionAsync<TResult>(
 		Func<SqliteConnection, Task<TResult>> action,

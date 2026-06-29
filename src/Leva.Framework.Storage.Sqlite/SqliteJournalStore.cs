@@ -10,18 +10,18 @@ namespace Leva.Framework.Storage.Sqlite;
 internal sealed class SqliteJournalStore<TEntry>
 {
 	private readonly string _name;
-	private readonly string _journalName;
 	private readonly SqliteStorageDatabase _database;
+	private readonly string _journalName;
 
-	internal SqliteJournalStore(string name, string journalName, SqliteStorageDatabase database)
+	internal SqliteJournalStore(string name, SqliteStorageDatabase database, string journalName)
 	{
 		ArgumentException.ThrowIfNullOrWhiteSpace(name);
-		ArgumentException.ThrowIfNullOrWhiteSpace(journalName);
 		ArgumentNullException.ThrowIfNull(database);
+		ArgumentException.ThrowIfNullOrWhiteSpace(journalName);
 
 		_name = name;
-		_journalName = journalName;
 		_database = database;
+		_journalName = journalName;
 	}
 
 	internal async Task<Result<StorageEntry<TEntry>>> AppendAsync(TEntry value, CancellationToken token)

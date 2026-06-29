@@ -16,14 +16,14 @@ internal sealed class FileStorageDatabase
 	private readonly Dictionary<string, object> _journals = new();
 	private readonly Dictionary<string, object> _repositories = new();
 
-	internal FileStorageDatabase(string rootPath, JsonSerializerOptions? jsonOptions = null)
+	internal FileStorageDatabase(string rootDirectory, JsonSerializerOptions? jsonOptions = null)
 	{
-		ArgumentException.ThrowIfNullOrWhiteSpace(rootPath);
-		RootPath = Path.GetFullPath(rootPath);
+		ArgumentException.ThrowIfNullOrWhiteSpace(rootDirectory);
+		RootDirectory = Path.GetFullPath(rootDirectory);
 		_jsonOptions = jsonOptions ?? new JsonSerializerOptions(JsonSerializerDefaults.Web) { WriteIndented = true };
 	}
 
-	internal string RootPath { get; }
+	internal string RootDirectory { get; }
 
 	internal FileRepositoryStore<TId, TValue> GetRepository<TId, TValue>(string name)
 		where TId : notnull
@@ -138,10 +138,10 @@ internal sealed class FileStorageDatabase
 		new(long.Parse(Path.GetFileNameWithoutExtension(path), CultureInfo.InvariantCulture));
 
 	private string GetRepositoryDirectory<TId, TValue>(string name)
-		where TId : notnull => Path.Combine(RootPath, "repositories", Hash(GetRepositoryKey<TId, TValue>(name)));
+		where TId : notnull => Path.Combine(RootDirectory, "repositories", Hash(GetRepositoryKey<TId, TValue>(name)));
 
 	private string GetJournalDirectory<TEntry>(string name) =>
-		Path.Combine(RootPath, "journals", Hash(GetJournalKey<TEntry>(name)));
+		Path.Combine(RootDirectory, "journals", Hash(GetJournalKey<TEntry>(name)));
 
 	private static string GetRepositoryKey<TId, TValue>(string name) =>
 		$"{name}|{GetTypeKey<TId>()}|{GetTypeKey<TValue>()}";
