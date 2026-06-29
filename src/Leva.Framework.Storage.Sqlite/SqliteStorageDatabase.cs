@@ -37,8 +37,8 @@ internal sealed class SqliteStorageDatabase
 		return connection;
 	}
 
-	public SqliteRepositoryStore<TId, TModel> GetRepository<TId, TModel>(string name)
-		where TId : notnull => new(name, GetRepositoryName<TId, TModel>(name), this);
+	public SqliteRepositoryStore<TId, TValue> GetRepository<TId, TValue>(string name)
+		where TId : notnull => new(name, GetRepositoryName<TId, TValue>(name), this);
 
 	public SqliteJournalStore<TEntry> GetJournal<TEntry>(string name) => new(name, GetJournalName<TEntry>(name), this);
 
@@ -86,11 +86,11 @@ internal sealed class SqliteStorageDatabase
 
 	public static string WriteTimestamp(DateTimeOffset value) => value.ToString("O", CultureInfo.InvariantCulture);
 
-	private static string GetRepositoryName<TId, TModel>(string name)
+	private static string GetRepositoryName<TId, TValue>(string name)
 		where TId : notnull
 	{
 		ArgumentException.ThrowIfNullOrWhiteSpace(name);
-		return Hash($"{name}|{typeof(TId).AssemblyQualifiedName}|{typeof(TModel).AssemblyQualifiedName}");
+		return Hash($"{name}|{typeof(TId).AssemblyQualifiedName}|{typeof(TValue).AssemblyQualifiedName}");
 	}
 
 	private static string GetJournalName<TEntry>(string name)

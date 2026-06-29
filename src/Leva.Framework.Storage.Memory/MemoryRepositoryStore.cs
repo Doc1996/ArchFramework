@@ -5,11 +5,11 @@ namespace Leva.Framework.Storage.Memory;
 /// <summary>
 /// Holds the mutable in-memory entries for one repository.
 /// </summary>
-internal sealed class MemoryRepositoryStore<TId, TModel>
+internal sealed class MemoryRepositoryStore<TId, TValue>
 	where TId : notnull
 {
 	private readonly Lock _lock = new();
-	private readonly Dictionary<TId, StorageEntry<TModel>> _entries = new();
+	private readonly Dictionary<TId, StorageEntry<TValue>> _entries = new();
 	private readonly string _name;
 
 	internal MemoryRepositoryStore(string name)
@@ -18,7 +18,7 @@ internal sealed class MemoryRepositoryStore<TId, TModel>
 		_name = name;
 	}
 
-	public Result<StorageEntry<TModel>> Save(TId id, TModel model, StorageVersion? expectedVersion)
+	public Result<StorageEntry<TValue>> Save(TId id, TValue value, StorageVersion? expectedVersion)
 	{
 		var key = id.ToString() ?? string.Empty;
 		lock (_lock)
@@ -27,34 +27,34 @@ internal sealed class MemoryRepositoryStore<TId, TModel>
 			if (_entries.TryGetValue(id, out var existing))
 			{
 				if (expectedVersion.HasValue && existing.Version != expectedVersion.Value)
-					return Result<StorageEntry<TModel>>.Fail(
+					return Result<StorageEntry<TValue>>.Fail(
 						StorageErrors.VersionConflict(_name, key, expectedVersion.Value, existing.Version)
 					);
 
-				var updated = existing with { Value = model, Version = existing.Version.Next(), UpdatedAt = utcNow };
+				var updated = existing with { Value = value, Version = existing.Version.Next(), UpdatedAt = utcNow };
 				_entries[id] = updated;
-				return Result<StorageEntry<TModel>>.Ok(updated);
+				return Result<StorageEntry<TValue>>.Ok(updated);
 			}
 
 			if (expectedVersion.HasValue)
-				return Result<StorageEntry<TModel>>.Fail(StorageErrors.NotFound(_name, key));
+				return Result<StorageEntry<TValue>>.Fail(StorageErrors.NotFound(_name, key));
 
-			var created = new StorageEntry<TModel>(model, new StorageVersion(1), utcNow, utcNow);
+			var created = new StorageEntry<TValue>(value, new StorageVersion(1), utcNow, utcNow);
 			_entries[id] = created;
-			return Result<StorageEntry<TModel>>.Ok(created);
+			return Result<StorageEntry<TValue>>.Ok(created);
 		}
 	}
 
-	public StorageEntry<TModel>? Load(TId id)
+	public StorageEntry<TValue>? Load(TId id)
 	{
 		lock (_lock)
 			return _entries.TryGetValue(id, out var entry) ? entry : null;
 	}
 
-	public IReadOnlyDictionary<TId, StorageEntry<TModel>> LoadAll()
+	public IReadOnlyDictionary<TId, StorageEntry<TValue>> LoadAll()
 	{
 		lock (_lock)
-			return new Dictionary<TId, StorageEntry<TModel>>(_entries);
+			return new Dictionary<TId, StorageEntry<TValue>>(_entries);
 	}
 
 	public bool Exists(TId id)

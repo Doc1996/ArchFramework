@@ -20,7 +20,7 @@ Leva.Framework.Storage.Files
 
 ## Project overview
 
-The file provider is a complete provider for the storage contracts. It keeps each named repository in a hashed directory and stores each keyed model as one JSON file. Journals are stored as ordered JSON files named by provider-assigned sequence version.
+The file provider is a complete provider for the storage contracts. It keeps each named repository in a hashed directory and stores each keyed value as one JSON file. Journals are stored as ordered JSON files named by provider-assigned sequence version.
 
 The provider is useful for local desktop tools, simple durable framework data, samples, and hosts that want persistence without a database or EF Core.
 
@@ -33,8 +33,8 @@ The provider is useful for local desktop tools, simple durable framework data, s
 
 ### Repository implementation
 
-`FileRepository<TId, TModel>` - Public repository implementation that delegates keyed model operations to a named file store.
-`FileRepositoryStore<TId, TModel>` - Reads, writes, checks, lists, and deletes repository entries in the file system.
+`FileRepository<TId, TValue>` - Public repository implementation that delegates keyed value operations to a named file store.
+`FileRepositoryStore<TId, TValue>` - Reads, writes, checks, lists, and deletes repository entries in the file system.
 
 ### Journal implementation
 

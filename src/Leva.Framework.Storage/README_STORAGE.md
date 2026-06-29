@@ -24,7 +24,7 @@ Leva.Framework.Engine
 
 ## Project overview
 
-Storage is intentionally small. Repositories are the general durable model store. They store keyed values, return values with provider metadata through `StorageEntry<T>`, and use optional expected versions for optimistic concurrency. Framework snapshots do not need a separate snapshot-store contract because they can be stored through a repository with a string key.
+Storage is intentionally small. Repositories are the general durable value store. They store keyed values, return values with provider metadata through `StorageEntry<T>`, and use optional expected versions for optimistic concurrency. Framework snapshots do not need a separate snapshot-store contract because they can be stored through a repository with a string key.
 
 Journals are append-only stores for durable history, audit trails, runtime records, or replayable entries. A journal appends records and reads them in provider-assigned version order, optionally after a known version and with a maximum count.
 
@@ -34,7 +34,7 @@ Storage is not a replacement for EF Core. EF Core should be used directly by app
 
 ### Repository contracts
 
-`IRepository<TId, TModel>` - Stores keyed models without exposing provider-specific persistence details. It checks existence, loads one model, loads all models, saves with an optional expected version, and deletes with an optional expected version.
+`IRepository<TId, TValue>` - Stores keyed values without exposing provider-specific persistence details. It checks existence, loads one value, loads all values, saves with an optional expected version, and deletes with an optional expected version.
 
 ### Journal contracts
 
@@ -42,6 +42,6 @@ Storage is not a replacement for EF Core. EF Core should be used directly by app
 
 ### Shared storage values
 
-`StorageEntry<T>` - Represents one stored value together with provider-owned metadata such as version, creation time, update time, and optional properties.
+`StorageEntry<T>` - Represents one stored value together with provider-owned metadata such as version, creation time, and update time.
 `StorageVersion` - Represents a positive provider-assigned storage revision or journal sequence number.
 `StorageErrors` - Creates common structured storage errors for missing records, version conflicts, unavailable providers, and failed operations.

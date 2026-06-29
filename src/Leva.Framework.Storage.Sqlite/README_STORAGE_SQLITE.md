@@ -35,8 +35,8 @@ The provider is useful for durable local framework data when files are too loose
 
 ### Repository implementation
 
-`SqliteRepository<TId, TModel>` - Public repository implementation that delegates keyed model operations to a named SQLite store.
-`SqliteRepositoryStore<TId, TModel>` - Performs repository SQL operations, version checks, serialization, and row mapping.
+`SqliteRepository<TId, TValue>` - Public repository implementation that delegates keyed value operations to a named SQLite store.
+`SqliteRepositoryStore<TId, TValue>` - Performs repository SQL operations, version checks, serialization, and row mapping.
 
 ### Journal implementation
 

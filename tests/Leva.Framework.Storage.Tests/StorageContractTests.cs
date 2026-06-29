@@ -36,13 +36,13 @@ public sealed class StorageContractTests
 
 		public Task<Result<StorageEntry<string>>> SaveAsync(
 			string id,
-			string model,
+			string value,
 			StorageVersion? expectedVersion = null,
 			CancellationToken token = default
 		)
 		{
 			_entry = new StorageEntry<string>(
-				model,
+				value,
 				new StorageVersion(1),
 				DateTimeOffset.UtcNow,
 				DateTimeOffset.UtcNow

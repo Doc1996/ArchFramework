@@ -7,6 +7,5 @@ public readonly record struct StorageEntry<T>(
 	T Value,
 	StorageVersion Version,
 	DateTimeOffset CreatedAt,
-	DateTimeOffset UpdatedAt,
-	IReadOnlyDictionary<string, string>? Properties = null
+	DateTimeOffset UpdatedAt
 );

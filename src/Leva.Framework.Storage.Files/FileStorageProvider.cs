@@ -9,7 +9,7 @@ public sealed class FileStorageProvider(string rootPath, JsonSerializerOptions? 
 {
 	private readonly FileStorageDatabase _database = new FileStorageDatabase(rootPath, jsonOptions);
 
-	public FileRepository<TId, TModel> CreateRepository<TId, TModel>(string name)
+	public FileRepository<TId, TValue> CreateRepository<TId, TValue>(string name)
 		where TId : notnull => new(name, _database);
 
 	public FileJournal<TEntry> CreateJournal<TEntry>(string name) => new(name, _database);

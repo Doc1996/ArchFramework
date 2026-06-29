@@ -7,7 +7,7 @@ namespace Leva.Framework.Storage.Sqlite;
 /// <summary>
 /// Holds SQL operations for one named repository table partition.
 /// </summary>
-internal sealed class SqliteRepositoryStore<TId, TModel>
+internal sealed class SqliteRepositoryStore<TId, TValue>
 	where TId : notnull
 {
 	private readonly string _name;
@@ -25,9 +25,9 @@ internal sealed class SqliteRepositoryStore<TId, TModel>
 		_database = database;
 	}
 
-	public async Task<Result<StorageEntry<TModel>>> SaveAsync(
+	public async Task<Result<StorageEntry<TValue>>> SaveAsync(
 		TId id,
-		TModel model,
+		TValue value,
 		StorageVersion? expectedVersion,
 		CancellationToken token
 	)
@@ -42,7 +42,7 @@ internal sealed class SqliteRepositoryStore<TId, TModel>
 					await UseTransactionAsync(
 						connection,
 						async transaction =>
-							await SaveAsync(connection, transaction, key, model, expectedVersion, token),
+							await SaveAsync(connection, transaction, key, value, expectedVersion, token),
 						token
 					),
 				token
@@ -54,13 +54,13 @@ internal sealed class SqliteRepositoryStore<TId, TModel>
 		}
 		catch (Exception ex)
 		{
-			return Result<StorageEntry<TModel>>.Fail(
+			return Result<StorageEntry<TValue>>.Fail(
 				StorageErrors.Failed($"save SQLite repository '{_name}'", ex.Message)
 			);
 		}
 	}
 
-	public async Task<Result<StorageEntry<TModel>>> LoadAsync(TId id, CancellationToken token)
+	public async Task<Result<StorageEntry<TValue>>> LoadAsync(TId id, CancellationToken token)
 	{
 		try
 		{
@@ -72,8 +72,8 @@ internal sealed class SqliteRepositoryStore<TId, TModel>
 				{
 					var existing = await LoadExistingAsync(connection, null, key, token);
 					return existing.HasValue
-						? Result<StorageEntry<TModel>>.Ok(existing.Value)
-						: Result<StorageEntry<TModel>>.Fail(StorageErrors.NotFound(_name, key));
+						? Result<StorageEntry<TValue>>.Ok(existing.Value)
+						: Result<StorageEntry<TValue>>.Fail(StorageErrors.NotFound(_name, key));
 				},
 				token
 			);
@@ -84,13 +84,13 @@ internal sealed class SqliteRepositoryStore<TId, TModel>
 		}
 		catch (Exception ex)
 		{
-			return Result<StorageEntry<TModel>>.Fail(
+			return Result<StorageEntry<TValue>>.Fail(
 				StorageErrors.Failed($"load SQLite repository '{_name}'", ex.Message)
 			);
 		}
 	}
 
-	public async Task<Result<IReadOnlyDictionary<TId, StorageEntry<TModel>>>> LoadAllAsync(CancellationToken token)
+	public async Task<Result<IReadOnlyDictionary<TId, StorageEntry<TValue>>>> LoadAllAsync(CancellationToken token)
 	{
 		try
 		{
@@ -98,7 +98,7 @@ internal sealed class SqliteRepositoryStore<TId, TModel>
 			return await _database.UseConnectionAsync(
 				async connection =>
 				{
-					var entries = new Dictionary<TId, StorageEntry<TModel>>();
+					var entries = new Dictionary<TId, StorageEntry<TValue>>();
 					await using var command = connection.CreateCommand();
 
 					command.CommandText = """
@@ -117,7 +117,7 @@ internal sealed class SqliteRepositoryStore<TId, TModel>
 						entries[SqliteStorageDatabase.FromKey<TId>(key)] = ReadEntry(reader, 1);
 					}
 
-					return Result<IReadOnlyDictionary<TId, StorageEntry<TModel>>>.Ok(entries);
+					return Result<IReadOnlyDictionary<TId, StorageEntry<TValue>>>.Ok(entries);
 				},
 				token
 			);
@@ -128,7 +128,7 @@ internal sealed class SqliteRepositoryStore<TId, TModel>
 		}
 		catch (Exception ex)
 		{
-			return Result<IReadOnlyDictionary<TId, StorageEntry<TModel>>>.Fail(
+			return Result<IReadOnlyDictionary<TId, StorageEntry<TValue>>>.Fail(
 				StorageErrors.Failed($"load SQLite repository '{_name}'", ex.Message)
 			);
 		}
@@ -211,11 +211,11 @@ internal sealed class SqliteRepositoryStore<TId, TModel>
 		return result;
 	}
 
-	private async Task<Result<StorageEntry<TModel>>> SaveAsync(
+	private async Task<Result<StorageEntry<TValue>>> SaveAsync(
 		SqliteConnection connection,
 		SqliteTransaction transaction,
 		string key,
-		TModel model,
+		TValue value,
 		StorageVersion? expectedVersion,
 		CancellationToken token
 	)
@@ -228,7 +228,7 @@ internal sealed class SqliteRepositoryStore<TId, TModel>
 				connection,
 				transaction,
 				key,
-				model,
+				value,
 				existing.Value,
 				expectedVersion,
 				utcNow,
@@ -236,32 +236,32 @@ internal sealed class SqliteRepositoryStore<TId, TModel>
 			);
 
 		if (expectedVersion.HasValue)
-			return Result<StorageEntry<TModel>>.Fail(StorageErrors.NotFound(_name, key));
+			return Result<StorageEntry<TValue>>.Fail(StorageErrors.NotFound(_name, key));
 
-		var newEntry = new StorageEntry<TModel>(model, new StorageVersion(1), utcNow, utcNow);
+		var newEntry = new StorageEntry<TValue>(value, new StorageVersion(1), utcNow, utcNow);
 		await InsertAsync(connection, transaction, key, newEntry, token);
-		return Result<StorageEntry<TModel>>.Ok(newEntry);
+		return Result<StorageEntry<TValue>>.Ok(newEntry);
 	}
 
-	private async Task<Result<StorageEntry<TModel>>> UpdateExistingAsync(
+	private async Task<Result<StorageEntry<TValue>>> UpdateExistingAsync(
 		SqliteConnection connection,
 		SqliteTransaction transaction,
 		string key,
-		TModel model,
-		StorageEntry<TModel> existing,
+		TValue value,
+		StorageEntry<TValue> existing,
 		StorageVersion? expectedVersion,
 		DateTimeOffset utcNow,
 		CancellationToken token
 	)
 	{
 		if (expectedVersion.HasValue && existing.Version != expectedVersion.Value)
-			return Result<StorageEntry<TModel>>.Fail(
+			return Result<StorageEntry<TValue>>.Fail(
 				StorageErrors.VersionConflict(_name, key, expectedVersion.Value, existing.Version)
 			);
 
-		var updatedEntry = existing with { Value = model, Version = existing.Version.Next(), UpdatedAt = utcNow };
+		var updatedEntry = existing with { Value = value, Version = existing.Version.Next(), UpdatedAt = utcNow };
 		await UpdateAsync(connection, transaction, key, updatedEntry, token);
-		return Result<StorageEntry<TModel>>.Ok(updatedEntry);
+		return Result<StorageEntry<TValue>>.Ok(updatedEntry);
 	}
 
 	private async Task<Result> DeleteAsync(
@@ -285,7 +285,7 @@ internal sealed class SqliteRepositoryStore<TId, TModel>
 		return Result.Ok();
 	}
 
-	private async Task<StorageEntry<TModel>?> LoadExistingAsync(
+	private async Task<StorageEntry<TValue>?> LoadExistingAsync(
 		SqliteConnection connection,
 		SqliteTransaction? transaction,
 		string key,
@@ -311,7 +311,7 @@ internal sealed class SqliteRepositoryStore<TId, TModel>
 		SqliteConnection connection,
 		SqliteTransaction transaction,
 		string key,
-		StorageEntry<TModel> entry,
+		StorageEntry<TValue> entry,
 		CancellationToken token
 	)
 	{
@@ -344,7 +344,7 @@ internal sealed class SqliteRepositoryStore<TId, TModel>
 		SqliteConnection connection,
 		SqliteTransaction transaction,
 		string key,
-		StorageEntry<TModel> entry,
+		StorageEntry<TValue> entry,
 		CancellationToken token
 	)
 	{
@@ -386,7 +386,7 @@ internal sealed class SqliteRepositoryStore<TId, TModel>
 		await command.ExecuteNonQueryAsync(token);
 	}
 
-	private void AddEntryParameters(SqliteCommand command, string key, StorageEntry<TModel> entry)
+	private void AddEntryParameters(SqliteCommand command, string key, StorageEntry<TValue> entry)
 	{
 		command.Parameters.AddWithValue("$repository_name", _repositoryName);
 		command.Parameters.AddWithValue("$storage_id", key);
@@ -396,9 +396,9 @@ internal sealed class SqliteRepositoryStore<TId, TModel>
 		command.Parameters.AddWithValue("$updated_at", SqliteStorageDatabase.WriteTimestamp(entry.UpdatedAt));
 	}
 
-	private StorageEntry<TModel> ReadEntry(DbDataReader reader, int valueIndex) =>
+	private StorageEntry<TValue> ReadEntry(DbDataReader reader, int valueIndex) =>
 		new(
-			_database.Deserialize<TModel>(reader.GetString(valueIndex)),
+			_database.Deserialize<TValue>(reader.GetString(valueIndex)),
 			new StorageVersion(reader.GetInt64(valueIndex + 1)),
 			SqliteStorageDatabase.ReadTimestamp(reader.GetString(valueIndex + 2)),
 			SqliteStorageDatabase.ReadTimestamp(reader.GetString(valueIndex + 3))

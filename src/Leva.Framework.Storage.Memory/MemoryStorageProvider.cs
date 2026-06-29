@@ -7,7 +7,7 @@ public sealed class MemoryStorageProvider
 {
 	private readonly MemoryStorageDatabase _database = new();
 
-	public MemoryRepository<TId, TModel> CreateRepository<TId, TModel>(string name)
+	public MemoryRepository<TId, TValue> CreateRepository<TId, TValue>(string name)
 		where TId : notnull => new(name, _database);
 
 	public MemoryJournal<TEntry> CreateJournal<TEntry>(string name) => new(name, _database);

@@ -9,18 +9,18 @@ internal sealed class MemoryStorageDatabase
 	private readonly Dictionary<string, object> _journals = new();
 	private readonly Dictionary<string, object> _repositories = new();
 
-	public MemoryRepositoryStore<TId, TModel> GetRepository<TId, TModel>(string name)
+	public MemoryRepositoryStore<TId, TValue> GetRepository<TId, TValue>(string name)
 		where TId : notnull
 	{
 		ArgumentException.ThrowIfNullOrWhiteSpace(name);
-		var key = GetRepositoryKey<TId, TModel>(name);
+		var key = GetRepositoryKey<TId, TValue>(name);
 
 		lock (_lock)
 		{
 			if (_repositories.TryGetValue(key, out var existing))
-				return (MemoryRepositoryStore<TId, TModel>)existing;
+				return (MemoryRepositoryStore<TId, TValue>)existing;
 
-			var store = new MemoryRepositoryStore<TId, TModel>(name);
+			var store = new MemoryRepositoryStore<TId, TValue>(name);
 			_repositories[key] = store;
 			return store;
 		}
@@ -42,8 +42,8 @@ internal sealed class MemoryStorageDatabase
 		}
 	}
 
-	private static string GetRepositoryKey<TId, TModel>(string name) =>
-		$"{name}|{typeof(TId).AssemblyQualifiedName}|{typeof(TModel).AssemblyQualifiedName}";
+	private static string GetRepositoryKey<TId, TValue>(string name) =>
+		$"{name}|{typeof(TId).AssemblyQualifiedName}|{typeof(TValue).AssemblyQualifiedName}";
 
 	private static string GetJournalKey<TEntry>(string name) => $"{name}|{typeof(TEntry).AssemblyQualifiedName}";
 }

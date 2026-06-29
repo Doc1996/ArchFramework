@@ -22,14 +22,14 @@ internal sealed class FileStorageDatabase
 
 	internal string RootPath { get; }
 
-	public FileRepositoryStore<TId, TModel> GetRepository<TId, TModel>(string name)
-		where TId : notnull => new(name, this, GetRepositoryDirectory<TId, TModel>(name));
+	public FileRepositoryStore<TId, TValue> GetRepository<TId, TValue>(string name)
+		where TId : notnull => new(name, this, GetRepositoryDirectory<TId, TValue>(name));
 
 	public FileJournalStore<TEntry> GetJournal<TEntry>(string name) =>
 		new(name, this, GetJournalDirectory<TEntry>(name));
 
-	public string GetRepositoryPath<TId, TModel>(string name, TId id)
-		where TId : notnull => Path.Combine(GetRepositoryDirectory<TId, TModel>(name), Encode(ToKey(id)) + ".json");
+	public string GetRepositoryPath<TId, TValue>(string name, TId id)
+		where TId : notnull => Path.Combine(GetRepositoryDirectory<TId, TValue>(name), Encode(ToKey(id)) + ".json");
 
 	public string GetJournalPath<TEntry>(string name, StorageVersion version) =>
 		Path.Combine(
@@ -102,11 +102,11 @@ internal sealed class FileStorageDatabase
 	public static StorageVersion ParseVersion(string path) =>
 		new(long.Parse(Path.GetFileNameWithoutExtension(path), CultureInfo.InvariantCulture));
 
-	private string GetRepositoryDirectory<TId, TModel>(string name)
+	private string GetRepositoryDirectory<TId, TValue>(string name)
 		where TId : notnull
 	{
 		ArgumentException.ThrowIfNullOrWhiteSpace(name);
-		return Path.Combine(RootPath, "repositories", Hash(GetRepositoryKey<TId, TModel>(name)));
+		return Path.Combine(RootPath, "repositories", Hash(GetRepositoryKey<TId, TValue>(name)));
 	}
 
 	private string GetJournalDirectory<TEntry>(string name)
@@ -115,8 +115,8 @@ internal sealed class FileStorageDatabase
 		return Path.Combine(RootPath, "journals", Hash(GetJournalKey<TEntry>(name)));
 	}
 
-	private static string GetRepositoryKey<TId, TModel>(string name) =>
-		$"{name}|{typeof(TId).AssemblyQualifiedName}|{typeof(TModel).AssemblyQualifiedName}";
+	private static string GetRepositoryKey<TId, TValue>(string name) =>
+		$"{name}|{typeof(TId).AssemblyQualifiedName}|{typeof(TValue).AssemblyQualifiedName}";
 
 	private static string GetJournalKey<TEntry>(string name) => $"{name}|{typeof(TEntry).AssemblyQualifiedName}";
 

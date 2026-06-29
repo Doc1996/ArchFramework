@@ -30,14 +30,12 @@ public sealed class StorageValueTests
 	{
 		var createdAt = DateTimeOffset.UtcNow;
 		var updatedAt = createdAt.AddSeconds(1);
-		var properties = new Dictionary<string, string> { ["source"] = "test" };
-		var entry = new StorageEntry<string>("value", new StorageVersion(1), createdAt, updatedAt, properties);
+		var entry = new StorageEntry<string>("value", new StorageVersion(1), createdAt, updatedAt);
 
 		Assert.Equal("value", entry.Value);
 		Assert.Equal(new StorageVersion(1), entry.Version);
 
 		Assert.Equal(createdAt, entry.CreatedAt);
 		Assert.Equal(updatedAt, entry.UpdatedAt);
-		Assert.Equal("test", entry.Properties?["source"]);
 	}
 }
