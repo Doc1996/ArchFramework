@@ -32,9 +32,6 @@ public sealed class AuthorizationService
 		token.ThrowIfCancellationRequested();
 		ArgumentNullException.ThrowIfNull(request);
 
-		if (request.Principal is null)
-			return Deny(request, "Principal is not available.");
-
 		var policies = _policies.Where(policy => policy.CanAuthorize(request)).ToArray();
 		if (policies.Length == 0)
 			return Deny(request, $"No authorization policy can evaluate '{request.Requirement}'.");

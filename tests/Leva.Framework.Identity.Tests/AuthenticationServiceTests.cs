@@ -9,7 +9,7 @@ public sealed class AuthenticationServiceTests
 	[Fact]
 	public async Task AuthenticateAsync_UsesFirstMatchingPolicyCreatesSessionAndWritesAudit()
 	{
-		var method = new AuthenticationMethod("local.password");
+		var method = new AuthenticationMethod("local.secret");
 		var unmatched = new FakeAuthenticationPolicy(new AuthenticationMethod("other"))
 		{
 			Result = Result<AuthenticationResult>.Ok(
@@ -63,7 +63,7 @@ public sealed class AuthenticationServiceTests
 	[Fact]
 	public async Task AuthenticateAsync_WritesAuditWhenPolicyFails()
 	{
-		var method = new AuthenticationMethod("local.password");
+		var method = new AuthenticationMethod("local.secret");
 		var audit = new MemoryAuditSink();
 		var policy = new FakeAuthenticationPolicy(method)
 		{

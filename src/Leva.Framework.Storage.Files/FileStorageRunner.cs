@@ -16,7 +16,6 @@ internal sealed class FileStorageRunner(string source)
 	)
 	{
 		await _asyncLock.WaitAsync(token);
-
 		try
 		{
 			return await action();
@@ -38,7 +37,6 @@ internal sealed class FileStorageRunner(string source)
 	internal async Task<Result> RunAsync(string operation, Func<Task<Result>> action, CancellationToken token)
 	{
 		await _asyncLock.WaitAsync(token);
-
 		try
 		{
 			return await action();

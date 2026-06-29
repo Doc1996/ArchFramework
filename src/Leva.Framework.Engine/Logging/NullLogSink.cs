@@ -8,6 +8,4 @@ namespace Leva.Framework.Engine;
 public sealed class NullLogSink : ILogSink
 {
 	public void Write(LogEntry logEntry) { }
-
-	public void Clear() { }
 }

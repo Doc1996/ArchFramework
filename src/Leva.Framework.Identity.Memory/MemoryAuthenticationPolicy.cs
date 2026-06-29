@@ -3,53 +3,50 @@ using Leva.Framework.Core;
 namespace Leva.Framework.Identity.Memory;
 
 /// <summary>
-/// Authenticates principals from in-memory name and secret credentials.
+/// Authenticates configured in-memory principal names for demos, samples, and tests.
 /// </summary>
 public sealed class MemoryAuthenticationPolicy : AuthenticationPolicy
 {
 	private readonly Lock _lock = new();
 	private readonly IPrincipalStore _principals;
-	private readonly Dictionary<string, MemoryPrincipalCredential> _credentials = new(StringComparer.OrdinalIgnoreCase);
+	private readonly Dictionary<string, PrincipalId> _names = new(StringComparer.OrdinalIgnoreCase);
 
 	public MemoryAuthenticationPolicy(IPrincipalStore principals, AuthenticationMethod? method = null)
 	{
 		ArgumentNullException.ThrowIfNull(principals);
 		_principals = principals;
-		Method = method ?? MemoryAuthenticationMethods.Secret;
+		Method = method ?? MemoryAuthenticationMethods.Principal;
 	}
 
 	public override AuthenticationMethod Method { get; }
 
-	public IReadOnlyList<MemoryPrincipalCredential> Credentials
+	public IReadOnlyDictionary<string, PrincipalId> Names
 	{
 		get
 		{
 			lock (_lock)
-				return _credentials.Values.ToList();
+				return _names.ToDictionary();
 		}
 	}
 
-	public void Add(MemoryPrincipalCredential credential)
+	public void Add(string name, PrincipalId principalId)
 	{
-		ArgumentNullException.ThrowIfNull(credential);
+		ArgumentException.ThrowIfNullOrWhiteSpace(name);
 		lock (_lock)
-			_credentials[credential.Name] = credential;
+			_names[name] = principalId;
 	}
-
-	public void Add(string name, string secret, PrincipalId principalId) =>
-		Add(new MemoryPrincipalCredential(name, secret, principalId));
 
 	public bool Remove(string name)
 	{
 		ArgumentException.ThrowIfNullOrWhiteSpace(name);
 		lock (_lock)
-			return _credentials.Remove(name);
+			return _names.Remove(name);
 	}
 
 	public void Clear()
 	{
 		lock (_lock)
-			_credentials.Clear();
+			_names.Clear();
 	}
 
 	public override async Task<Result<AuthenticationResult>> AuthenticateAsync(
@@ -63,14 +60,11 @@ public sealed class MemoryAuthenticationPolicy : AuthenticationPolicy
 		if (string.IsNullOrWhiteSpace(request.Name))
 			return Succeeded(AuthenticationResult.Failed("Principal name is required."));
 
-		if (string.IsNullOrWhiteSpace(request.Secret))
-			return Succeeded(AuthenticationResult.Failed("Principal secret is required."));
+		var principalId = FindPrincipalId(request.Name);
+		if (!principalId.HasValue)
+			return Succeeded(AuthenticationResult.Failed("Principal name is invalid."));
 
-		var credential = FindCredential(request.Name);
-		if (credential is null || credential.Secret != request.Secret)
-			return Succeeded(AuthenticationResult.Failed("Principal credentials are invalid."));
-
-		var principal = await _principals.LoadAsync(credential.PrincipalId, token);
+		var principal = await _principals.LoadAsync(principalId.Value, token);
 		if (principal.IsFailure)
 			return Result<AuthenticationResult>.Fail(principal.Error);
 
@@ -79,10 +73,10 @@ public sealed class MemoryAuthenticationPolicy : AuthenticationPolicy
 			: Succeeded(AuthenticationResult.Succeeded(principal.Value));
 	}
 
-	private MemoryPrincipalCredential? FindCredential(string name)
+	private PrincipalId? FindPrincipalId(string name)
 	{
 		lock (_lock)
-			return _credentials.TryGetValue(name, out var credential) ? credential : null;
+			return _names.TryGetValue(name, out var principalId) ? principalId : null;
 	}
 
 	private static Result<AuthenticationResult> Succeeded(AuthenticationResult result) =>

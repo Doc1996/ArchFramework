@@ -6,5 +6,4 @@ namespace Leva.Framework.Core;
 public interface ILogSink
 {
 	void Write(LogEntry logEntry);
-	void Clear();
 }

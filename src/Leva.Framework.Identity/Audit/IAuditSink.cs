@@ -6,5 +6,4 @@ namespace Leva.Framework.Identity;
 public interface IAuditSink
 {
 	void Write(AuditEntry auditEntry);
-	void Clear();
 }

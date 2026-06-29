@@ -19,10 +19,9 @@ public sealed class AuditSinkTests
 	}
 
 	[Fact]
-	public void NullAuditSink_IgnoresEntriesAndClear()
+	public void NullAuditSink_IgnoresEntries()
 	{
 		var sink = new NullAuditSink();
 		sink.Write(new AuditEntry(AuditAction.AuthenticationFailed, DateTimeOffset.UtcNow));
-		sink.Clear();
 	}
 }
