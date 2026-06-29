@@ -6,6 +6,7 @@
     <Project Path="src/Leva.Framework.Identity/Leva.Framework.Identity.csproj" />
     <Project Path="src/Leva.Framework.Identity.Memory/Leva.Framework.Identity.Memory.csproj" />
     <Project Path="src/Leva.Framework.Identity.Local/Leva.Framework.Identity.Local.csproj" />
+    <Project Path="src/Leva.Framework.Identity.AspNet/Leva.Framework.Identity.AspNet.csproj" />
     <Project Path="src/Leva.Framework.Storage/Leva.Framework.Storage.csproj" />
     <Project Path="src/Leva.Framework.Storage.Files/Leva.Framework.Storage.Files.csproj" />
     <Project Path="src/Leva.Framework.Storage.Memory/Leva.Framework.Storage.Memory.csproj" />
@@ -19,6 +20,7 @@
     <Project Path="tests/Leva.Framework.Identity.Tests/Leva.Framework.Identity.Tests.csproj" />
     <Project Path="tests/Leva.Framework.Identity.Memory.Tests/Leva.Framework.Identity.Memory.Tests.csproj" />
     <Project Path="tests/Leva.Framework.Identity.Local.Tests/Leva.Framework.Identity.Local.Tests.csproj" />
+    <Project Path="tests/Leva.Framework.Identity.AspNet.Tests/Leva.Framework.Identity.AspNet.Tests.csproj" />
     <Project Path="tests/Leva.Framework.Storage.Tests/Leva.Framework.Storage.Tests.csproj" />
     <Project Path="tests/Leva.Framework.Storage.Files.Tests/Leva.Framework.Storage.Files.Tests.csproj" />
     <Project Path="tests/Leva.Framework.Storage.Memory.Tests/Leva.Framework.Storage.Memory.Tests.csproj" />

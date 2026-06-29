@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<IsPackable>false</IsPackable>
+		<IsTestProject>true</IsTestProject>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="../Leva.Framework.Testing/Leva.Framework.Testing.csproj" />
+		<ProjectReference Include="../../src/Leva.Framework.Core/Leva.Framework.Core.csproj" />
+		<ProjectReference Include="../../src/Leva.Framework.Identity/Leva.Framework.Identity.csproj" />
+		<ProjectReference Include="../../src/Leva.Framework.Identity.Memory/Leva.Framework.Identity.Memory.csproj" />
+		<ProjectReference Include="../../src/Leva.Framework.Identity.AspNet/Leva.Framework.Identity.AspNet.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.NET.Test.Sdk" />
+		<PackageReference Include="xunit" />
+		<PackageReference Include="xunit.runner.visualstudio">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+</Project>
