@@ -6,4 +6,4 @@
 
 `SqliteRepositoryTests` - Verifies save, load, load all, exists, delete, persisted reads, not-found, and version conflict behavior.
 `SqliteJournalTests` - Verifies append, read, persisted reads, version ordering, after-version filtering, and limits.
-`TestSqliteDatabase` - Provides isolated temporary database files for SQLite provider tests.
+`TestSqliteDatabase` - Internal test helper that provides isolated temporary database files for SQLite provider tests.

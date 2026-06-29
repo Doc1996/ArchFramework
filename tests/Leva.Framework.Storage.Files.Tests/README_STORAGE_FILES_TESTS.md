@@ -6,4 +6,4 @@
 
 `FileRepositoryTests` - Verifies save, load, load all, exists, delete, persisted reads, not-found, and version conflict behavior.
 `FileJournalTests` - Verifies append, read, persisted reads, version ordering, after-version filtering, and limits.
-`TestStorageDirectory` - Provides isolated temporary directories for file provider tests.
+`TestStorageDirectory` - Internal test helper that provides isolated temporary directories for file provider tests.

@@ -2,7 +2,7 @@ namespace Leva.Framework.Storage.Files.Tests;
 
 internal sealed class TestStorageDirectory : IDisposable
 {
-	public TestStorageDirectory()
+	internal TestStorageDirectory()
 	{
 		Path = System.IO.Path.Combine(
 			System.IO.Path.GetTempPath(),
@@ -11,7 +11,7 @@ internal sealed class TestStorageDirectory : IDisposable
 		Directory.CreateDirectory(Path);
 	}
 
-	public string Path { get; }
+	internal string Path { get; }
 
 	public void Dispose()
 	{

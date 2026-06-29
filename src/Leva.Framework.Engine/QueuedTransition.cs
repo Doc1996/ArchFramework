@@ -29,7 +29,7 @@ internal sealed class QueuedTransition(RuntimeLog runtimeLog) : ITransition
 		runtimeLog.Add(LogCategory.Transition, "State reentry requested.", new { Reason = reason });
 	}
 
-	public bool TryDequeue(out StateId? targetStateId, out string? reason)
+	internal bool TryDequeue(out StateId? targetStateId, out string? reason)
 	{
 		lock (_lock)
 		{

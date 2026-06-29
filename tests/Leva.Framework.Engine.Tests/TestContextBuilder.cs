@@ -5,7 +5,7 @@ namespace Leva.Framework.Engine.Tests;
 
 internal static class TestContextBuilder
 {
-	public static Context Create(
+	internal static Context Create(
 		FakeContext fake,
 		IEnumerable<IState<FakeAccess>>? states = null,
 		IEnumerable<IBehavior<FakeAccess>>? behaviors = null,

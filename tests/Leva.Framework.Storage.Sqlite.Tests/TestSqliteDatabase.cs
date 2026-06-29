@@ -4,7 +4,7 @@ internal sealed class TestSqliteDatabase : IDisposable
 {
 	private readonly string _directoryPath;
 
-	public TestSqliteDatabase()
+	internal TestSqliteDatabase()
 	{
 		_directoryPath = System.IO.Path.Combine(
 			System.IO.Path.GetTempPath(),
@@ -15,7 +15,7 @@ internal sealed class TestSqliteDatabase : IDisposable
 		Path = System.IO.Path.Combine(_directoryPath, "storage.db");
 	}
 
-	public string Path { get; }
+	internal string Path { get; }
 
 	public void Dispose()
 	{

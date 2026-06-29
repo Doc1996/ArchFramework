@@ -5,7 +5,7 @@ namespace Leva.Framework.Storage.Tests;
 
 internal static class ResultAssert
 {
-	public static T Success<T>(Result<T> result)
+	internal static T Success<T>(Result<T> result)
 	{
 		Assert.True(result.IsSuccess);
 		Assert.NotNull(result.Value);
