@@ -1,3 +1,4 @@
+using Leva.Framework.Testing;
 using Xunit;
 
 namespace Leva.Framework.Identity.Memory.Tests;

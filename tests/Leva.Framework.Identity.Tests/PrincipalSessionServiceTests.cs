@@ -1,4 +1,5 @@
 using Leva.Framework.Fakes;
+using Leva.Framework.Testing;
 using Xunit;
 
 namespace Leva.Framework.Identity.Tests;

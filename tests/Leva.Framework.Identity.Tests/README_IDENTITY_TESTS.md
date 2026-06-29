@@ -10,5 +10,5 @@
 `PrincipalSessionServiceTests` - Verifies session creation, loading, expiration, sign-out, deletion, and audit entries.
 `AuthenticationServiceTests` - Verifies authentication policy selection, session creation, sign-out, failure behavior, and audit entries.
 `AuthorizationServiceTests` - Verifies authorization denial, policy evaluation order, successful authorization, failed authorization, and policy failures.
+`PrincipalAuthorizationPolicyTests` - Verifies signed-in, role, permission, and claim authorization behavior.
 `PrincipalAccessTests` - Verifies current session resolution, principal extraction, signed-in checks, authorization checks, and source failure propagation.
-`ResultAssert` - Small helper for asserting successful `Result<T>` values.

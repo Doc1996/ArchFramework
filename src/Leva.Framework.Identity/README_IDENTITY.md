@@ -1,6 +1,6 @@
 # Leva.Framework.Identity
 
-`Leva.Framework.Identity` is the provider-neutral identity contract layer of ArchFramework. It defines identities, sessions, authentication, authorization, audit records, and state-facing principal access used by provider libraries and applications.
+`Leva.Framework.Identity` is the provider-neutral identity contract layer of ArchFramework. It defines principals, sessions, authentication, authorization, audit records, and state-facing principal access used by provider libraries and applications.
 
 ## Purpose and dependencies
 
@@ -69,6 +69,7 @@ Audit records are separate from runtime logs. `AuditEntry` records security-rele
 `AuthorizationRequest` - Represents an authorization check for a principal, optional session, and requirement.
 `AuthorizationResult` - Represents the result of an authorization check with success flag, requirement, and optional reason.
 `AuthorizationPolicy` - Evaluates whether an authorization request satisfies one provider-defined policy.
+`PrincipalAuthorizationPolicy` - Evaluates signed-in, role, permission, and claim requirements from the principal model.
 `AuthorizationService` - Runs authorization policies and writes audit entries for authorization results.
 
 ### Audit

@@ -40,7 +40,6 @@ internal sealed class SqliteJournalStore<TEntry>
 							var entry = new StorageEntry<TEntry>(value, version, utcNow, utcNow);
 
 							await InsertAsync(connection, transaction, entry, token);
-
 							return Result<StorageEntry<TEntry>>.Ok(entry);
 						},
 						token

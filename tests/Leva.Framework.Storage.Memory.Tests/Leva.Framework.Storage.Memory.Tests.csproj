@@ -5,6 +5,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="../Leva.Framework.Testing/Leva.Framework.Testing.csproj" />
 		<ProjectReference Include="../../src/Leva.Framework.Storage/Leva.Framework.Storage.csproj" />
 		<ProjectReference Include="../../src/Leva.Framework.Storage.Memory/Leva.Framework.Storage.Memory.csproj" />
 	</ItemGroup>

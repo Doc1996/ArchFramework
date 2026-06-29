@@ -1,31 +1,32 @@
 # ArchFramework
 
-ArchFramework is a clean .NET framework for event-driven, state-machine applications. It provides reusable runtime structure for typed events, explicit states, routines, behaviors, controlled transitions, runtime memory, diagnostics, principal, storage, and recovery snapshots.
+ArchFramework is a clean .NET framework for event-driven, state-machine applications. It provides reusable runtime structure for typed events, explicit states, routines, behaviors, controlled transitions, runtime memory, diagnostics, principal identity, provider-neutral storage, and recovery snapshots.
 
 ## Architecture summary
 
 ArchFramework keeps important application behavior out of random services, UI callbacks, and uncontrolled background code. Work enters the runtime as typed events, flows through a deterministic dispatcher, reaches the active state or routine, can fall back to behaviors, and only then applies requested transitions. This makes the application easier to reason about, test, log, persist, secure, and recover.
 
-The framework is split into small libraries. `Leva.Framework.Core` defines the shared vocabulary. `Leva.Framework.Engine` implements the runtime. `Leva.Framework.Fakes` provides reusable test doubles. `Leva.Framework.Storage` defines provider-neutral persistence contracts. Storage provider libraries implement those contracts for memory, files, and SQLite. `Leva.Framework.Identity` defines provider-neutral principal, session, authentication, authorization, audit, and state-facing principal access concepts. `Leva.Framework.Identity.Memory` implements a complete in-memory identity provider for tests and demos.
+The framework is split into small libraries. `Leva.Framework.Core` defines the shared vocabulary. `Leva.Framework.Engine` implements the runtime. `Leva.Framework.Fakes` provides reusable test doubles. `Leva.Framework.Storage` defines provider-neutral persistence contracts. Storage provider libraries implement those contracts for memory, files, and SQLite. `Leva.Framework.Identity` defines provider-neutral principal, session, authentication, authorization, audit, and state-facing principal access concepts. `Leva.Framework.Identity.Memory` provides an in-memory identity provider for tests and demos. `Leva.Framework.Identity.Local` provides local/offline secret-based identity for desktop, kiosk, and internal tools. `Leva.Framework.Testing` contains shared test-only assertion helpers.
 
 ## Library structure
 
 ```text
-Leva.Framework.Core           -> shared contracts, IDs, entries, results, snapshots
-Leva.Framework.Engine         -> event queue, dispatcher, state machine, boards, logs
-Leva.Framework.Fakes          -> fake clocks, events, queues, states, routines, principal, logs
-Leva.Framework.Storage        -> repository, journal, entry, version contracts
-Leva.Framework.Storage.Memory -> in-process storage provider
-Leva.Framework.Storage.Files  -> local JSON/file-system storage provider
-Leva.Framework.Storage.Sqlite -> local SQLite storage provider
-Leva.Framework.Identity       -> principals, sessions, authentication, authorization, audit
+Leva.Framework.Core            -> shared contracts, IDs, entries, results, snapshots
+Leva.Framework.Engine          -> event queue, dispatcher, state machine, boards, logs
+Leva.Framework.Fakes           -> fake clocks, events, queues, states, routines, principal, logs
+Leva.Framework.Storage         -> repository, journal, entry, version contracts
+Leva.Framework.Storage.Memory  -> in-process storage provider
+Leva.Framework.Storage.Files   -> local JSON/file-system storage provider
+Leva.Framework.Storage.Sqlite  -> local SQLite storage provider
+Leva.Framework.Identity        -> principals, sessions, authentication, authorization, audit
 Leva.Framework.Identity.Memory -> in-memory principal/session/auth provider
+Leva.Framework.Identity.Local  -> local/offline credential and secret auth provider
+Leva.Framework.Testing         -> shared test assertions and test-only helpers
 ```
 
 Future libraries should plug into the same architecture without forcing infrastructure into Core or Engine.
 
 ```text
-Leva.Framework.Identity.Local       local/offline desktop provider
 Leva.Framework.Identity.AspNetCore  future web provider
 Leva.Framework.Notifications        future
 Leva.Framework.Presentation.Blazor  future
@@ -33,7 +34,7 @@ Leva.Framework.Presentation.Blazor  future
 
 ## Dependency direction
 
-Dependencies move inward toward Core. Core depends only on .NET. Engine depends on Core. Storage depends on Core. Identity depends on Core. Provider libraries depend on their contract libraries and Core. Fakes depends on Core, Engine, and Identity because it is a testing support library. Applications and future provider libraries may depend on selected framework libraries, but Core and Engine should not depend on applications, UI providers, storage providers, notification providers, identity providers, devices, databases, or web frameworks.
+Dependencies move inward toward Core. Core depends only on .NET. Engine depends on Core. Storage depends on Core. Identity depends on Core. Provider libraries depend on their contract libraries and Core. Fakes depends on Core, Engine, and Identity because it is a testing support library. Testing depends on Core and xUnit because it is only used by test projects. Applications and future provider libraries may depend on selected framework libraries, but Core and Engine should not depend on applications, UI providers, storage providers, notification providers, identity providers, devices, databases, or web frameworks.
 
 ```text
 Leva.Framework.Core
@@ -53,6 +54,7 @@ Leva.Framework.Storage.Sqlite
   -> Leva.Framework.Core
 
 Leva.Framework.Identity.Memory
+Leva.Framework.Identity.Local
   -> Leva.Framework.Identity
   -> Leva.Framework.Core
 
@@ -60,6 +62,10 @@ Leva.Framework.Fakes
   -> Leva.Framework.Engine
   -> Leva.Framework.Identity
   -> Leva.Framework.Core
+
+Leva.Framework.Testing
+  -> Leva.Framework.Core
+  -> xUnit
 
 Applications / providers
   -> selected framework libraries
@@ -114,6 +120,8 @@ README_FAKES.md             -> Fakes purpose, dependencies, overview, files and 
 README_STORAGE*.md          -> Storage contracts and provider library guides
 README_IDENTITY.md          -> Identity purpose, dependencies, overview, files and classes
 README_IDENTITY_MEMORY.md   -> Identity.Memory provider guide
+README_IDENTITY_LOCAL.md    -> Identity.Local provider guide
+README_TESTING.md           -> shared test helper guide
 README_*_TESTS.md           -> focused test coverage summaries
 ```
 

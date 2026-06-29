@@ -1,10 +1,10 @@
 # Leva.Framework.Identity.Memory
 
-`Leva.Framework.Identity.Memory` provides in-process implementations of the provider-neutral contracts from `Leva.Framework.Identity`.
+`Leva.Framework.Identity.Memory` is the in-memory provider implementation of `Leva.Framework.Identity`. It stores principals and sessions in process and authenticates configured principal names for tests, demos, samples, and early applications.
 
 ## Purpose and dependencies
 
-Memory exists for tests, demos, samples, and short-lived local application scenarios where durable identity storage is not required. It depends on `Leva.Framework.Identity` and `Leva.Framework.Core`; it does not depend on Engine, Storage, ASP.NET Core, databases, password hashing packages, or external identity providers.
+Memory identity exists for tests, demos, samples, and short-lived local application scenarios where durable identity storage is not required. It depends on `Leva.Framework.Identity` and `Leva.Framework.Core`; it does not depend on Engine, Storage, ASP.NET Core, databases, password hashing packages, or external identity providers.
 
 ```text
 Leva.Framework.Identity.Memory
@@ -15,11 +15,11 @@ Leva.Framework.Identity.Memory
 
 ## Project overview
 
-The provider keeps principals, credentials, and sessions inside one in-process composition. Principals can be added to `MemoryPrincipalStore`, credentials can be added to `MemoryAuthenticationPolicy`, and sessions can be saved in `MemoryPrincipalSessionStore`. Values remain available while the memory objects are alive and are lost when they are discarded.
+The memory provider is intentionally simple. `MemoryPrincipalStore` keeps principals in memory. `MemoryPrincipalSessionStore` keeps sessions in memory. `MemoryAuthenticationPolicy` authenticates a configured name to a configured `PrincipalId` using the `memory.principal` method. It does not store passwords, secrets, reset tokens, email confirmation state, lockout state, or account lifecycle data.
 
-Authentication uses the `memory.secret` method and maps a configured login name and secret to a principal. Authorization evaluates signed-in, role, permission, and claim requirements from the principal model. `MemoryPrincipalSessionSource` exposes one configured current session for tests, demos, and simple local hosts.
+Authorization is not memory-specific. `MemoryPrincipalServices` uses the shared `PrincipalAuthorizationPolicy` from `Leva.Framework.Identity` for signed-in, role, permission, and claim checks. `MemoryPrincipalSessionSource` exposes one configured current session for tests, demos, and simple hosts.
 
-`MemoryPrincipalServices` is a small composition helper. It creates the memory stores, policies, services, session source, and principal access object while still leaving each individual object available for direct testing or manual wiring.
+`MemoryPrincipalServices` is a small composition helper. It creates the memory stores, authentication policy, shared authorization policy, session service, authentication service, authorization service, session source, and principal access object while still leaving each individual object available for direct testing or manual wiring.
 
 ## Files and classes
 
@@ -30,7 +30,6 @@ Authentication uses the `memory.secret` method and maps a configured login name 
 ### Principal storage
 
 `MemoryPrincipalStore` - Stores principals in memory and resolves them by id, display name, email, or configured names.
-`MemoryPrincipalCredential` - Connects a login name and secret to a principal id for memory authentication.
 
 ### Session implementation
 
@@ -39,9 +38,5 @@ Authentication uses the `memory.secret` method and maps a configured login name 
 
 ### Authentication implementation
 
-`MemoryAuthenticationMethods` - Defines the standard `memory.secret` authentication method.
-`MemoryAuthenticationPolicy` - Authenticates principals by name and secret using configured memory credentials.
-
-### Authorization implementation
-
-`MemoryAuthorizationPolicy` - Evaluates signed-in, role, permission, and claim requirements from the principal model.
+`MemoryAuthenticationMethods` - Defines the standard `memory.principal` authentication method.
+`MemoryAuthenticationPolicy` - Authenticates configured names by resolving them to existing principals.

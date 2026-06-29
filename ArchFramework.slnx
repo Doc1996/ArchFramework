@@ -12,6 +12,7 @@
     <Project Path="src/Leva.Framework.Storage.Sqlite/Leva.Framework.Storage.Sqlite.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/Leva.Framework.Testing/Leva.Framework.Testing.csproj" />
     <Project Path="tests/Leva.Framework.Core.Tests/Leva.Framework.Core.Tests.csproj" />
     <Project Path="tests/Leva.Framework.Engine.Tests/Leva.Framework.Engine.Tests.csproj" />
     <Project Path="tests/Leva.Framework.Fakes.Tests/Leva.Framework.Fakes.Tests.csproj" />

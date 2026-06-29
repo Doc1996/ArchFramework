@@ -42,8 +42,6 @@ public sealed class ContractTests
 	private sealed class TestLogSink : ILogSink
 	{
 		public void Write(LogEntry logEntry) { }
-
-		public void Clear() { }
 	}
 
 	private sealed class TestState : IState<TestAccess>
