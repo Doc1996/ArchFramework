@@ -16,15 +16,6 @@ public sealed class SqliteJournal<TEntry> : IJournal<TEntry>
 		_store = database.GetJournal<TEntry>(name);
 	}
 
-	internal SqliteJournal(string name, SqliteStorageDatabase database, SqliteStorageSession session)
-	{
-		ArgumentException.ThrowIfNullOrWhiteSpace(name);
-		ArgumentNullException.ThrowIfNull(database);
-		ArgumentNullException.ThrowIfNull(session);
-
-		_store = database.GetJournal<TEntry>(name, session);
-	}
-
 	public Task<Result<StorageEntry<TEntry>>> AppendAsync(TEntry entry, CancellationToken token = default)
 	{
 		token.ThrowIfCancellationRequested();

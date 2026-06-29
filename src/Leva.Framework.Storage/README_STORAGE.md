@@ -1,10 +1,12 @@
 # Leva.Framework.Storage
 
-`Leva.Framework.Storage` is the provider-neutral persistence contract layer of ArchFramework. It defines repositories, journals, storage sessions, stored entries, versions, and common storage errors used by provider libraries and applications.
+`Leva.Framework.Storage` is the provider-neutral persistence contract layer of ArchFramework. It defines repositories, journals, stored entries, versions, and common storage errors used by provider libraries and applications.
 
 ## Purpose and dependencies
 
-Storage exists so applications and provider libraries can share the same persistence vocabulary without coupling the framework to a specific database, serializer, file format, or infrastructure provider. It contains contracts and small storage values, not concrete persistence behavior. `Leva.Framework.Storage` depends on `Leva.Framework.Core` so storage operations use the same `Result`, `Result<T>`, and `Error` model as the rest of the framework. Core must not depend on Storage, and Engine should not depend on Storage directly; hosts and infrastructure adapters should connect storage explicitly at the application boundary.
+Storage exists so framework-owned data can be persisted without coupling the framework to EF Core, SQLite, files, or any other concrete persistence technology. It is intended for snapshots, runtime journals, small keyed records, and provider-neutral framework persistence. Application domain data with relationships and rich queries should usually use EF Core directly in the application storage layer.
+
+`Leva.Framework.Storage` depends on `Leva.Framework.Core` so storage operations use the same `Result`, `Result<T>`, and `Error` model as the rest of the framework. Core must not depend on Storage, and Engine should not depend on Storage directly; hosts and infrastructure adapters should connect storage explicitly at the application boundary.
 
 ```text
 Leva.Framework.Storage
@@ -22,13 +24,11 @@ Leva.Framework.Engine
 
 ## Project overview
 
-Storage is intentionally contracts-first. It defines what the framework expects from persistence while leaving implementation details to provider libraries. An in-memory provider can keep values directly, a file-system provider can use local JSON files, and a SQLite provider can use tables and provider-owned schema migration.
-
-Repositories are the general durable model store. They store keyed values, return stored values with provider metadata through `StorageEntry<T>`, and use optional expected versions for optimistic concurrency. Framework snapshots do not need a separate snapshot-store contract because they can be stored through a repository with a string key.
+Storage is intentionally small. Repositories are the general durable model store. They store keyed values, return values with provider metadata through `StorageEntry<T>`, and use optional expected versions for optimistic concurrency. Framework snapshots do not need a separate snapshot-store contract because they can be stored through a repository with a string key.
 
 Journals are append-only stores for durable history, audit trails, runtime records, or replayable entries. A journal appends records and reads them in provider-assigned version order, optionally after a known version and with a maximum count.
 
-Storage sessions are provider-owned operation boundaries. They allow providers to group related repository and journal work behind one commit or rollback decision without exposing database transactions, connections, or provider-specific objects. `CommitAsync` makes pending work durable, `RollbackAsync` abandons pending work, and asynchronous disposal performs cleanup.
+Storage is not a replacement for EF Core. EF Core should be used directly by applications for relational domain data, navigation properties, migrations, and complex queries. Storage should stay focused on simple provider-neutral persistence that framework libraries and hosts can swap between memory, files, SQLite, or future providers.
 
 ## Files and classes
 
@@ -39,11 +39,6 @@ Storage sessions are provider-owned operation boundaries. They allow providers t
 ### Journal contracts
 
 `IJournal<TEntry>` - Stores append-only entries for durable history, audit trails, runtime records, or replayable data. It appends one entry and reads entries in version order, optionally after a known version and with a maximum count.
-
-### Session contracts
-
-`IStorageSession` - Represents a provider-owned operation boundary for related storage work. It exposes commit and rollback operations while using asynchronous disposal for cleanup.
-`IStorageSessionFactory` - Opens provider-owned storage sessions without exposing transaction, connection, or provider-specific objects.
 
 ### Shared storage values
 

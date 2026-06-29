@@ -13,14 +13,8 @@ internal sealed class SqliteRepositoryStore<TId, TModel>
 	private readonly string _name;
 	private readonly string _repositoryName;
 	private readonly SqliteStorageDatabase _database;
-	private readonly SqliteStorageSession? _session;
 
-	public SqliteRepositoryStore(
-		string name,
-		string repositoryName,
-		SqliteStorageDatabase database,
-		SqliteStorageSession? session
-	)
+	public SqliteRepositoryStore(string name, string repositoryName, SqliteStorageDatabase database)
 	{
 		ArgumentException.ThrowIfNullOrWhiteSpace(name);
 		ArgumentException.ThrowIfNullOrWhiteSpace(repositoryName);
@@ -29,7 +23,6 @@ internal sealed class SqliteRepositoryStore<TId, TModel>
 		_name = name;
 		_repositoryName = repositoryName;
 		_database = database;
-		_session = session;
 	}
 
 	public async Task<Result<StorageEntry<TModel>>> SaveAsync(
@@ -45,13 +38,11 @@ internal sealed class SqliteRepositoryStore<TId, TModel>
 			var key = SqliteStorageDatabase.ToKey(id);
 
 			return await _database.UseConnectionAsync(
-				_session,
-				async (connection, transaction) =>
+				async connection =>
 					await UseTransactionAsync(
 						connection,
-						transaction,
-						async activeTransaction =>
-							await SaveAsync(connection, activeTransaction, key, model, expectedVersion, token),
+						async transaction =>
+							await SaveAsync(connection, transaction, key, model, expectedVersion, token),
 						token
 					),
 				token
@@ -77,10 +68,9 @@ internal sealed class SqliteRepositoryStore<TId, TModel>
 			var key = SqliteStorageDatabase.ToKey(id);
 
 			return await _database.UseConnectionAsync(
-				_session,
-				async (connection, transaction) =>
+				async connection =>
 				{
-					var existing = await LoadExistingAsync(connection, transaction, key, token);
+					var existing = await LoadExistingAsync(connection, null, key, token);
 					return existing.HasValue
 						? Result<StorageEntry<TModel>>.Ok(existing.Value)
 						: Result<StorageEntry<TModel>>.Fail(StorageErrors.NotFound(_name, key));
@@ -106,13 +96,11 @@ internal sealed class SqliteRepositoryStore<TId, TModel>
 		{
 			token.ThrowIfCancellationRequested();
 			return await _database.UseConnectionAsync(
-				_session,
-				async (connection, transaction) =>
+				async connection =>
 				{
 					var entries = new Dictionary<TId, StorageEntry<TModel>>();
 					await using var command = connection.CreateCommand();
 
-					command.Transaction = transaction;
 					command.CommandText = """
 					SELECT storage_id, value_json, version, created_at, updated_at
 					FROM repository_entries
@@ -154,11 +142,9 @@ internal sealed class SqliteRepositoryStore<TId, TModel>
 			var key = SqliteStorageDatabase.ToKey(id);
 
 			return await _database.UseConnectionAsync(
-				_session,
-				async (connection, transaction) =>
+				async connection =>
 				{
 					await using var command = connection.CreateCommand();
-					command.Transaction = transaction;
 					command.CommandText = """
 					SELECT 1
 					FROM repository_entries
@@ -193,13 +179,10 @@ internal sealed class SqliteRepositoryStore<TId, TModel>
 			var key = SqliteStorageDatabase.ToKey(id);
 
 			return await _database.UseConnectionAsync(
-				_session,
-				async (connection, transaction) =>
+				async connection =>
 					await UseTransactionAsync(
 						connection,
-						transaction,
-						async activeTransaction =>
-							await DeleteAsync(connection, activeTransaction, key, expectedVersion, token),
+						async transaction => await DeleteAsync(connection, transaction, key, expectedVersion, token),
 						token
 					),
 				token
@@ -217,18 +200,14 @@ internal sealed class SqliteRepositoryStore<TId, TModel>
 
 	private static async Task<TResult> UseTransactionAsync<TResult>(
 		SqliteConnection connection,
-		SqliteTransaction? transaction,
 		Func<SqliteTransaction, Task<TResult>> action,
 		CancellationToken token
 	)
 	{
-		if (transaction is not null)
-			return await action(transaction);
+		await using var transaction = (SqliteTransaction)await connection.BeginTransactionAsync(token);
+		var result = await action(transaction);
 
-		await using var localTransaction = (SqliteTransaction)await connection.BeginTransactionAsync(token);
-		var result = await action(localTransaction);
-
-		await localTransaction.CommitAsync(token);
+		await transaction.CommitAsync(token);
 		return result;
 	}
 

@@ -7,7 +7,7 @@ using System.Text.Json;
 namespace Leva.Framework.Storage.Files;
 
 /// <summary>
-/// Owns file paths, serialization, and directory copying for one file storage provider instance.
+/// Owns file paths and serialization for one file storage provider instance.
 /// </summary>
 internal sealed class FileStorageDatabase
 {
@@ -21,32 +21,6 @@ internal sealed class FileStorageDatabase
 	}
 
 	internal string RootPath { get; }
-
-	public FileStorageDatabase Clone()
-	{
-		var database = new FileStorageDatabase(
-			Path.Combine(Path.GetTempPath(), "leva-storage-files-" + Guid.NewGuid().ToString("N")),
-			_jsonOptions
-		);
-
-		CopyDirectory(RootPath, database.RootPath);
-		return database;
-	}
-
-	public void ReplaceWith(FileStorageDatabase database)
-	{
-		ArgumentNullException.ThrowIfNull(database);
-		if (Directory.Exists(RootPath))
-			Directory.Delete(RootPath, true);
-
-		CopyDirectory(database.RootPath, RootPath);
-	}
-
-	public void Delete()
-	{
-		if (Directory.Exists(RootPath))
-			Directory.Delete(RootPath, true);
-	}
 
 	public FileRepositoryStore<TId, TModel> GetRepository<TId, TModel>(string name)
 		where TId : notnull => new(name, this, GetRepositoryDirectory<TId, TModel>(name));
@@ -139,27 +113,6 @@ internal sealed class FileStorageDatabase
 	{
 		ArgumentException.ThrowIfNullOrWhiteSpace(name);
 		return Path.Combine(RootPath, "journals", Hash(GetJournalKey<TEntry>(name)));
-	}
-
-	private static void CopyDirectory(string source, string target)
-	{
-		Directory.CreateDirectory(target);
-		if (!Directory.Exists(source))
-			return;
-
-		foreach (var directory in Directory.EnumerateDirectories(source, "*", SearchOption.AllDirectories))
-		{
-			var relativePath = Path.GetRelativePath(source, directory);
-			Directory.CreateDirectory(Path.Combine(target, relativePath));
-		}
-
-		foreach (var file in Directory.EnumerateFiles(source, "*", SearchOption.AllDirectories))
-		{
-			var relativePath = Path.GetRelativePath(source, file);
-			var targetFile = Path.Combine(target, relativePath);
-			Directory.CreateDirectory(Path.GetDirectoryName(targetFile)!);
-			File.Copy(file, targetFile, true);
-		}
 	}
 
 	private static string GetRepositoryKey<TId, TModel>(string name) =>

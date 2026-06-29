@@ -17,15 +17,6 @@ public sealed class SqliteRepository<TId, TModel> : IRepository<TId, TModel>
 		_store = database.GetRepository<TId, TModel>(name);
 	}
 
-	internal SqliteRepository(string name, SqliteStorageDatabase database, SqliteStorageSession session)
-	{
-		ArgumentException.ThrowIfNullOrWhiteSpace(name);
-		ArgumentNullException.ThrowIfNull(database);
-		ArgumentNullException.ThrowIfNull(session);
-
-		_store = database.GetRepository<TId, TModel>(name, session);
-	}
-
 	public Task<Result<StorageEntry<TModel>>> SaveAsync(
 		TId id,
 		TModel model,

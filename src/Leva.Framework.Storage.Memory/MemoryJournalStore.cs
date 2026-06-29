@@ -1,36 +1,13 @@
 namespace Leva.Framework.Storage.Memory;
 
 /// <summary>
-/// Holds the mutable in-memory buffer for one journal and can be copied for storage sessions.
+/// Holds the mutable in-memory entries for one journal.
 /// </summary>
-internal sealed class MemoryJournalStore<TEntry> : IMemoryStoreBuffer
+internal sealed class MemoryJournalStore<TEntry>
 {
 	private readonly Lock _lock = new();
 	private readonly List<StorageEntry<TEntry>> _entries = [];
 	private long _nextVersion = 1;
-
-	public IMemoryStoreBuffer Clone()
-	{
-		lock (_lock)
-		{
-			var buffer = new MemoryJournalStore<TEntry>();
-			buffer._entries.AddRange(_entries);
-			buffer._nextVersion = _nextVersion;
-
-			return buffer;
-		}
-	}
-
-	public void CopyFrom(IMemoryStoreBuffer source)
-	{
-		var sourceBuffer = (MemoryJournalStore<TEntry>)source;
-		lock (_lock)
-		{
-			_entries.Clear();
-			_entries.AddRange(sourceBuffer._entries);
-			_nextVersion = sourceBuffer._nextVersion;
-		}
-	}
 
 	public StorageEntry<TEntry> Append(TEntry value)
 	{

@@ -1,45 +1,44 @@
 # Leva.Framework.Storage.Sqlite
 
-`Leva.Framework.Storage.Sqlite` provides local SQLite implementations of the provider-neutral contracts from `Leva.Framework.Storage`.
+`Leva.Framework.Storage.Sqlite` is the SQLite provider implementation of `Leva.Framework.Storage`. It stores repositories and journals in one SQLite database file.
 
 ## Purpose and dependencies
 
-SQLite exists for small durable applications, local tools, desktop-style hosts, and simple application persistence without running a database server. It depends on `Leva.Framework.Storage`, `Leva.Framework.Core`, and `Microsoft.Data.Sqlite`; it uses JSON serialization for stored values and SQLite columns for provider-owned metadata.
+`Leva.Framework.Storage.Sqlite` depends on `Leva.Framework.Storage`, `Leva.Framework.Core`, `Microsoft.Data.Sqlite`, and SQLite native provider packages. It does not depend on Engine, Memory, Files, EF Core, or application projects.
 
 ```text
+Leva.Framework.Core
+  -> .NET only
+
+Leva.Framework.Storage
+  -> Leva.Framework.Core
+
 Leva.Framework.Storage.Sqlite
   -> Leva.Framework.Storage
   -> Leva.Framework.Core
   -> Microsoft.Data.Sqlite
-  -> .NET base libraries
 ```
 
 ## Project overview
 
-The provider stores repository records and journal entries in one SQLite database file. Repositories store keyed values in a repository table partition. Journals store ordered append-only entries in a journal table partition using provider-assigned sequence versions.
+The SQLite provider is a complete provider for the storage contracts. It stores all repositories in one provider-owned repository table and all journals in one provider-owned journal table. Named repositories and journals are separated by stable hashed provider names.
 
-Storage sessions use one SQLite connection and transaction. Commit commits the transaction, while rollback or disposal abandons it.
-
-The public repository and journal classes stay thin. They delegate storage behavior to internal stores, while `SqliteStorageDatabase` owns connection creation, serialization, key conversion, and schema initialization.
+The provider is useful for durable local framework data when files are too loose but EF Core would be unnecessary. It should stay a small SQLite implementation of the storage contracts, not a second ORM.
 
 ## Files and classes
 
-### Provider entry point
+### Provider composition
 
-`SqliteStorageProvider` - Creates repositories, journals, and storage sessions for one SQLite database file.
-`SqliteStorageDatabase` - Owns database paths, connections, serialization, and key conversion for one provider instance.
+`SqliteStorageProvider` - Creates repositories and journals for one SQLite database file.
+`SqliteStorageDatabase` - Owns database paths, connections, serialization, timestamp formatting, and key conversion.
 `SqliteStorageInitializer` - Creates the provider-owned SQLite schema when a database connection is opened.
 
 ### Repository implementation
 
-`SqliteRepository<TId, TModel>` - Stores keyed models in SQLite under a named repository.
-`SqliteRepositoryStore<TId, TModel>` - Holds SQL operations for one named repository table partition.
+`SqliteRepository<TId, TModel>` - Public repository implementation that delegates keyed model operations to a named SQLite store.
+`SqliteRepositoryStore<TId, TModel>` - Performs repository SQL operations, version checks, serialization, and row mapping.
 
 ### Journal implementation
 
-`SqliteJournal<TEntry>` - Stores append-only journal entries in SQLite under a named journal.
-`SqliteJournalStore<TEntry>` - Holds SQL operations for one named append-only journal table partition.
-
-### Session implementation
-
-`SqliteStorageSession` - Owns a SQLite connection and transaction until commit or rollback.
+`SqliteJournal<TEntry>` - Public journal implementation that delegates append and read operations to a named SQLite store.
+`SqliteJournalStore<TEntry>` - Performs journal SQL operations, sequence version assignment, serialization, and row mapping.

@@ -1,13 +1,13 @@
 namespace Leva.Framework.Storage.Memory;
 
 /// <summary>
-/// Owns named in-memory repository and journal store buffers for one provider instance.
+/// Owns named in-memory repository and journal stores for one provider instance.
 /// </summary>
 internal sealed class MemoryStorageDatabase
 {
 	private readonly Lock _lock = new();
-	private readonly Dictionary<string, IMemoryStoreBuffer> _journals = new();
-	private readonly Dictionary<string, IMemoryStoreBuffer> _repositories = new();
+	private readonly Dictionary<string, object> _journals = new();
+	private readonly Dictionary<string, object> _repositories = new();
 
 	public MemoryRepositoryStore<TId, TModel> GetRepository<TId, TModel>(string name)
 		where TId : notnull
@@ -39,50 +39,6 @@ internal sealed class MemoryStorageDatabase
 			var store = new MemoryJournalStore<TEntry>();
 			_journals[key] = store;
 			return store;
-		}
-	}
-
-	public MemoryStorageDatabase Clone()
-	{
-		var database = new MemoryStorageDatabase();
-		lock (_lock)
-		{
-			foreach (var journal in _journals)
-				database._journals[journal.Key] = journal.Value.Clone();
-
-			foreach (var repository in _repositories)
-				database._repositories[repository.Key] = repository.Value.Clone();
-		}
-
-		return database;
-	}
-
-	internal void ReplaceWith(MemoryStorageDatabase database)
-	{
-		ArgumentNullException.ThrowIfNull(database);
-		var copyDatabase = database.Clone();
-
-		lock (_lock)
-		{
-			CopyStores(_journals, copyDatabase._journals);
-			CopyStores(_repositories, copyDatabase._repositories);
-		}
-	}
-
-	private static void CopyStores(
-		Dictionary<string, IMemoryStoreBuffer> target,
-		Dictionary<string, IMemoryStoreBuffer> source
-	)
-	{
-		foreach (var key in target.Keys.Except(source.Keys).ToArray())
-			target.Remove(key);
-
-		foreach (var store in source)
-		{
-			if (target.TryGetValue(store.Key, out var existing))
-				existing.CopyFrom(store.Value);
-			else
-				target[store.Key] = store.Value.Clone();
 		}
 	}
 

@@ -3,9 +3,9 @@ using Leva.Framework.Core;
 namespace Leva.Framework.Storage.Memory;
 
 /// <summary>
-/// Holds the mutable in-memory buffer for one repository and can be copied for storage sessions.
+/// Holds the mutable in-memory entries for one repository.
 /// </summary>
-internal sealed class MemoryRepositoryStore<TId, TModel> : IMemoryStoreBuffer
+internal sealed class MemoryRepositoryStore<TId, TModel>
 	where TId : notnull
 {
 	private readonly Lock _lock = new();
@@ -16,31 +16,6 @@ internal sealed class MemoryRepositoryStore<TId, TModel> : IMemoryStoreBuffer
 	{
 		ArgumentException.ThrowIfNullOrWhiteSpace(name);
 		_name = name;
-	}
-
-	public IMemoryStoreBuffer Clone()
-	{
-		var buffer = new MemoryRepositoryStore<TId, TModel>(_name);
-		lock (_lock)
-		{
-			foreach (var entry in _entries)
-				buffer._entries[entry.Key] = entry.Value;
-		}
-
-		return buffer;
-	}
-
-	public void CopyFrom(IMemoryStoreBuffer source)
-	{
-		var sourceBuffer = (MemoryRepositoryStore<TId, TModel>)source;
-		var entries = sourceBuffer.LoadAll();
-
-		lock (_lock)
-		{
-			_entries.Clear();
-			foreach (var entry in entries)
-				_entries[entry.Key] = entry.Value;
-		}
 	}
 
 	public Result<StorageEntry<TModel>> Save(TId id, TModel model, StorageVersion? expectedVersion)

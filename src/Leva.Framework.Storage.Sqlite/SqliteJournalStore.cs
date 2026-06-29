@@ -12,14 +12,8 @@ internal sealed class SqliteJournalStore<TEntry>
 	private readonly string _name;
 	private readonly string _journalName;
 	private readonly SqliteStorageDatabase _database;
-	private readonly SqliteStorageSession? _session;
 
-	public SqliteJournalStore(
-		string name,
-		string journalName,
-		SqliteStorageDatabase database,
-		SqliteStorageSession? session
-	)
+	public SqliteJournalStore(string name, string journalName, SqliteStorageDatabase database)
 	{
 		ArgumentException.ThrowIfNullOrWhiteSpace(name);
 		ArgumentException.ThrowIfNullOrWhiteSpace(journalName);
@@ -28,7 +22,6 @@ internal sealed class SqliteJournalStore<TEntry>
 		_name = name;
 		_journalName = journalName;
 		_database = database;
-		_session = session;
 	}
 
 	public async Task<Result<StorageEntry<TEntry>>> AppendAsync(TEntry value, CancellationToken token)
@@ -37,18 +30,16 @@ internal sealed class SqliteJournalStore<TEntry>
 		{
 			token.ThrowIfCancellationRequested();
 			return await _database.UseConnectionAsync(
-				_session,
-				async (connection, transaction) =>
+				async connection =>
 					await UseTransactionAsync(
 						connection,
-						transaction,
-						async activeTransaction =>
+						async transaction =>
 						{
-							var version = await GetNextVersionAsync(connection, activeTransaction, token);
+							var version = await GetNextVersionAsync(connection, transaction, token);
 							var utcNow = DateTimeOffset.UtcNow;
 							var entry = new StorageEntry<TEntry>(value, version, utcNow, utcNow);
 
-							await InsertAsync(connection, activeTransaction, entry, token);
+							await InsertAsync(connection, transaction, entry, token);
 
 							return Result<StorageEntry<TEntry>>.Ok(entry);
 						},
@@ -79,13 +70,11 @@ internal sealed class SqliteJournalStore<TEntry>
 		{
 			token.ThrowIfCancellationRequested();
 			return await _database.UseConnectionAsync(
-				_session,
-				async (connection, transaction) =>
+				async connection =>
 				{
 					var entries = new List<StorageEntry<TEntry>>();
 
 					await using var command = connection.CreateCommand();
-					command.Transaction = transaction;
 					command.CommandText = CreateReadCommandText(afterVersion, limit);
 					command.Parameters.AddWithValue("$journal_name", _journalName);
 
@@ -117,18 +106,14 @@ internal sealed class SqliteJournalStore<TEntry>
 
 	private static async Task<TResult> UseTransactionAsync<TResult>(
 		SqliteConnection connection,
-		SqliteTransaction? transaction,
 		Func<SqliteTransaction, Task<TResult>> action,
 		CancellationToken token
 	)
 	{
-		if (transaction is not null)
-			return await action(transaction);
+		await using var transaction = (SqliteTransaction)await connection.BeginTransactionAsync(token);
+		var result = await action(transaction);
 
-		await using var localTransaction = (SqliteTransaction)await connection.BeginTransactionAsync(token);
-		var result = await action(localTransaction);
-
-		await localTransaction.CommitAsync(token);
+		await transaction.CommitAsync(token);
 		return result;
 	}
 

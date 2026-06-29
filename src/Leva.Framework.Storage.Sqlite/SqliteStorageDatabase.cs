@@ -38,28 +38,17 @@ internal sealed class SqliteStorageDatabase
 	}
 
 	public SqliteRepositoryStore<TId, TModel> GetRepository<TId, TModel>(string name)
-		where TId : notnull => new(name, GetRepositoryName<TId, TModel>(name), this, null);
+		where TId : notnull => new(name, GetRepositoryName<TId, TModel>(name), this);
 
-	public SqliteRepositoryStore<TId, TModel> GetRepository<TId, TModel>(string name, SqliteStorageSession session)
-		where TId : notnull => new(name, GetRepositoryName<TId, TModel>(name), this, session);
-
-	public SqliteJournalStore<TEntry> GetJournal<TEntry>(string name) =>
-		new(name, GetJournalName<TEntry>(name), this, null);
-
-	public SqliteJournalStore<TEntry> GetJournal<TEntry>(string name, SqliteStorageSession session) =>
-		new(name, GetJournalName<TEntry>(name), this, session);
+	public SqliteJournalStore<TEntry> GetJournal<TEntry>(string name) => new(name, GetJournalName<TEntry>(name), this);
 
 	public async Task<TResult> UseConnectionAsync<TResult>(
-		SqliteStorageSession? session,
-		Func<SqliteConnection, SqliteTransaction?, Task<TResult>> action,
+		Func<SqliteConnection, Task<TResult>> action,
 		CancellationToken token
 	)
 	{
-		if (session is not null)
-			return await action(session.Connection, session.Transaction);
-
 		await using var connection = await OpenConnectionAsync(token);
-		return await action(connection, null);
+		return await action(connection);
 	}
 
 	public string Serialize<T>(T value) => JsonSerializer.Serialize(value, _jsonOptions);
