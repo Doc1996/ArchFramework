@@ -3,9 +3,9 @@ namespace Leva.Framework.Identity.AspNet;
 /// <summary>
 /// Maps framework auth sessions and principals to compact JWT claim payloads.
 /// </summary>
-public sealed class AspNetJwtClaimsMapper
+internal sealed class AspNetJwtClaimsMapper
 {
-	public AspNetJwtPayload Map(
+	internal AspNetJwtPayload Map(
 		AuthSession session,
 		string issuer,
 		string audience,
@@ -30,7 +30,7 @@ public sealed class AspNetJwtClaimsMapper
 		);
 	}
 
-	public AuthSession Map(AspNetJwtPayload payload)
+	internal AuthSession Map(AspNetJwtPayload payload)
 	{
 		ArgumentNullException.ThrowIfNull(payload);
 		var principal = new Principal(

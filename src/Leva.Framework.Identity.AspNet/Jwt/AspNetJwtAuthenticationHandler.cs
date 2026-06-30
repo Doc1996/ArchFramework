@@ -9,15 +9,15 @@ namespace Leva.Framework.Identity.AspNet;
 /// ASP.NET Core authentication handler backed by built in JWT bearer tokens.
 /// </summary>
 public sealed class AspNetJwtAuthenticationHandler(
-	IOptionsMonitor<AspNetJwtAuthenticationOptions> options,
+	IOptionsMonitor<AspNetJwtAuthenticationOptions> authOptions,
 	ILoggerFactory logger,
 	UrlEncoder encoder,
-	IOptions<AspNetJwtOptions> options,
+	IOptions<AspNetJwtOptions> jwtOptions,
 	AspNetJwtTokenService tokenService,
 	AspNetClaimsPrincipalMapper principalMapper
-) : AuthenticationHandler<AspNetJwtAuthenticationOptions>(options, logger, encoder)
+) : AuthenticationHandler<AspNetJwtAuthenticationOptions>(authOptions, logger, encoder)
 {
-	private readonly AspNetJwtOptions _options = options.Value;
+	private readonly AspNetJwtOptions _options = jwtOptions.Value;
 
 	protected override Task<AuthenticateResult> HandleAuthenticateAsync()
 	{
@@ -29,17 +29,20 @@ public sealed class AspNetJwtAuthenticationHandler(
 		if (session.IsFailure)
 			return Task.FromResult(AuthenticateResult.Fail(session.Error.Message));
 
-		var principal = principalMapper.Map(session.Value!, _options.AuthenticationScheme);
-		var ticket = new AuthenticationTicket(principal, _options.AuthenticationScheme);
+		var scheme = _options.AuthenticationScheme;
+		var principal = principalMapper.Map(session.Value!, scheme);
+		var ticket = new AuthenticationTicket(principal, scheme);
+
 		return Task.FromResult(AuthenticateResult.Success(ticket));
 	}
 
 	private string? ReadBearerToken()
 	{
 		var header = Request.Headers.Authorization.FirstOrDefault();
-		return
-			header is not null
-			&& header.StartsWith(AspNetJwtDefaults.AuthorizationPrefix, StringComparison.OrdinalIgnoreCase)
+		if (header is null)
+			return null;
+
+		return header.StartsWith(AspNetJwtDefaults.AuthorizationPrefix, StringComparison.OrdinalIgnoreCase)
 			? header[AspNetJwtDefaults.AuthorizationPrefix.Length..].Trim()
 			: null;
 	}

@@ -14,9 +14,9 @@ public sealed class AspNetClaimsPrincipalMapperTests
 			new PrincipalId("principal-1"),
 			"User One",
 			"user@example.com",
-			[new PrincipalRole("admin")],
-			[new PrincipalPermission("plans.create")],
-			[new PrincipalClaim("department", "engineering")]
+			new HashSet<PrincipalRole> { new("admin") },
+			new HashSet<PrincipalPermission> { new("plans.create") },
+			new[] { new PrincipalClaim("department", "engineering") }
 		);
 
 		var session = new AuthSession(

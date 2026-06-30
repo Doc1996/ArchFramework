@@ -6,7 +6,7 @@ ArchFramework is a clean .NET framework for event-driven, state-machine applicat
 
 ArchFramework keeps important application behavior out of random services, UI callbacks, and uncontrolled background code. Work enters the runtime as typed events, flows through a deterministic dispatcher, reaches the active state or routine, can fall back to behaviors, and only then applies requested transitions. This makes the application easier to reason about, test, log, persist, secure, and recover.
 
-The framework is split into small libraries. `Leva.Framework.Core` defines the shared vocabulary. `Leva.Framework.Engine` implements the runtime. `Leva.Framework.Fakes` provides reusable test doubles. `Leva.Framework.Storage` defines provider-neutral persistence contracts. Storage provider libraries implement those contracts for memory, files, and SQLite. `Leva.Framework.Identity` defines provider-neutral principal, auth session, authentication, authorization, audit, and state-facing principal access concepts. `Leva.Framework.Identity.Memory` provides an in-memory identity provider for tests and demos. `Leva.Framework.Identity.Local` provides local/offline secret-based identity for desktop, kiosk, and internal tools. `Leva.Framework.Identity.AspNet` adapts framework identity auth sessions to ASP.NET Core authentication, authorization, cookies, and built in identity endpoints. `Leva.Framework.Testing` contains shared test-only assertion helpers.
+The framework is split into small libraries. `Leva.Framework.Core` defines the shared vocabulary. `Leva.Framework.Engine` implements the runtime. `Leva.Framework.Fakes` provides reusable test doubles. `Leva.Framework.Storage` defines provider-neutral persistence contracts. Storage provider libraries implement those contracts for memory, files, and SQLite. `Leva.Framework.Identity` defines provider-neutral principal, auth session, authentication, authorization, audit, and state-facing principal access concepts. `Leva.Framework.Identity.Memory` provides an in-memory identity provider for tests and demos. `Leva.Framework.Identity.Local` provides local/offline secret-based identity for desktop, kiosk, and internal tools. `Leva.Framework.Identity.AspNet` adapts framework identity auth sessions to ASP.NET Core authentication, authorization, cookies, built in endpoints, Google sign-in, and JWT bearer tokens. `Leva.Framework.Testing` contains shared test-only assertion helpers.
 
 ## Library structure
 
@@ -21,7 +21,7 @@ Leva.Framework.Storage.Sqlite  -> local SQLite storage provider
 Leva.Framework.Identity        -> principals, auth sessions, authentication, authorization, audit
 Leva.Framework.Identity.Memory -> in-memory principal/auth-session/auth provider
 Leva.Framework.Identity.Local  -> local/offline credential and secret auth provider
-Leva.Framework.Identity.AspNet -> ASP.NET Core auth-session, claims, and endpoint adapter
+Leva.Framework.Identity.AspNet -> ASP.NET Core auth-session, claims, endpoints, Google, JWT
 Leva.Framework.Testing         -> shared test assertions and test-only helpers
 ```
 
@@ -125,7 +125,7 @@ README_STORAGE*.md          -> Storage contracts and provider library guides
 README_IDENTITY.md          -> Identity purpose, dependencies, overview, files and classes
 README_IDENTITY_MEMORY.md   -> Identity.Memory provider guide
 README_IDENTITY_LOCAL.md    -> Identity.Local provider guide
-README_IDENTITY_ASPNET.md -> Identity.AspNet provider guide
+README_IDENTITY_ASPNET.md   -> Identity.AspNet provider guide
 README_TESTING.md           -> shared test helper guide
 README_*_TESTS.md           -> focused test coverage summaries
 ```

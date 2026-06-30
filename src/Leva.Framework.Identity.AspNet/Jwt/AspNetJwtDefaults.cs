@@ -10,11 +10,11 @@ public static class AspNetJwtDefaults
 	public const string AuthenticationScheme = "FrameworkJwt";
 	public const string TokenType = "Bearer";
 	public const string AuthorizationPrefix = "Bearer ";
-	public const string PermissionClaimType = "framework:permission";
-	public const string SessionIdClaimType = "framework:auth_session_id";
 	public const string Issuer = "Framework";
 	public const string Audience = "Framework";
+	public const int TokenLifetimeMinutes = 60;
+	public const int ClockSkewMinutes = 1;
 
-	public static readonly TimeSpan TokenLifetime = TimeSpan.FromHours(1);
-	public static readonly TimeSpan ClockSkew = TimeSpan.FromMinutes(1);
+	public static TimeSpan TokenLifetime => TimeSpan.FromMinutes(TokenLifetimeMinutes);
+	public static TimeSpan ClockSkew => TimeSpan.FromMinutes(ClockSkewMinutes);
 }

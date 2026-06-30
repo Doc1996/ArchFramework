@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 namespace Leva.Framework.Identity.AspNet;
 
 /// <summary>
-/// Writes and deletes framework auth session cookies on ASP.NET Core responses.
+/// Writes and deletes framework auth session identifiers on ASP.NET Core responses.
 /// </summary>
 public sealed class AspNetAuthSessionWriter(IOptions<AspNetIdentityOptions> options)
 {

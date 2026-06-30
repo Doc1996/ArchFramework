@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 namespace Leva.Framework.Identity.AspNet;
 
 /// <summary>
-/// Resolves the current framework auth session from the ASP.NET Core HTTP context.
+/// Resolves the current framework auth session from the active ASP.NET Core HTTP context.
 /// </summary>
 public sealed class AspNetAuthSessionSource(
 	IHttpContextAccessor contextAccessor,
@@ -21,8 +21,9 @@ public sealed class AspNetAuthSessionSource(
 			return Result<AuthSession?>.Ok(null);
 
 		var sessionId = sessionReader.Read(context);
-		return sessionId is null
-			? Result<AuthSession?>.Ok(null)
-			: await sessionService.LoadAsync(sessionId.Value, token);
+		if (sessionId is null)
+			return Result<AuthSession?>.Ok(null);
+
+		return await sessionService.LoadAsync(sessionId.Value, token);
 	}
 }

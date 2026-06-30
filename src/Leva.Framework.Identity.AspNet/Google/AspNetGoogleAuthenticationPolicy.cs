@@ -9,8 +9,8 @@ namespace Leva.Framework.Identity.AspNet;
 /// Authenticates Google access tokens and maps Google user information to framework principals.
 /// </summary>
 public sealed class AspNetGoogleAuthenticationPolicy(
-	IHttpClientFactory httpClientFactory,
 	IOptions<AspNetGoogleOptions> options,
+	IHttpClientFactory httpClientFactory,
 	AspNetGooglePrincipalMapper principalMapper
 ) : AuthenticationPolicy
 {

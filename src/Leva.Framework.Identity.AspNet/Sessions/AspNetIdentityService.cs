@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 namespace Leva.Framework.Identity.AspNet;
 
 /// <summary>
-/// Handles built in ASP.NET Core identity login, logout, and principal/session lookup.
+/// Provides high-level ASP.NET Core identity operations for built in endpoints and custom web UI.
 /// </summary>
 public sealed class AspNetIdentityService(
 	AuthenticationService authentication,
@@ -19,9 +19,9 @@ public sealed class AspNetIdentityService(
 		CancellationToken token = default
 	)
 	{
-		token.ThrowIfCancellationRequested();
 		ArgumentNullException.ThrowIfNull(context);
 		ArgumentNullException.ThrowIfNull(request);
+		token.ThrowIfCancellationRequested();
 
 		var result = await authentication.AuthenticateAsync(request, token);
 		if (result.IsFailure)
@@ -36,8 +36,8 @@ public sealed class AspNetIdentityService(
 
 	public async Task<Result> LogoutAsync(HttpContext context, CancellationToken token = default)
 	{
-		token.ThrowIfCancellationRequested();
 		ArgumentNullException.ThrowIfNull(context);
+		token.ThrowIfCancellationRequested();
 
 		var sessionId = sessionReader.Read(context);
 		if (sessionId is null)
@@ -52,20 +52,22 @@ public sealed class AspNetIdentityService(
 
 	public async Task<Result<AuthSession?>> GetSessionAsync(HttpContext context, CancellationToken token = default)
 	{
-		token.ThrowIfCancellationRequested();
 		ArgumentNullException.ThrowIfNull(context);
+		token.ThrowIfCancellationRequested();
 
 		var sessionId = sessionReader.Read(context);
-		return sessionId is null
-			? Result<AuthSession?>.Ok(null)
-			: await sessionService.LoadAsync(sessionId.Value, token);
+		if (sessionId is null)
+			return Result<AuthSession?>.Ok(null);
+
+		return await sessionService.LoadAsync(sessionId.Value, token);
 	}
 
 	public async Task<Result<Principal?>> GetPrincipalAsync(HttpContext context, CancellationToken token = default)
 	{
 		var session = await GetSessionAsync(context, token);
-		return session.IsFailure
-			? Result<Principal?>.Fail(session.Error)
-			: Result<Principal?>.Ok(session.Value?.Principal);
+		if (session.IsFailure)
+			return Result<Principal?>.Fail(session.Error);
+
+		return Result<Principal?>.Ok(session.Value?.Principal);
 	}
 }

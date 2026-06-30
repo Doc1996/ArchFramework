@@ -27,8 +27,8 @@ public sealed class AspNetEndpointContractTests
 		var principal = new Principal(
 			new PrincipalId("principal-1"),
 			"User One",
-			Roles: [new PrincipalRole("admin")],
-			Permissions: [new PrincipalPermission("plans.create")]
+			Roles: new HashSet<PrincipalRole> { new("admin") },
+			Permissions: new HashSet<PrincipalPermission> { new("plans.create") }
 		);
 
 		var session = new AuthSession(

@@ -18,7 +18,7 @@ public sealed class AspNetAuthorizationHandlerTests
 		var principal = new Principal(
 			new PrincipalId("principal-1"),
 			"User One",
-			Permissions: [new PrincipalPermission("plans.create")]
+			Permissions: new HashSet<PrincipalPermission> { new("plans.create") }
 		);
 
 		var session = ResultAssert.Success(await sessionService.CreateAsync(principal));

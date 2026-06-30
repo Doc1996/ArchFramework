@@ -29,7 +29,7 @@ Authorization is also delegated back to framework identity. `AspNetAuthorization
 
 Google support implements a compact OAuth sign-in flow for ASP.NET Core hosts. It creates a Google authorization redirect, validates the callback state, exchanges the authorization code for an access token, reads Google user information, maps it to a framework principal, and signs the user into a normal framework auth session. Google stays grouped in one feature folder because the defaults, options, user info contract, mapper, policy, sign-in service, and endpoints form one login flow.
 
-JWT support issues and validates compact HMAC-signed bearer tokens for framework auth sessions. It can issue tokens from any configured framework authentication method and can authenticate incoming `Authorization: Bearer` requests through an ASP.NET Core authentication handler. JWT stays grouped in one feature folder because its options, mapper, token service, handler, policy, endpoint, and response contract are a cohesive token flow.
+JWT support issues and validates compact HMAC-signed bearer tokens for framework auth sessions. It can issue tokens from any configured framework authentication method and can authenticate incoming `Authorization: Bearer` requests through an ASP.NET Core authentication handler. JWT stays grouped in one feature folder because its options, internal mapper, token service, handler, policy, endpoint, and response contract are a cohesive token flow.
 
 ## Files and classes
 
@@ -47,10 +47,10 @@ JWT support issues and validates compact HMAC-signed bearer tokens for framework
 
 ### Auth sessions
 
-`AspNetAuthSessionSource` - Resolves the current auth session from the ASP.NET Core HTTP context for application code and access objects.
-`AspNetAuthSessionReader` - Reads auth session ids from ASP.NET Core request cookies or optional headers.
-`AspNetAuthSessionWriter` - Writes and deletes auth session cookies on ASP.NET Core responses.
-`AspNetIdentityService` - Handles login, logout, principal lookup, and auth session lookup through framework authentication services and ASP.NET Core auth session cookies.
+`AspNetAuthSessionSource` - Resolves the current auth session from the active ASP.NET Core HTTP context for application code and access objects.
+`AspNetAuthSessionReader` - Reads auth session identifiers from ASP.NET Core request cookies or optional headers.
+`AspNetAuthSessionWriter` - Writes and deletes auth session identifiers on ASP.NET Core responses.
+`AspNetIdentityService` - Provides high-level login, logout, principal lookup, and auth session lookup for built in endpoints and custom web UI.
 
 ### Authorization implementation
 
@@ -78,10 +78,10 @@ JWT support issues and validates compact HMAC-signed bearer tokens for framework
 
 `AspNetJwtDefaults` - Holds the built in JWT authentication method, scheme, token type, bearer prefix, and claim defaults.
 `AspNetJwtOptions` - Configures issuer, audience, signing key, token lifetime, clock skew, and scheme name.
-`AspNetJwtClaimsMapper` - Maps framework auth sessions and principals to internal JWT payloads and back.
-`AspNetJwtPayload` - Represents the built in JWT payload used by framework auth sessions.
-`AspNetJwtClaim` - Represents one framework principal claim stored in the JWT payload.
-`AspNetJwtHeader` - Represents the built in JWT header.
+`AspNetJwtClaimsMapper` - Internal mapper between framework auth sessions and JWT payload records.
+`AspNetJwtPayload` - Internal JWT payload record used by framework auth sessions.
+`AspNetJwtClaim` - Internal framework principal claim record stored in the JWT payload.
+`AspNetJwtHeader` - Internal JWT header record.
 `AspNetJwtTokenService` - Issues and validates built in HMAC-signed JWT access tokens.
 `AspNetJwtAuthenticationPolicy` - Authenticates JWT tokens through the framework authentication service.
 `AspNetJwtAuthenticationOptions` - ASP.NET Core authentication scheme options for built in JWT bearer tokens.

@@ -11,8 +11,8 @@ namespace Leva.Framework.Identity.AspNet;
 /// Handles the built in ASP.NET Core Google OAuth sign-in flow.
 /// </summary>
 public sealed class AspNetGoogleSignInService(
-	IHttpClientFactory httpClientFactory,
 	IOptions<AspNetGoogleOptions> options,
+	IHttpClientFactory httpClientFactory,
 	AspNetIdentityService identity
 )
 {

@@ -10,13 +10,15 @@ public sealed class AspNetGoogleContractTests
 	public void Map_CreatesGooglePrincipal()
 	{
 		var mapper = new AspNetGooglePrincipalMapper();
-		var principal = mapper.Map(new AspNetGoogleUserInfo(
-			"google-1",
-			"User One",
-			"user@example.com",
-			true,
-			"https://example.com/picture.png"
-		););
+		var principal = mapper.Map(
+			new AspNetGoogleUserInfo(
+				"google-1",
+				"User One",
+				"user@example.com",
+				true,
+				"https://example.com/picture.png"
+			)
+		);
 
 		Assert.Equal(new PrincipalId("google:google-1"), principal.Id);
 		Assert.Equal("User One", principal.DisplayName);
@@ -57,9 +59,13 @@ public sealed class AspNetGoogleContractTests
 		Assert.Contains(".Framework.Google.ReturnUrl=%2F", context.Response.Headers.SetCookie.ToString());
 	}
 
-	private static AspNetGoogleSignInService CreateService() =>
-		new(
-			new TestHttpClientFactory(),
+	private static AspNetGoogleSignInService CreateService()
+	{
+		var sessionStore = new EmptyAuthSessionStore();
+		var sessionService = new AuthSessionService(sessionStore);
+		var identityOptions = Options.Create(new AspNetIdentityOptions());
+
+		return new AspNetGoogleSignInService(
 			Options.Create(
 				new AspNetGoogleOptions
 				{
@@ -68,11 +74,13 @@ public sealed class AspNetGoogleContractTests
 					SecureCookie = false,
 				}
 			),
+			new TestHttpClientFactory(),
 			new AspNetIdentityService(
-				new AuthenticationService([], new AuthSessionService(new EmptyAuthSessionStore())),
-				new AuthSessionService(new EmptyAuthSessionStore()),
-				new AspNetAuthSessionReader(Options.Create(new AspNetIdentityOptions())),
-				new AspNetAuthSessionWriter(Options.Create(new AspNetIdentityOptions()))
+				new AuthenticationService([], sessionService),
+				sessionService,
+				new AspNetAuthSessionReader(identityOptions),
+				new AspNetAuthSessionWriter(identityOptions)
 			)
 		);
+	}
 }

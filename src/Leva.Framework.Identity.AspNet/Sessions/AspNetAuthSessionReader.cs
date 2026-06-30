@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 namespace Leva.Framework.Identity.AspNet;
 
 /// <summary>
-/// Reads framework auth session ids from ASP.NET Core requests.
+/// Reads framework auth session identifiers from ASP.NET Core requests.
 /// </summary>
 public sealed class AspNetAuthSessionReader(IOptions<AspNetIdentityOptions> options)
 {

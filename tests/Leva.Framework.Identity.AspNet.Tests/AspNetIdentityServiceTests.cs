@@ -48,7 +48,7 @@ public sealed class AspNetIdentityServiceTests
 		);
 
 		var result = await service.LogoutAsync(new DefaultHttpContext());
-		var error = ResultAssert.Failure(result);
-		Assert.Equal("principal.unauthorized", error.Code);
+		Assert.True(result.IsFailure);
+		Assert.Equal("principal.unauthorized", result.Error.Code);
 	}
 }

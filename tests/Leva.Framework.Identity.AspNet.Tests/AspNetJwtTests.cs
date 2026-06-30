@@ -14,9 +14,9 @@ public sealed class AspNetJwtTests
 			new PrincipalId("principal-1"),
 			"User One",
 			"user@example.com",
-			[new PrincipalRole("admin")],
-			[new PrincipalPermission("plans.create")],
-			[new PrincipalClaim("department", "engineering")]
+			new HashSet<PrincipalRole> { new("admin") },
+			new HashSet<PrincipalPermission> { new("plans.create") },
+			new[] { new PrincipalClaim("department", "engineering") }
 		);
 
 		var session = new AuthSession(
@@ -43,9 +43,9 @@ public sealed class AspNetJwtTests
 	{
 		var service = CreateService();
 		var result = service.ValidateToken("invalid-token");
-		var error = ResultAssert.Failure(result);
 
-		Assert.Equal("principal.unauthorized", error.Code);
+		Assert.True(result.IsFailure);
+		Assert.Equal("principal.unauthorized", result.Error.Code);
 	}
 
 	private static AspNetJwtTokenService CreateService() =>

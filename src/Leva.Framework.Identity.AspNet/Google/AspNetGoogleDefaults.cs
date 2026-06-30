@@ -17,6 +17,7 @@ public static class AspNetGoogleDefaults
 	public const string DefaultReturnUrl = "/";
 	public const string SubjectClaimType = "google:subject";
 	public const string PictureClaimType = "google:picture";
+	public const int CorrelationLifetimeMinutes = 10;
 
-	public static readonly TimeSpan CorrelationLifetime = TimeSpan.FromMinutes(10);
+	public static TimeSpan CorrelationLifetime => TimeSpan.FromMinutes(CorrelationLifetimeMinutes);
 }
