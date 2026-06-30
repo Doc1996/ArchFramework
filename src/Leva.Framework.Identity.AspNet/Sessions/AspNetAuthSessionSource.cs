@@ -16,6 +16,7 @@ public sealed class AspNetAuthSessionSource(
 	{
 		token.ThrowIfCancellationRequested();
 		var context = contextAccessor.HttpContext;
+
 		if (context is null)
 			return Result<AuthSession?>.Ok(null);
 

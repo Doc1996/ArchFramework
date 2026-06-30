@@ -5,23 +5,26 @@ using Microsoft.AspNetCore.Routing;
 namespace Leva.Framework.Identity.AspNet;
 
 /// <summary>
-/// Maps built in ASP.NET Core JWT endpoints for token issuing.
+/// Maps built in ASP.NET Core JWT endpoints: POST /identity/jwt/login.
 /// </summary>
 public static class AspNetJwtEndpoints
 {
+	public const string DefaultPrefix = "/identity/jwt";
+	public const string LoginPath = "/login";
+
 	public static RouteGroupBuilder MapAspNetJwtEndpoints(
 		this IEndpointRouteBuilder endpoints,
-		string prefix = "/identity/jwt"
+		string prefix = DefaultPrefix
 	)
 	{
 		ArgumentNullException.ThrowIfNull(endpoints);
-
 		var group = endpoints.MapGroup(prefix);
-		group.MapPost("/login", SignInAsync);
+
+		group.MapPost(LoginPath, LoginAsync);
 		return group;
 	}
 
-	private static async Task<IResult> SignInAsync(
+	private static async Task<IResult> LoginAsync(
 		AspNetLoginRequest request,
 		AuthenticationService authentication,
 		AspNetJwtTokenService tokens,

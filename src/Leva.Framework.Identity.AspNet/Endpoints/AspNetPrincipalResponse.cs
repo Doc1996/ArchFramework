@@ -1,9 +1,9 @@
 namespace Leva.Framework.Identity.AspNet;
 
 /// <summary>
-/// Response body returned by the built in ASP.NET Core current principal endpoint.
+/// Response body returned by the built in ASP.NET Core principal endpoint.
 /// </summary>
-public sealed record AspNetCurrentPrincipalResponse(
+public sealed record AspNetPrincipalResponse(
 	bool IsAuthenticated,
 	string? SessionId = null,
 	string? PrincipalId = null,
@@ -14,9 +14,9 @@ public sealed record AspNetCurrentPrincipalResponse(
 	IReadOnlyList<PrincipalClaim>? Claims = null
 )
 {
-	public static AspNetCurrentPrincipalResponse Anonymous { get; } = new(false);
+	public static AspNetPrincipalResponse Anonymous { get; } = new(false);
 
-	public static AspNetCurrentPrincipalResponse From(AuthSession session) =>
+	public static AspNetPrincipalResponse FromSession(AuthSession session) =>
 		new(
 			true,
 			session.SessionId.Value,

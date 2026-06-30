@@ -5,63 +5,68 @@ using Microsoft.AspNetCore.Routing;
 namespace Leva.Framework.Identity.AspNet;
 
 /// <summary>
-/// Maps built in ASP.NET Core identity endpoints for login, logout, and current principal lookup.
+/// Maps built in ASP.NET Core identity endpoints: POST /identity/login, POST /identity/logout, and GET /identity/principal.
 /// </summary>
 public static class AspNetIdentityEndpoints
 {
+	public const string DefaultPrefix = "/identity";
+	public const string LoginPath = "/login";
+	public const string LogoutPath = "/logout";
+	public const string PrincipalPath = "/principal";
+
 	public static RouteGroupBuilder MapAspNetIdentityEndpoints(
 		this IEndpointRouteBuilder endpoints,
-		string prefix = "/identity"
+		string prefix = DefaultPrefix
 	)
 	{
 		ArgumentNullException.ThrowIfNull(endpoints);
 		var group = endpoints.MapGroup(prefix);
 
-		group.MapPost("/login", SignInAsync);
-		group.MapPost("/logout", SignOutAsync);
-		group.MapGet("/me", GetCurrentPrincipalAsync);
+		group.MapPost(LoginPath, LoginAsync);
+		group.MapPost(LogoutPath, LogoutAsync);
+		group.MapGet(PrincipalPath, GetPrincipalAsync);
 
 		return group;
 	}
 
-	private static async Task<IResult> SignInAsync(
+	private static async Task<IResult> LoginAsync(
 		HttpContext context,
 		AspNetLoginRequest request,
-		AspNetSignInService signIn,
+		AspNetIdentityService identity,
 		CancellationToken token
 	)
 	{
-		var result = await signIn.SignInAsync(context, request.ToAuthenticationRequest(), token);
+		var result = await identity.LoginAsync(context, request.ToAuthenticationRequest(), token);
 		if (result.IsFailure)
 			return Results.BadRequest(result.Error);
 
-		var response = AspNetLoginResponse.From(result.Value!);
+		var response = AspNetLoginResponse.FromAuthenticationResult(result.Value!);
 		return response.IsAuthenticated ? Results.Ok(response) : Results.Unauthorized();
 	}
 
-	private static async Task<IResult> SignOutAsync(
+	private static async Task<IResult> LogoutAsync(
 		HttpContext context,
-		AspNetSignInService signIn,
+		AspNetIdentityService identity,
 		CancellationToken token
 	)
 	{
-		var result = await signIn.SignOutAsync(context, token);
+		var result = await identity.LogoutAsync(context, token);
 		return result.IsSuccess ? Results.Ok() : Results.BadRequest(result.Error);
 	}
 
-	private static async Task<IResult> GetCurrentPrincipalAsync(
-		AspNetAuthSessionSource sessionSource,
+	private static async Task<IResult> GetPrincipalAsync(
+		HttpContext context,
+		AspNetIdentityService identity,
 		CancellationToken token
 	)
 	{
-		var session = await sessionSource.GetSessionAsync(token);
+		var session = await identity.GetSessionAsync(context, token);
 		if (session.IsFailure)
 			return Results.BadRequest(session.Error);
 
-		return Results.Ok(
-			session.Value is null
-				? AspNetCurrentPrincipalResponse.Anonymous
-				: AspNetCurrentPrincipalResponse.From(session.Value)
-		);
+		var response = session.Value is null
+			? AspNetPrincipalResponse.Anonymous
+			: AspNetPrincipalResponse.FromSession(session.Value);
+		return Results.Ok(response);
 	}
 }

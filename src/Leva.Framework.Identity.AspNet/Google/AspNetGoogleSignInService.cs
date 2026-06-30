@@ -11,9 +11,9 @@ namespace Leva.Framework.Identity.AspNet;
 /// Handles the built in ASP.NET Core Google OAuth sign-in flow.
 /// </summary>
 public sealed class AspNetGoogleSignInService(
-	HttpClient httpClient,
+	IHttpClientFactory httpClientFactory,
 	IOptions<AspNetGoogleOptions> options,
-	AspNetSignInService signIn
+	AspNetIdentityService identity
 )
 {
 	private readonly AspNetGoogleOptions _options = options.Value;
@@ -24,7 +24,7 @@ public sealed class AspNetGoogleSignInService(
 		ValidateOptions();
 		var state = CreateState();
 
-		WriteCorrelationCookies(context, state, returnUrl);
+		WriteCorrelationCookies(context, state, NormalizeReturnUrl(returnUrl));
 		var query = new Dictionary<string, string?>
 		{
 			["client_id"] = _options.ClientId,
@@ -37,32 +37,34 @@ public sealed class AspNetGoogleSignInService(
 		return QueryHelpers.AddQueryString(_options.AuthorizationEndpoint, query);
 	}
 
-	public async Task<Result<string>> CompleteSignInAsync(HttpContext context, CancellationToken token = default)
+	public async Task<Result<string>> CompleteLoginAsync(HttpContext context, CancellationToken token = default)
 	{
 		token.ThrowIfCancellationRequested();
 		ArgumentNullException.ThrowIfNull(context);
-		ValidateOptions();
 
+		ValidateOptions();
 		var code = context.Request.Query["code"].FirstOrDefault();
 		var state = context.Request.Query["state"].FirstOrDefault();
 
 		if (string.IsNullOrWhiteSpace(code))
 			return Result<string>.Fail(PrincipalErrors.Invalid("Google callback", "Authorization code is missing."));
+
 		if (!IsValidState(context, state))
 			return Result<string>.Fail(PrincipalErrors.Invalid("Google callback", "OAuth state is invalid."));
 
 		var accessToken = await ExchangeCodeAsync(context, code, token);
 		var request = new AuthenticationRequest(_options.Method, Token: accessToken);
-		var signInResult = await signIn.SignInAsync(context, request, token);
+		var identityResult = await identity.LoginAsync(context, request, token);
 
-		if (signInResult.IsFailure)
-			return Result<string>.Fail(signInResult.Error);
-		if (!signInResult.Value!.IsAuthenticated)
-			return Result<string>.Fail(PrincipalErrors.Unauthorized(signInResult.Value.Reason));
+		if (identityResult.IsFailure)
+			return Result<string>.Fail(identityResult.Error);
 
-		var returnUrl = context.Request.Cookies[_options.ReturnUrlCookieName];
+		if (!identityResult.Value!.IsAuthenticated)
+			return Result<string>.Fail(PrincipalErrors.Unauthorized(identityResult.Value.Reason));
+
+		var returnUrl = NormalizeReturnUrl(context.Request.Cookies[_options.ReturnUrlCookieName]);
 		DeleteCorrelationCookies(context);
-		return Result<string>.Ok(string.IsNullOrWhiteSpace(returnUrl) ? _options.DefaultReturnUrl : returnUrl);
+		return Result<string>.Ok(returnUrl);
 	}
 
 	private async Task<string> ExchangeCodeAsync(HttpContext context, string code, CancellationToken token)
@@ -76,6 +78,7 @@ public sealed class AspNetGoogleSignInService(
 			["redirect_uri"] = GetRedirectUri(context),
 		};
 
+		var httpClient = httpClientFactory.CreateClient(AspNetGoogleDefaults.HttpClientName);
 		using var response = await httpClient.PostAsync(
 			_options.TokenEndpoint,
 			new FormUrlEncodedContent(values),
@@ -99,16 +102,11 @@ public sealed class AspNetGoogleSignInService(
 	private string GetRedirectUri(HttpContext context) =>
 		$"{context.Request.Scheme}://{context.Request.Host}{context.Request.PathBase}{_options.CallbackPath}";
 
-	private void WriteCorrelationCookies(HttpContext context, string state, string? returnUrl)
+	private void WriteCorrelationCookies(HttpContext context, string state, string returnUrl)
 	{
 		var cookieOptions = CreateCookieOptions();
 		context.Response.Cookies.Append(_options.StateCookieName, state, cookieOptions);
-
-		context.Response.Cookies.Append(
-			_options.ReturnUrlCookieName,
-			string.IsNullOrWhiteSpace(returnUrl) ? _options.DefaultReturnUrl : returnUrl,
-			cookieOptions
-		);
+		context.Response.Cookies.Append(_options.ReturnUrlCookieName, returnUrl, cookieOptions);
 	}
 
 	private void DeleteCorrelationCookies(HttpContext context)
@@ -118,14 +116,16 @@ public sealed class AspNetGoogleSignInService(
 		context.Response.Cookies.Delete(_options.ReturnUrlCookieName, cookieOptions);
 	}
 
-	private CookieOptions CreateCookieOptions() =>
-		new()
+	private CookieOptions CreateCookieOptions()
+	{
+		return new()
 		{
 			HttpOnly = _options.HttpOnlyCookie,
 			Secure = _options.SecureCookie,
 			SameSite = _options.SameSite,
 			Expires = DateTimeOffset.UtcNow.Add(_options.CorrelationLifetime),
 		};
+	}
 
 	private bool IsValidState(HttpContext context, string? state)
 	{
@@ -133,6 +133,20 @@ public sealed class AspNetGoogleSignInService(
 		return !string.IsNullOrWhiteSpace(state)
 			&& !string.IsNullOrWhiteSpace(expected)
 			&& string.Equals(state, expected, StringComparison.Ordinal);
+	}
+
+	private string NormalizeReturnUrl(string? returnUrl) =>
+		IsLocalReturnUrl(returnUrl) ? returnUrl! : NormalizeDefaultReturnUrl();
+
+	private string NormalizeDefaultReturnUrl() =>
+		IsLocalReturnUrl(_options.DefaultReturnUrl) ? _options.DefaultReturnUrl : "/";
+
+	private static bool IsLocalReturnUrl(string? returnUrl)
+	{
+		return !string.IsNullOrWhiteSpace(returnUrl)
+			&& returnUrl[0] == '/'
+			&& (returnUrl.Length == 1 || returnUrl[1] != '/')
+			&& (returnUrl.Length == 1 || returnUrl[1] != '\\');
 	}
 
 	private static string CreateState()

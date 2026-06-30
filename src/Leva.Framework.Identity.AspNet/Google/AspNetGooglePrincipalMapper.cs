@@ -8,7 +8,6 @@ public sealed class AspNetGooglePrincipalMapper
 	public Principal Map(AspNetGoogleUserInfo user)
 	{
 		ArgumentNullException.ThrowIfNull(user);
-
 		var claims = new List<PrincipalClaim>
 		{
 			new(AspNetGoogleDefaults.SubjectClaimType, user.Subject),

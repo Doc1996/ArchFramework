@@ -7,9 +7,9 @@ public sealed class AspNetJwtOptions
 {
 	public AuthenticationMethod Method { get; set; } = AspNetJwtDefaults.Method;
 	public string AuthenticationScheme { get; set; } = AspNetJwtDefaults.AuthenticationScheme;
-	public string Issuer { get; set; } = "Framework";
-	public string Audience { get; set; } = "Framework";
+	public string Issuer { get; set; } = AspNetJwtDefaults.Issuer;
+	public string Audience { get; set; } = AspNetJwtDefaults.Audience;
 	public string SigningKey { get; set; } = string.Empty;
-	public TimeSpan TokenLifetime { get; set; } = TimeSpan.FromHours(1);
-	public TimeSpan ClockSkew { get; set; } = TimeSpan.FromMinutes(1);
+	public TimeSpan TokenLifetime { get; set; } = AspNetJwtDefaults.TokenLifetime;
+	public TimeSpan ClockSkew { get; set; } = AspNetJwtDefaults.ClockSkew;
 }

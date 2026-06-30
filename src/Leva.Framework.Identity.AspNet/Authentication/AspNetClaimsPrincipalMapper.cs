@@ -13,7 +13,7 @@ public sealed class AspNetClaimsPrincipalMapper(IOptions<AspNetIdentityOptions> 
 
 	private readonly AspNetIdentityOptions _options = options.Value;
 
-	public ClaimsPrincipal Map(AuthSession session)
+	public ClaimsPrincipal Map(AuthSession session, string? authenticationType = null)
 	{
 		ArgumentNullException.ThrowIfNull(session);
 		var claims = new List<Claim>
@@ -26,14 +26,27 @@ public sealed class AspNetClaimsPrincipalMapper(IOptions<AspNetIdentityOptions> 
 		if (!string.IsNullOrWhiteSpace(session.Principal.Email))
 			claims.Add(new Claim(ClaimTypes.Email, session.Principal.Email));
 
+		claims.AddRange(session.Principal.Claims.Select(claim => new Claim(claim.Type, claim.Value)));
 		claims.AddRange(session.Principal.Roles.Select(role => new Claim(ClaimTypes.Role, role.Value)));
 		claims.AddRange(
 			session.Principal.Permissions.Select(permission => new Claim(PermissionClaimType, permission.Value))
 		);
-		claims.AddRange(session.Principal.Claims.Select(claim => new Claim(claim.Type, claim.Value)));
 
-		return new ClaimsPrincipal(
-			new ClaimsIdentity(claims, _options.AuthenticationScheme, ClaimTypes.Name, ClaimTypes.Role)
-		);
+		var scheme = authenticationType ?? _options.AuthenticationScheme;
+		return new ClaimsPrincipal(new ClaimsIdentity(claims, scheme, ClaimTypes.Name, ClaimTypes.Role));
+	}
+
+	public AuthSessionId? GetSessionId(ClaimsPrincipal principal)
+	{
+		ArgumentNullException.ThrowIfNull(principal);
+		var sessionId = principal.FindFirstValue(SessionIdClaimType);
+		return string.IsNullOrWhiteSpace(sessionId) ? null : new AuthSessionId(sessionId);
+	}
+
+	public PrincipalId? GetPrincipalId(ClaimsPrincipal principal)
+	{
+		ArgumentNullException.ThrowIfNull(principal);
+		var principalId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+		return string.IsNullOrWhiteSpace(principalId) ? null : new PrincipalId(principalId);
 	}
 }

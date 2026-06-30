@@ -4,15 +4,16 @@ using Microsoft.AspNetCore.Http;
 namespace Leva.Framework.Identity.AspNet;
 
 /// <summary>
-/// Signs principals in and out through framework authentication services and ASP.NET Core auth session cookies.
+/// Handles built in ASP.NET Core identity login, logout, and principal/session lookup.
 /// </summary>
-public sealed class AspNetSignInService(
+public sealed class AspNetIdentityService(
 	AuthenticationService authentication,
+	AuthSessionService sessionService,
 	AspNetAuthSessionReader sessionReader,
 	AspNetAuthSessionWriter sessionWriter
 )
 {
-	public async Task<Result<AuthenticationResult>> SignInAsync(
+	public async Task<Result<AuthenticationResult>> LoginAsync(
 		HttpContext context,
 		AuthenticationRequest request,
 		CancellationToken token = default
@@ -33,7 +34,7 @@ public sealed class AspNetSignInService(
 		return result;
 	}
 
-	public async Task<Result> SignOutAsync(HttpContext context, CancellationToken token = default)
+	public async Task<Result> LogoutAsync(HttpContext context, CancellationToken token = default)
 	{
 		token.ThrowIfCancellationRequested();
 		ArgumentNullException.ThrowIfNull(context);
@@ -47,5 +48,24 @@ public sealed class AspNetSignInService(
 			sessionWriter.Delete(context);
 
 		return result;
+	}
+
+	public async Task<Result<AuthSession?>> GetSessionAsync(HttpContext context, CancellationToken token = default)
+	{
+		token.ThrowIfCancellationRequested();
+		ArgumentNullException.ThrowIfNull(context);
+
+		var sessionId = sessionReader.Read(context);
+		return sessionId is null
+			? Result<AuthSession?>.Ok(null)
+			: await sessionService.LoadAsync(sessionId.Value, token);
+	}
+
+	public async Task<Result<Principal?>> GetPrincipalAsync(HttpContext context, CancellationToken token = default)
+	{
+		var session = await GetSessionAsync(context, token);
+		return session.IsFailure
+			? Result<Principal?>.Fail(session.Error)
+			: Result<Principal?>.Ok(session.Value?.Principal);
 	}
 }

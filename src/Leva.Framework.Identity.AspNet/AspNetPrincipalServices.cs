@@ -24,8 +24,7 @@ public static class AspNetPrincipalServices
 		services.AddSingleton<AspNetAuthSessionReader>();
 		services.AddSingleton<AspNetAuthSessionWriter>();
 		services.AddSingleton<AspNetClaimsPrincipalMapper>();
-
-		services.AddScoped<AspNetSignInService>();
+		services.AddScoped<AspNetIdentityService>();
 		services.AddScoped<AspNetAuthSessionSource>();
 		services.AddScoped<IAuthorizationHandler, AspNetAuthorizationHandler>();
 
@@ -49,14 +48,14 @@ public static class AspNetPrincipalServices
 		configure?.Invoke(options);
 
 		services.AddSingleton(Options.Create(options));
+		services.AddHttpClient(AspNetGoogleDefaults.HttpClientName);
 		services.AddSingleton<AspNetGooglePrincipalMapper>();
 		services.AddSingleton<AspNetGoogleAuthenticationPolicy>();
 		services.AddSingleton<AuthenticationPolicy>(provider =>
 			provider.GetRequiredService<AspNetGoogleAuthenticationPolicy>()
 		);
-
 		services.AddScoped<AspNetGoogleSignInService>();
-		services.AddSingleton<HttpClient>();
+
 		return services;
 	}
 
@@ -70,7 +69,6 @@ public static class AspNetPrincipalServices
 		configure?.Invoke(options);
 
 		services.AddSingleton(Options.Create(options));
-		services.AddSingleton<AspNetJwtClaimsMapper>();
 		services.AddSingleton<AspNetJwtTokenService>();
 		services.AddSingleton<AspNetJwtAuthenticationPolicy>();
 		services.AddSingleton<AuthenticationPolicy>(provider =>

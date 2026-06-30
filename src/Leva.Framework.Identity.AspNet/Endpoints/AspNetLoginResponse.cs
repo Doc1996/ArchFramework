@@ -11,7 +11,7 @@ public sealed record AspNetLoginResponse(
 	string? Reason = null
 )
 {
-	public static AspNetLoginResponse From(AuthenticationResult result) =>
+	public static AspNetLoginResponse FromAuthenticationResult(AuthenticationResult result) =>
 		new(
 			result.IsAuthenticated,
 			result.Principal?.Id.Value,

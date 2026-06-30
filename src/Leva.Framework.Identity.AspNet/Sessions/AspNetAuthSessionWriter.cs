@@ -13,32 +13,25 @@ public sealed class AspNetAuthSessionWriter(IOptions<AspNetIdentityOptions> opti
 	public void Write(HttpContext context, AuthSessionId sessionId)
 	{
 		ArgumentNullException.ThrowIfNull(context);
-
-		context.Response.Cookies.Append(
-			_options.SessionCookieName,
-			sessionId.Value,
-			new CookieOptions
-			{
-				HttpOnly = _options.HttpOnlyCookie,
-				Secure = _options.SecureCookie,
-				SameSite = _options.SameSite,
-				Expires = DateTimeOffset.UtcNow.Add(_options.CookieLifetime),
-			}
-		);
+		var cookieOptions = new CookieOptions
+		{
+			HttpOnly = _options.HttpOnlyCookie,
+			Secure = _options.SecureCookie,
+			SameSite = _options.SameSite,
+			Expires = DateTimeOffset.UtcNow.Add(_options.CookieLifetime),
+		};
+		context.Response.Cookies.Append(_options.SessionCookieName, sessionId.Value, cookieOptions);
 	}
 
 	public void Delete(HttpContext context)
 	{
 		ArgumentNullException.ThrowIfNull(context);
-
-		context.Response.Cookies.Delete(
-			_options.SessionCookieName,
-			new CookieOptions
-			{
-				HttpOnly = _options.HttpOnlyCookie,
-				Secure = _options.SecureCookie,
-				SameSite = _options.SameSite,
-			}
-		);
+		var cookieOptions = new CookieOptions
+		{
+			HttpOnly = _options.HttpOnlyCookie,
+			Secure = _options.SecureCookie,
+			SameSite = _options.SameSite,
+		};
+		context.Response.Cookies.Delete(_options.SessionCookieName, cookieOptions);
 	}
 }
