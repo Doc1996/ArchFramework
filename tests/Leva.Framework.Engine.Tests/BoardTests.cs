@@ -20,7 +20,6 @@ public sealed class BoardTests
 		Assert.True(board.HasAny);
 		Assert.True(board.HasBlocking);
 		Assert.Equal(clock.UtcNow, Assert.Single(board.AlarmEntries).RaisedAt);
-
 		Assert.True(board.Clear(alarmId));
 		Assert.False(board.HasAny);
 	}
@@ -39,4 +38,5 @@ public sealed class BoardTests
 		Assert.True(board.Clear("Device"));
 		Assert.Empty(board.StatusEntries);
 	}
+
 }

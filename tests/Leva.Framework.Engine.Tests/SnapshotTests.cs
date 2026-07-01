@@ -37,6 +37,7 @@ public sealed class SnapshotTests
 		var context = TestContextBuilder.Create(fake, [ready, restored]);
 		var alarm = new AlarmEntry(AlarmId.New(), "Alarm", AlarmLevel.Error, true, fake.Clock.UtcNow);
 		var status = new StatusEntry("Device", "Mode", "Auto", fake.Clock.UtcNow);
+
 		var snapshot = new Snapshot(
 			restored.Id,
 			fake.Clock.UtcNow,
