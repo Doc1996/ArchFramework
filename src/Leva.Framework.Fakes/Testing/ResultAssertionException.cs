@@ -1,4 +1,4 @@
-namespace Leva.Framework.Testing;
+namespace Leva.Framework.Fakes;
 
 /// <summary>
 /// Exception thrown when a framework result assertion fails.

@@ -38,5 +38,4 @@ public sealed class BoardTests
 		Assert.True(board.Clear("Device"));
 		Assert.Empty(board.StatusEntries);
 	}
-
 }

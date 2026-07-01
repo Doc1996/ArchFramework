@@ -4,22 +4,15 @@ using Leva.Framework.Notifications;
 namespace Leva.Framework.Fakes;
 
 /// <summary>
-/// Configurable notification sender fake with captured sends and one-shot failure behavior.
+/// Configurable notification gateway fake with captured sends and one-shot failure behavior.
 /// </summary>
-public sealed class FakeNotificationSender : INotificationSender
+public sealed class FakeNotificationGateway : INotificationGateway
 {
 	private readonly Lock _lock = new();
-	private readonly List<Notification> _sent = [];
+	private readonly SyncList<Notification> _sent = new();
 	private Error? _nextError;
 
-	public IReadOnlyList<Notification> Sent
-	{
-		get
-		{
-			lock (_lock)
-				return _sent.ToArray();
-		}
-	}
+	public IReadOnlyList<Notification> Sent => _sent.List();
 
 	public void FailNext(Error error)
 	{
@@ -39,19 +32,17 @@ public sealed class FakeNotificationSender : INotificationSender
 				_nextError = null;
 				return Task.FromResult(Result.Fail(error));
 			}
-
-			_sent.Add(notification);
 		}
 
+		_sent.Add(notification);
 		return Task.FromResult(Result.Ok());
 	}
 
 	public void Clear()
 	{
 		lock (_lock)
-		{
-			_sent.Clear();
 			_nextError = null;
-		}
+
+		_sent.Clear();
 	}
 }

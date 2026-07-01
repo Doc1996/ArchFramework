@@ -1,10 +1,10 @@
 # Leva.Framework.Fakes
 
-`Leva.Framework.Fakes` provides reusable test doubles for Core, Engine, provider-neutral Identity, and provider-neutral Notifications libraries. It helps tests assemble deterministic runtime scenarios without duplicating production engine behavior.
+`Leva.Framework.Fakes` provides reusable test doubles and shared test helpers for Core, Engine, provider-neutral Identity, and provider-neutral Notifications libraries. It helps tests assemble deterministic runtime scenarios without duplicating production engine behavior.
 
 ## Purpose and dependencies
 
-Fakes exist for unit tests, integration-style framework tests, demos, and application tests that need predictable clocks, queues, events, logs, transitions, states, routines, behaviors, status updates, alarms, identity sources, authentication policies, authorization policies, notification sending/storage behavior, or a ready-made fake context. `Leva.Framework.Fakes` may depend on Core, Engine, Identity, and Notifications because it is a testing support library for those projects. Engine, Identity, and Notifications must never depend on Fakes. Fakes should not depend on application projects, UI providers, storage providers, notification providers, concrete authentication providers, or external infrastructure.
+Fakes exist for unit tests, integration-style framework tests, demos, and application tests that need predictable clocks, queues, events, logs, transitions, states, routines, behaviors, status updates, alarms, identity sources, authentication policies, authorization policies, notification gateway/storage behavior, result assertions, or a ready-made fake context. `Leva.Framework.Fakes` may depend on Core, Engine, Identity, and Notifications because it is a testing support library for those projects. Engine, Identity, and Notifications must never depend on Fakes. Fakes should not depend on application projects, UI providers, storage providers, notification providers, concrete authentication providers, or external infrastructure.
 
 ```text
 Leva.Framework.Fakes
@@ -21,13 +21,13 @@ Leva.Framework.Notifications
 
 ## Project overview
 
-Fakes are intentionally small and observable. They expose what happened in a test: captured log entries, transition requests, queued events, current fake time, handler calls, enter/exit counts, status updates, alarm calls, identity/auth-session lookups, policy calls, and configured return behavior.
+Fakes are intentionally small and observable. They expose what happened in a test: captured log entries, transition requests, queued events, current fake time, handler calls, enter/exit counts, status updates, alarm calls, identity/auth-session lookups, policy calls, notification sends, stored notification entries, configured return behavior, and failed `Result` assertions.
 
-The source files are grouped by the framework area they support: `Core`, `Engine`, `Identity`, and `Notifications`. The namespace stays `Leva.Framework.Fakes` so tests can import one namespace and use all fakes.
+The source files are grouped by the framework area they support: `Core`, `Engine`, `Identity`, `Notifications`, and `Testing`. The namespace stays `Leva.Framework.Fakes` so tests can import one namespace and use all fakes and shared test helpers.
 
-Use focused fakes when testing one component. For example, use `FakeClock` for time-dependent tests, `FakeTransition` for transition-request tests, `FakeLogSink` for log-output tests, and `FakeEventQueue` for queue behavior. Use `FakeContext` when a test needs convenient fake wiring and manual composition would distract from the test purpose.
+Use focused fakes when testing one component. For example, use `FakeClock` for time-dependent tests, `FakeTransition` for transition-request tests, `FakeLogSink` for log-output tests, `FakeEventQueue` for queue behavior, and `FakeNotificationGateway` for notification failure paths. Use `FakeContext` when a test needs convenient fake wiring and manual composition would distract from the test purpose.
 
-Fakes should not become a second engine. If a fake starts reproducing too much production behavior, the test should probably use Engine directly or introduce a smaller test seam.
+Fakes should not become a second engine, second identity provider, or second notification provider. If a fake starts reproducing too much production behavior, the test should probably use the real library directly or introduce a smaller test seam.
 
 ## Files and classes
 
@@ -60,5 +60,10 @@ Fakes should not become a second engine. If a fake starts reproducing too much p
 
 ### Notification fakes
 
-`FakeNotificationSender` - Configurable notification sender fake with call tracking and one-shot failure behavior.
+`FakeNotificationGateway` - Configurable notification gateway fake with captured sends and one-shot failure behavior.
 `FakeNotificationStore` - Configurable notification store fake with snapshots and one-shot save failure behavior.
+
+### Test helpers
+
+`ResultAssert` - Provides shared assertions for successful `Result` and `Result<T>` values.
+`ResultAssertionException` - Exception thrown when a shared result assertion fails.

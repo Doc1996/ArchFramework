@@ -1,5 +1,5 @@
+using Leva.Framework.Fakes;
 using Leva.Framework.Identity.Memory;
-using Leva.Framework.Testing;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using Xunit;

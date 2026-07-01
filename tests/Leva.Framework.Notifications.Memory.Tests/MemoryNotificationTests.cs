@@ -1,7 +1,7 @@
 using Leva.Framework.Core;
+using Leva.Framework.Fakes;
 using Leva.Framework.Notifications;
 using Leva.Framework.Notifications.Memory;
-using Leva.Framework.Testing;
 using Xunit;
 
 namespace Leva.Framework.Notifications.Memory.Tests;
@@ -11,12 +11,12 @@ public sealed class MemoryNotificationTests
 	[Fact]
 	public async Task SendAsync_RecordsSentNotification()
 	{
-		var sender = new MemoryNotificationSender();
+		var gateway = new MemoryNotificationGateway();
 		var notification = TestNotification();
 
-		ResultAssert.Success(await sender.SendAsync(notification));
-		Assert.Single(sender.Sent);
-		Assert.Equal(notification, sender.Sent[0]);
+		ResultAssert.Success(await gateway.SendAsync(notification));
+		Assert.Single(gateway.Sent);
+		Assert.Equal(notification, gateway.Sent[0]);
 	}
 
 	[Fact]
@@ -53,7 +53,7 @@ public sealed class MemoryNotificationTests
 		);
 
 		Assert.Equal(NotificationStatus.Sent, entry.Status);
-		Assert.Single(services.Sender.Sent);
+		Assert.Single(services.Gateway.Sent);
 		Assert.Single(services.Store.Entries);
 	}
 

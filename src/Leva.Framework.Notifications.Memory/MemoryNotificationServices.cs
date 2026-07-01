@@ -7,21 +7,21 @@ namespace Leva.Framework.Notifications.Memory;
 /// Groups common in-memory notification services for development and tests.
 /// </summary>
 public sealed class MemoryNotificationServices(
-	MemoryNotificationSender sender,
+	MemoryNotificationGateway gateway,
 	MemoryNotificationStore store,
 	NotificationService notificationService
 )
 {
-	public MemoryNotificationSender Sender { get; } = sender;
+	public MemoryNotificationGateway Gateway { get; } = gateway;
 	public MemoryNotificationStore Store { get; } = store;
 	public NotificationService NotificationService { get; } = notificationService;
 
 	public static MemoryNotificationServices Create(IClock? clock = null)
 	{
 		var usedClock = clock ?? new SystemClock();
-		var sender = new MemoryNotificationSender();
+		var gateway = new MemoryNotificationGateway();
 		var store = new MemoryNotificationStore();
 
-		return new MemoryNotificationServices(sender, store, new NotificationService(sender, store, usedClock));
+		return new MemoryNotificationServices(gateway, store, new NotificationService(gateway, store, usedClock));
 	}
 }

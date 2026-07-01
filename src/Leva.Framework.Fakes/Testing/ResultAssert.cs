@@ -1,6 +1,6 @@
 using Leva.Framework.Core;
 
-namespace Leva.Framework.Testing;
+namespace Leva.Framework.Fakes;
 
 /// <summary>
 /// Shared assertions for framework tests that return Result values.

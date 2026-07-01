@@ -1,5 +1,5 @@
 using Leva.Framework.Core;
-using Leva.Framework.Testing;
+using Leva.Framework.Fakes;
 using Xunit;
 
 namespace Leva.Framework.Storage.Tests;

@@ -9,17 +9,10 @@ namespace Leva.Framework.Fakes;
 public sealed class FakeNotificationStore : INotificationStore
 {
 	private readonly Lock _lock = new();
-	private readonly Dictionary<NotificationId, NotificationEntry> _entries = [];
+	private readonly SyncDictionary<NotificationId, NotificationEntry> _entries = new();
 	private Error? _nextSaveError;
 
-	public IReadOnlyList<NotificationEntry> Entries
-	{
-		get
-		{
-			lock (_lock)
-				return _entries.Values.ToArray();
-		}
-	}
+	public IReadOnlyList<NotificationEntry> Entries => _entries.Values();
 
 	public void FailNextSave(Error error)
 	{
@@ -37,33 +30,31 @@ public sealed class FakeNotificationStore : INotificationStore
 		{
 			error = _nextSaveError;
 			_nextSaveError = null;
-
-			if (error is null)
-				_entries[entry.NotificationId] = entry;
 		}
 
-		return Task.FromResult(error is null ? Result.Ok() : Result.Fail(error));
+		if (error is not null)
+			return Task.FromResult(Result.Fail(error));
+
+		_entries.Set(entry.NotificationId, entry);
+		return Task.FromResult(Result.Ok());
 	}
 
 	public Task<Result<NotificationEntry?>> LoadAsync(NotificationId id, CancellationToken token = default)
 	{
 		token.ThrowIfCancellationRequested();
-		lock (_lock)
-			return Task.FromResult(Result<NotificationEntry?>.Ok(_entries.GetValueOrDefault(id)));
+		return Task.FromResult(Result<NotificationEntry?>.Ok(_entries.GetOrDefault(id)));
 	}
 
 	public Task<Result<IReadOnlyList<NotificationEntry>>> LoadAllAsync(CancellationToken token = default)
 	{
 		token.ThrowIfCancellationRequested();
-		lock (_lock)
-			return Task.FromResult(Result<IReadOnlyList<NotificationEntry>>.Ok(_entries.Values.ToArray()));
+		return Task.FromResult(Result<IReadOnlyList<NotificationEntry>>.Ok(_entries.Values()));
 	}
 
 	public Task<Result> DeleteAsync(NotificationId id, CancellationToken token = default)
 	{
 		token.ThrowIfCancellationRequested();
-		lock (_lock)
-			_entries.Remove(id);
+		_entries.Remove(id);
 
 		return Task.FromResult(Result.Ok());
 	}
@@ -71,9 +62,8 @@ public sealed class FakeNotificationStore : INotificationStore
 	public void Clear()
 	{
 		lock (_lock)
-		{
-			_entries.Clear();
 			_nextSaveError = null;
-		}
+
+		_entries.Clear();
 	}
 }

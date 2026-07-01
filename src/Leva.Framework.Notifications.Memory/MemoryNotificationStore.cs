@@ -8,55 +8,36 @@ namespace Leva.Framework.Notifications.Memory;
 /// </summary>
 public sealed class MemoryNotificationStore : INotificationStore
 {
-	private readonly Lock _lock = new();
-	private readonly Dictionary<NotificationId, NotificationEntry> _entries = [];
-
-	public IReadOnlyList<NotificationEntry> Entries
-	{
-		get
-		{
-			lock (_lock)
-				return _entries.Values.ToArray();
-		}
-	}
+	private readonly SyncDictionary<NotificationId, NotificationEntry> _entries = new();
+	public IReadOnlyList<NotificationEntry> Entries => _entries.Values();
 
 	public Task<Result> SaveAsync(NotificationEntry entry, CancellationToken token = default)
 	{
 		token.ThrowIfCancellationRequested();
 		ArgumentNullException.ThrowIfNull(entry);
 
-		lock (_lock)
-			_entries[entry.NotificationId] = entry;
-
+		_entries.Set(entry.NotificationId, entry);
 		return Task.FromResult(Result.Ok());
 	}
 
 	public Task<Result<NotificationEntry?>> LoadAsync(NotificationId id, CancellationToken token = default)
 	{
 		token.ThrowIfCancellationRequested();
-		lock (_lock)
-			return Task.FromResult(Result<NotificationEntry?>.Ok(_entries.GetValueOrDefault(id)));
+		return Task.FromResult(Result<NotificationEntry?>.Ok(_entries.GetOrDefault(id)));
 	}
 
 	public Task<Result<IReadOnlyList<NotificationEntry>>> LoadAllAsync(CancellationToken token = default)
 	{
 		token.ThrowIfCancellationRequested();
-		lock (_lock)
-			return Task.FromResult(Result<IReadOnlyList<NotificationEntry>>.Ok(_entries.Values.ToArray()));
+		return Task.FromResult(Result<IReadOnlyList<NotificationEntry>>.Ok(_entries.Values()));
 	}
 
 	public Task<Result> DeleteAsync(NotificationId id, CancellationToken token = default)
 	{
 		token.ThrowIfCancellationRequested();
-		lock (_lock)
-			_entries.Remove(id);
-
+		_entries.Remove(id);
 		return Task.FromResult(Result.Ok());
 	}
 
-	public void Clear()
-	{
-		lock (_lock)
-			_entries.Clear();
-	}
+	public void Clear() => _entries.Clear();
 }

@@ -8,7 +8,7 @@
 		<ProjectReference Include="../../src/Leva.Framework.Core/Leva.Framework.Core.csproj" />
 		<ProjectReference Include="../../src/Leva.Framework.Notifications/Leva.Framework.Notifications.csproj" />
 		<ProjectReference Include="../../src/Leva.Framework.Notifications.Memory/Leva.Framework.Notifications.Memory.csproj" />
-		<ProjectReference Include="../Leva.Framework.Testing/Leva.Framework.Testing.csproj" />
+		<ProjectReference Include="../../src/Leva.Framework.Fakes/Leva.Framework.Fakes.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

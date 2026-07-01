@@ -3,9 +3,9 @@ using Leva.Framework.Core;
 namespace Leva.Framework.Notifications;
 
 /// <summary>
-/// Sends notifications through one or more delivery channels.
+/// Sends notifications through a concrete delivery mechanism.
 /// </summary>
-public interface INotificationSender
+public interface INotificationGateway
 {
 	Task<Result> SendAsync(Notification notification, CancellationToken token = default);
 }
