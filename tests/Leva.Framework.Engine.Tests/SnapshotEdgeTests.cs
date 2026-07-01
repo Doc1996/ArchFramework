@@ -22,26 +22,15 @@ public sealed class SnapshotEdgeTests
 		var ready = new FakeState(new StateId("Ready"));
 		var restored = new FakeState(new StateId("Restored"));
 		var fake = new FakeContext();
+
 		var context = TestContextBuilder.Create(fake, [ready, restored]);
 		var alarm = new AlarmEntry(AlarmId.New(), "Alarm", AlarmLevel.Error, true, fake.Clock.UtcNow);
 		var status = new StatusEntry("Device", "Mode", "Auto", fake.Clock.UtcNow);
 
-		var command = new CommandEntry(
-			CommandId.New(),
-			"Command",
-			CommandStatus.Started,
-			fake.Clock.UtcNow,
-			fake.Clock.UtcNow
-		);
 		var snapshot = new Snapshot(
 			restored.Id,
 			fake.Clock.UtcNow,
-			new Dictionary<string, object?>
-			{
-				["Alarms"] = alarm,
-				["Statuses"] = status,
-				["Commands"] = command,
-			}
+			new Dictionary<string, object?> { ["Alarms"] = alarm, ["Statuses"] = status }
 		);
 
 		await context.StateMachine.StartAsync(ready.Id);
@@ -49,7 +38,6 @@ public sealed class SnapshotEdgeTests
 
 		Assert.Contains(alarm, context.AlarmBoard.AlarmEntries);
 		Assert.Contains(status, context.StatusBoard.StatusEntries);
-		Assert.Contains(command, context.CommandBoard.CommandEntries);
 	}
 
 	[Fact]
@@ -58,6 +46,7 @@ public sealed class SnapshotEdgeTests
 		var ready = new FakeState(new StateId("Ready"));
 		var restored = new FakeState(new StateId("Restored"));
 		var fake = new FakeContext();
+
 		var context = TestContextBuilder.Create(fake, [ready, restored]);
 		var oldAlarm = new AlarmEntry(AlarmId.New(), "Old", AlarmLevel.Warning, false, fake.Clock.UtcNow);
 		var newAlarm = new AlarmEntry(AlarmId.New(), "New", AlarmLevel.Critical, true, fake.Clock.UtcNow);

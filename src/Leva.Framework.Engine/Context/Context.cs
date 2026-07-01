@@ -16,13 +16,11 @@ public sealed class Context(
 	RoutineRunner routineRunner,
 	BehaviorRunner behaviorRunner,
 	AlarmBoard alarmBoard,
-	StatusBoard statusBoard,
-	CommandBoard commandBoard
+	StatusBoard statusBoard
 )
 {
 	private const string AlarmsKey = "Alarms";
 	private const string StatusesKey = "Statuses";
-	private const string CommandsKey = "Commands";
 
 	public IClock Clock { get; } = clock;
 	public ILogSink LogSink { get; } = logSink;
@@ -35,7 +33,6 @@ public sealed class Context(
 	public BehaviorRunner BehaviorRunner { get; } = behaviorRunner;
 	public AlarmBoard AlarmBoard { get; } = alarmBoard;
 	public StatusBoard StatusBoard { get; } = statusBoard;
-	public CommandBoard CommandBoard { get; } = commandBoard;
 
 	public Snapshot CreateSnapshot(IReadOnlyDictionary<string, object?>? data = null)
 	{
@@ -46,7 +43,6 @@ public sealed class Context(
 		{
 			[AlarmsKey] = AlarmBoard.AlarmEntries.ToList(),
 			[StatusesKey] = StatusBoard.StatusEntries.ToList(),
-			[CommandsKey] = CommandBoard.CommandEntries.ToList(),
 		};
 
 		var snapshot = new Snapshot(stateId, Clock.UtcNow, snapshotData);
@@ -58,7 +54,6 @@ public sealed class Context(
 				StateId = stateId,
 				AlarmCount = AlarmBoard.AlarmEntries.Count,
 				StatusCount = StatusBoard.StatusEntries.Count,
-				CommandCount = CommandBoard.CommandEntries.Count,
 			}
 		);
 
@@ -74,10 +69,6 @@ public sealed class Context(
 		StatusBoard.ClearAll();
 		foreach (var statusEntry in GetDataItems<StatusEntry>(snapshot, StatusesKey))
 			StatusBoard.Set(statusEntry);
-
-		CommandBoard.ClearAll();
-		foreach (var commandEntry in GetDataItems<CommandEntry>(snapshot, CommandsKey))
-			CommandBoard.Set(commandEntry);
 
 		if (StateMachine.CurrentStateId is null)
 			await StateMachine.StartAsync(snapshot.StateId, token);
@@ -95,7 +86,6 @@ public sealed class Context(
 				StateId = snapshot.StateId,
 				AlarmCount = AlarmBoard.AlarmEntries.Count,
 				StatusCount = StatusBoard.StatusEntries.Count,
-				CommandCount = CommandBoard.CommandEntries.Count,
 			}
 		);
 	}

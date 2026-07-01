@@ -22,10 +22,10 @@ public sealed class RuntimeLogDetailTests
 	public void Add_NormalizesIdValues()
 	{
 		var runtimeLog = new RuntimeLog(new FakeClock(), new FakeLogSink());
-		var commandId = CommandId.New();
-		var logEntry = runtimeLog.Add(LogCategory.Command, "Command.", commandId);
+		var eventId = EventId.New();
+		var logEntry = runtimeLog.Add(LogCategory.Event, "Event.", eventId);
 
-		Assert.Equal(commandId.Value, logEntry.Properties?["CommandId"]);
+		Assert.Equal(eventId.Value, logEntry.Properties?["EventId"]);
 	}
 
 	[Fact]

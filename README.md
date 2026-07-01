@@ -1,18 +1,19 @@
 # ArchFramework
 
-ArchFramework is a clean .NET framework for event-driven, state-machine applications. It provides reusable runtime structure for typed events, explicit states, routines, behaviors, controlled transitions, runtime memory, diagnostics, principal identity, provider-neutral storage, and recovery snapshots.
+ArchFramework is a clean .NET framework for event-driven, state-machine applications. It provides reusable runtime structure for typed events, explicit states, routines, behaviors, controlled transitions, runtime memory, diagnostics, execution tracking, principal identity, provider-neutral storage, and recovery snapshots.
 
 ## Architecture summary
 
 ArchFramework keeps important application behavior out of random services, UI callbacks, and uncontrolled background code. Work enters the runtime as typed events, flows through a deterministic dispatcher, reaches the active state or routine, can fall back to behaviors, and only then applies requested transitions. This makes the application easier to reason about, test, log, persist, secure, and recover.
 
-The framework is split into small libraries. `Leva.Framework.Core` defines the shared vocabulary. `Leva.Framework.Engine` implements the runtime. `Leva.Framework.Fakes` provides reusable test doubles. `Leva.Framework.Storage` defines provider-neutral persistence contracts. Storage provider libraries implement those contracts for memory, files, and SQLite. `Leva.Framework.Identity` defines provider-neutral principal, auth session, authentication, authorization, audit, and state-facing principal access concepts. `Leva.Framework.Identity.Memory` provides an in-memory identity provider for tests and demos. `Leva.Framework.Identity.Local` provides local/offline secret-based identity for desktop, kiosk, and internal tools. `Leva.Framework.Identity.AspNet` adapts framework identity auth sessions to ASP.NET Core authentication, authorization, cookies, built in endpoints, Google sign-in, and JWT bearer tokens. `Leva.Framework.Testing` contains shared test-only assertion helpers.
+The framework is split into small libraries. `Leva.Framework.Core` defines the shared vocabulary. `Leva.Framework.Engine` implements the runtime. `Leva.Framework.Execution` runs requested work on background tasks with progress, cancellation, and typed results. `Leva.Framework.Fakes` provides reusable test doubles. `Leva.Framework.Storage` defines provider-neutral persistence contracts. Storage provider libraries implement those contracts for memory, files, and SQLite. `Leva.Framework.Identity` defines provider-neutral principal, auth session, authentication, authorization, audit, and state-facing principal access concepts. `Leva.Framework.Identity.Memory` provides an in-memory identity provider for tests and demos. `Leva.Framework.Identity.Local` provides local/offline secret-based identity for desktop, kiosk, and internal tools. `Leva.Framework.Identity.AspNet` adapts framework identity auth sessions to ASP.NET Core authentication, authorization, cookies, built in endpoints, Google sign-in, and JWT bearer tokens. `Leva.Framework.Testing` contains shared test-only assertion helpers.
 
 ## Library structure
 
 ```text
 Leva.Framework.Core            -> shared contracts, IDs, entries, results, snapshots
 Leva.Framework.Engine          -> event queue, dispatcher, state machine, boards, logs
+Leva.Framework.Execution       -> background execution, progress, cancellation, results
 Leva.Framework.Fakes           -> fake clocks, events, queues, states, routines, principal, logs
 Leva.Framework.Storage         -> repository, journal, entry, version contracts
 Leva.Framework.Storage.Memory  -> in-process storage provider
@@ -34,7 +35,7 @@ Leva.Framework.Presentation.Blazor  future
 
 ## Dependency direction
 
-Dependencies move inward toward Core. Core depends only on .NET. Engine depends on Core. Storage depends on Core. Identity depends on Core. Provider libraries depend on their contract libraries and Core. Fakes depends on Core, Engine, and Identity because it is a testing support library. Testing depends on Core and stays independent of a specific test runner. Applications and future provider libraries may depend on selected framework libraries, but Core and Engine should not depend on applications, UI providers, storage providers, notification providers, identity providers, devices, databases, or web frameworks.
+Dependencies move inward toward Core. Core depends only on .NET. Engine depends on Core. Execution depends on Core. Storage depends on Core. Identity depends on Core. Provider libraries depend on their contract libraries and Core. Fakes depends on Core, Engine, and Identity because it is a testing support library. Testing depends on Core and stays independent of a specific test runner. Applications and future provider libraries may depend on selected framework libraries, but Core and Engine should not depend on applications, UI providers, storage providers, notification providers, identity providers, devices, databases, or web frameworks.
 
 ```text
 Leva.Framework.Core
@@ -43,6 +44,7 @@ Leva.Framework.Core
 Leva.Framework.Engine
   -> Leva.Framework.Core
 
+Leva.Framework.Execution
 Leva.Framework.Storage
 Leva.Framework.Identity
   -> Leva.Framework.Core
@@ -106,7 +108,6 @@ The engine separates latest-known runtime facts from chronological history and d
 ```text
 AlarmBoard   -> currently active alarms and faults
 StatusBoard  -> latest-known status values
-CommandBoard -> tracked command lifecycle entries
 RuntimeLog   -> chronological runtime history as LogEntry values
 LogSink      -> diagnostic log output
 Snapshot     -> durable recovery state

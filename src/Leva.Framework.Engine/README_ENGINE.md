@@ -4,7 +4,7 @@
 
 ## Purpose and dependencies
 
-Engine turns Core contracts into deterministic runtime behavior. It owns event queueing, dispatching, transition draining, state execution, routine execution, fallback behavior execution, alarms, statuses, commands, runtime history, logging, and snapshot creation/loading. `Leva.Framework.Engine` depends on `Leva.Framework.Core`. Engine must not depend on Fakes, Storage implementations, UI providers, notification providers, authentication providers, database providers, devices, or application projects.
+Engine turns Core contracts into deterministic runtime behavior. It owns event queueing, dispatching, transition draining, state execution, routine execution, fallback behavior execution, alarms, statuses, runtime history, logging, and snapshot creation/loading. `Leva.Framework.Engine` depends on `Leva.Framework.Core`. Engine must not depend on Fakes, Storage implementations, UI providers, notification providers, authentication providers, database providers, devices, or application projects.
 
 ```text
 Leva.Framework.Engine
@@ -41,13 +41,14 @@ This separation keeps state changes predictable. Runtime code requests transitio
 ```text
 AlarmBoard   -> active alarms
 StatusBoard  -> latest statuses
-CommandBoard -> tracked commands
 RuntimeLog   -> chronological LogEntry history
 LogSink      -> diagnostic output
 Context      -> runtime composition root
 ```
 
 The engine stays application-independent. Applications provide concrete states, events, access objects, services, screens, persistence, notifications, and domain rules. Engine provides reusable runtime mechanics.
+
+Engine intentionally does not depend on `Leva.Framework.Execution`. Long-running or external work should be started through Execution by the application composition layer, then reported back to Engine through ordinary events when the application wants workflow state to react.
 
 ## Files and classes
 
@@ -86,8 +87,6 @@ The engine stays application-independent. Applications provide concrete states, 
 `StatusBoard` - Stores latest-known status values and exposes safe snapshots.
 `IStatusUpdater` - Hook that can update status memory from incoming events.
 `NullStatusUpdater` - Default status updater that intentionally updates nothing.
-`CommandBoard` - Tracks command lifecycle entries and exposes safe snapshots.
-`CommandHandle` - Handle returned for a tracked command so caller code can complete, fail, cancel, or timeout it.
 
 ### Runtime logging
 
@@ -99,6 +98,6 @@ The engine stays application-independent. Applications provide concrete states, 
 
 ### Snapshot support
 
-`Context.CreateSnapshot` - Captures current state ID, active alarms, statuses, commands, and optional host data into a `Snapshot`.
-`Context.LoadSnapshotAsync` - Restores alarms, statuses, commands, and state-machine position from a `Snapshot`.
+`Context.CreateSnapshot` - Captures current state ID, active alarms, statuses, and optional host data into a `Snapshot`.
+`Context.LoadSnapshotAsync` - Restores alarms, statuses, and state-machine position from a `Snapshot`.
 

@@ -1,7 +1,7 @@
 namespace Leva.Framework.Core;
 
 /// <summary>
-/// Groups runtime log entries by broad engine area.
+/// Groups runtime log entries by broad framework area.
 /// </summary>
 public enum LogCategory
 {
@@ -12,6 +12,6 @@ public enum LogCategory
 	Behavior,
 	Alarm,
 	Status,
-	Command,
+	Execution,
 	Snapshot,
 }

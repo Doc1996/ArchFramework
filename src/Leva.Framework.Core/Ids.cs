@@ -9,14 +9,6 @@ public readonly record struct AlarmId(Guid Value)
 }
 
 /// <summary>
-/// Identifies a command issued by a state, routine, behavior or application service.
-/// </summary>
-public readonly record struct CommandId(Guid Value)
-{
-	public static CommandId New() => new(Guid.NewGuid());
-}
-
-/// <summary>
 /// Identifies a request that expects a correlated response or completion event.
 /// </summary>
 public readonly record struct RequestId(Guid Value)

@@ -1,6 +1,6 @@
 # Leva.Framework.Core
 
-`Leva.Framework.Core` is the shared vocabulary layer of ArchFramework. It defines stable contracts, IDs, result types, entries, snapshots, synchronization helpers, and small value objects used by the rest of the framework.
+`Leva.Framework.Core` is the shared vocabulary layer of ArchFramework. It defines stable contracts, IDs, result types, snapshots, synchronization helpers, and small value objects used by the rest of the framework.
 
 ## Purpose and dependencies
 
@@ -11,6 +11,7 @@ Leva.Framework.Core
   -> .NET only
 
 Leva.Framework.Engine
+Leva.Framework.Execution
 Leva.Framework.Fakes
 future provider libraries
   -> Leva.Framework.Core
@@ -18,7 +19,7 @@ future provider libraries
 
 ## Project overview
 
-Core is intentionally small and stable. A type belongs here only when it represents a framework-wide concept that many libraries can safely depend on. This includes contracts such as `IEvent`, `IState<TAccess>`, `IRoutine<TAccess>`, `IBehavior<TAccess>`, `ITransition`, and `ILogSink`; identifier values such as `StateId`, `RoutineId`, `EventId`, `CommandId`, `RequestId`, and `AlarmId`; and shared values such as `Result`, `Error`, runtime entries, `Snapshot`, and small synchronization helpers.
+Core is intentionally small and stable. A type belongs here only when it represents a framework-wide concept that many libraries can safely depend on. This includes contracts such as `IEvent`, `IState<TAccess>`, `IRoutine<TAccess>`, `IBehavior<TAccess>`, `ITransition`, and `ILogSink`; identifier values such as `StateId`, `RoutineId`, `EventId`, `RequestId`, and `AlarmId`; and shared values such as `Result`, `Error`, runtime entries, `Snapshot`, and small synchronization helpers.
 
 Core does not decide how events are queued, how states are executed, how data is stored, or how UI is shown. Those responsibilities belong to Engine, provider libraries, or applications. Core only defines the shape of the concepts so those layers can communicate cleanly.
 
@@ -43,7 +44,6 @@ Core does not decide how events are queued, how states are executed, how data is
 ### Identifier values
 
 `AlarmId` - Identifies one alarm instance raised by the runtime or application.
-`CommandId` - Identifies one command issued by a state, routine, behavior, or application service.
 `RequestId` - Identifies a request that expects a correlated response or completion event.
 `EventId` - Identifies one event instance for logging, scheduling, cancellation, and correlation.
 `RoutineId` - Identifies a routine type or routine instance in runtime logs and bindings.
@@ -59,8 +59,6 @@ Core does not decide how events are queued, how states are executed, how data is
 
 `AlarmEntry` - Represents one active alarm or fault with principal, message, level, blocking flag, raised time, and optional properties.
 `AlarmLevel` - Defines alarm severity.
-`CommandEntry` - Represents one tracked command or external operation with principal, name, status, creation/update/completion times, optional error, optional state, and optional properties.
-`CommandStatus` - Describes the lifecycle state of a tracked command.
 `EventPriority` - Defines queue priority for events waiting in the engine queue.
 `RoutineStatus` - Describes routine lifecycle state.
 `Snapshot` - Captures durable runtime state that can be stored and later used to resume execution safely.

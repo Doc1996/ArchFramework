@@ -2,6 +2,7 @@
   <Folder Name="/src/">
     <Project Path="src/Leva.Framework.Core/Leva.Framework.Core.csproj" />
     <Project Path="src/Leva.Framework.Engine/Leva.Framework.Engine.csproj" />
+    <Project Path="src/Leva.Framework.Execution/Leva.Framework.Execution.csproj" />
     <Project Path="src/Leva.Framework.Fakes/Leva.Framework.Fakes.csproj" />
     <Project Path="src/Leva.Framework.Identity/Leva.Framework.Identity.csproj" />
     <Project Path="src/Leva.Framework.Identity.Memory/Leva.Framework.Identity.Memory.csproj" />
@@ -16,6 +17,7 @@
     <Project Path="tests/Leva.Framework.Testing/Leva.Framework.Testing.csproj" />
     <Project Path="tests/Leva.Framework.Core.Tests/Leva.Framework.Core.Tests.csproj" />
     <Project Path="tests/Leva.Framework.Engine.Tests/Leva.Framework.Engine.Tests.csproj" />
+    <Project Path="tests/Leva.Framework.Execution.Tests/Leva.Framework.Execution.Tests.csproj" />
     <Project Path="tests/Leva.Framework.Fakes.Tests/Leva.Framework.Fakes.Tests.csproj" />
     <Project Path="tests/Leva.Framework.Identity.Tests/Leva.Framework.Identity.Tests.csproj" />
     <Project Path="tests/Leva.Framework.Identity.Memory.Tests/Leva.Framework.Identity.Memory.Tests.csproj" />

@@ -9,7 +9,6 @@ public sealed class IdTests
 	public void RuntimeIds_NewCreatesDifferentValues()
 	{
 		Assert.NotEqual(AlarmId.New(), AlarmId.New());
-		Assert.NotEqual(CommandId.New(), CommandId.New());
 		Assert.NotEqual(EventId.New(), EventId.New());
 		Assert.NotEqual(RequestId.New(), RequestId.New());
 	}

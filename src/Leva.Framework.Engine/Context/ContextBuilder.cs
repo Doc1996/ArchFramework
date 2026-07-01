@@ -68,7 +68,6 @@ public sealed class ContextBuilder
 		var eventQueue = _eventQueue ?? new EventQueue(_clock, runtimeLog);
 		var alarmBoard = _alarmSupervisor?.AlarmBoard ?? new AlarmBoard(_clock, runtimeLog);
 		var statusBoard = _statusUpdater?.StatusBoard ?? new StatusBoard(runtimeLog);
-		var commandBoard = new CommandBoard(_clock, runtimeLog);
 
 		var routineRunner = new RoutineRunner(runtimeAccess, runtimeLog);
 		var behaviorRunner = new BehaviorRunner(_behaviors, runtimeAccess, runtimeLog);
@@ -97,8 +96,7 @@ public sealed class ContextBuilder
 			routineRunner,
 			behaviorRunner,
 			alarmBoard,
-			statusBoard,
-			commandBoard
+			statusBoard
 		);
 	}
 

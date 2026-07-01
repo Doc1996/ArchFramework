@@ -29,31 +29,9 @@ public sealed class CoreValueTests
 	}
 
 	[Fact]
-	public void CommandEntry_CanRepresentFinishedFailure()
-	{
-		var error = new Error("Failed", "Command failed.");
-		var finishedAt = DateTimeOffset.UnixEpoch.AddSeconds(5);
-
-		var commandEntry = new CommandEntry(
-			CommandId.New(),
-			"Command",
-			CommandStatus.Failed,
-			DateTimeOffset.UnixEpoch,
-			finishedAt,
-			finishedAt,
-			error
-		);
-
-		Assert.Equal(CommandStatus.Failed, commandEntry.Status);
-		Assert.Equal(finishedAt, commandEntry.FinishedAt);
-		Assert.Equal(error, commandEntry.Error);
-	}
-
-	[Fact]
 	public void RuntimeIds_DefaultValuesAreDifferentFromNewValues()
 	{
 		Assert.NotEqual(default(AlarmId), AlarmId.New());
-		Assert.NotEqual(default(CommandId), CommandId.New());
 		Assert.NotEqual(default(EventId), EventId.New());
 		Assert.NotEqual(default(RequestId), RequestId.New());
 	}

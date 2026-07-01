@@ -20,19 +20,6 @@ public sealed class EntryTests
 	}
 
 	[Fact]
-	public void CommandEntry_StoresLifecycleSnapshot()
-	{
-		var commandId = CommandId.New();
-		var startedAt = DateTimeOffset.UtcNow;
-		var commandEntry = new CommandEntry(commandId, "Move", CommandStatus.Started, startedAt, startedAt);
-
-		Assert.Equal(commandId, commandEntry.Id);
-		Assert.Equal("Move", commandEntry.Name);
-		Assert.Equal(CommandStatus.Started, commandEntry.Status);
-		Assert.Null(commandEntry.FinishedAt);
-	}
-
-	[Fact]
 	public void StatusEntry_StoresLatestValue()
 	{
 		var updatedAt = DateTimeOffset.UtcNow;
