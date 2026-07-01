@@ -3,5 +3,6 @@
 		<ProjectReference Include="../Leva.Framework.Core/Leva.Framework.Core.csproj" />
 		<ProjectReference Include="../Leva.Framework.Engine/Leva.Framework.Engine.csproj" />
 		<ProjectReference Include="../Leva.Framework.Identity/Leva.Framework.Identity.csproj" />
+		<ProjectReference Include="../Leva.Framework.Notifications/Leva.Framework.Notifications.csproj" />
 	</ItemGroup>
 </Project>

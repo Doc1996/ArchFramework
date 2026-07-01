@@ -56,7 +56,6 @@ Engine intentionally does not depend on `Leva.Framework.Execution`. Long-running
 
 `Context` - Main runtime composition object that owns engine services and exposes controlled runtime capabilities to the host.
 `ContextBuilder` - Builds a `Context` from clocks, log sinks, queues, supervisors, updaters, state bindings, and behavior bindings.
-`SystemClock` - Production `IClock` implementation based on UTC system time.
 
 ### Events and dispatching
 
