@@ -27,11 +27,11 @@ public sealed class ExecutionRunner(ExecutionBoard board)
 
 		var executionId = ExecutionId.New();
 		var tokenSource = CancellationTokenSource.CreateLinkedTokenSource(token);
-		var reporter = new ExecutionReporter(board, executionId);
+		var progress = new ExecutionProgress(executionId, board);
 
 		board.Start(executionId, execution.GetType().Name);
-		var completion = Task.Run(() => RunAsync(request, execution, reporter, executionId, tokenSource));
-		return new ExecutionHandle<TResult>(executionId, completion, board, () => CancelExecution(tokenSource));
+		var completion = Task.Run(() => RunAsync(request, execution, progress, executionId, tokenSource));
+		return new ExecutionHandle<TResult>(executionId, board, completion, () => CancelExecution(tokenSource));
 	}
 
 	private ExecutionHandle<TResult> StartFailed<TResult>(Error error)
@@ -42,8 +42,8 @@ public sealed class ExecutionRunner(ExecutionBoard board)
 
 		return new ExecutionHandle<TResult>(
 			executionId,
-			Task.FromResult(Result<TResult>.Fail(error)),
 			board,
+			Task.FromResult(Result<TResult>.Fail(error)),
 			static () => { }
 		);
 	}
@@ -51,7 +51,7 @@ public sealed class ExecutionRunner(ExecutionBoard board)
 	private async Task<Result<TResult>> RunAsync<TRequest, TResult>(
 		TRequest request,
 		IExecution<TRequest, TResult> execution,
-		ExecutionReporter reporter,
+		ExecutionProgress progress,
 		ExecutionId executionId,
 		CancellationTokenSource tokenSource
 	)
@@ -59,11 +59,10 @@ public sealed class ExecutionRunner(ExecutionBoard board)
 		try
 		{
 			tokenSource.Token.ThrowIfCancellationRequested();
-			var result = await execution.ExecuteAsync(request, reporter, tokenSource.Token);
+			var result = await execution.ExecuteAsync(request, progress, tokenSource.Token);
 
 			if (tokenSource.IsCancellationRequested)
 				return MarkCancelled<TResult>(executionId);
-
 			return Finish(executionId, result);
 		}
 		catch (OperationCanceledException) when (tokenSource.IsCancellationRequested)

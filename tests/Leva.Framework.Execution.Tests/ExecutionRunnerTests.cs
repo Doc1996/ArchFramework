@@ -83,11 +83,11 @@ public sealed class ExecutionRunnerTests
 	{
 		public Task<Result<int>> ExecuteAsync(
 			int request,
-			ExecutionReporter reporter,
+			ExecutionProgress progress,
 			CancellationToken token = default
 		)
 		{
-			reporter.Report("Multiplying", 100);
+			progress.Report("Multiplying", 100);
 			return Task.FromResult(Result<int>.Ok(request * 2));
 		}
 	}
@@ -98,7 +98,7 @@ public sealed class ExecutionRunnerTests
 
 		public async Task<Result<string>> ExecuteAsync(
 			string request,
-			ExecutionReporter reporter,
+			ExecutionProgress progress,
 			CancellationToken token = default
 		)
 		{
@@ -112,7 +112,7 @@ public sealed class ExecutionRunnerTests
 	{
 		public Task<Result<string>> ExecuteAsync(
 			string request,
-			ExecutionReporter reporter,
+			ExecutionProgress progress,
 			CancellationToken token = default
 		) => throw new InvalidOperationException("Failure.");
 	}

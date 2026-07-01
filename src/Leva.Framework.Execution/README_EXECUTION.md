@@ -37,7 +37,7 @@ The central runtime objects are the execution board, execution runner, and execu
 ### Execution contract
 
 `IExecution<TRequest, TResult>` - Defines a typed execution contract.
-`ExecutionReporter` - Reports progress from inside a running execution.
+`ExecutionProgress` - Reports progress from inside a running execution.
 
 ### Runtime coordination
 

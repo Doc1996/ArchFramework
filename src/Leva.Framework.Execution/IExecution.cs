@@ -7,5 +7,5 @@ namespace Leva.Framework.Execution;
 /// </summary>
 public interface IExecution<TRequest, TResult>
 {
-	Task<Result<TResult>> ExecuteAsync(TRequest request, ExecutionReporter reporter, CancellationToken token = default);
+	Task<Result<TResult>> ExecuteAsync(TRequest request, ExecutionProgress progress, CancellationToken token = default);
 }

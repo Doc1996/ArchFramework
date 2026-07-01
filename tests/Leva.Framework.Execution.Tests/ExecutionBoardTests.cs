@@ -66,11 +66,11 @@ public sealed class ExecutionBoardTests
 	{
 		public Task<Result<string>> ExecuteAsync(
 			string request,
-			ExecutionReporter reporter,
+			ExecutionProgress progress,
 			CancellationToken token = default
 		)
 		{
-			reporter.Report("Echoing", 100);
+			progress.Report("Echoing", 100);
 			return Task.FromResult(Result<string>.Ok(request));
 		}
 	}
@@ -79,7 +79,7 @@ public sealed class ExecutionBoardTests
 	{
 		public Task<Result<string>> ExecuteAsync(
 			string request,
-			ExecutionReporter reporter,
+			ExecutionProgress progress,
 			CancellationToken token = default
 		) => Task.FromResult(Result<string>.Fail(new Error("execution.test", "Test failure.")));
 	}

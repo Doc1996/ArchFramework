@@ -3,7 +3,7 @@ using Leva.Framework.Core;
 namespace Leva.Framework.Execution;
 
 /// <summary>
-/// Represents one running execution and exposes status, cancellation, and typed completion result.
+/// Represents the caller side of one started execution.
 /// </summary>
 public sealed class ExecutionHandle<TResult>
 {
@@ -12,14 +12,14 @@ public sealed class ExecutionHandle<TResult>
 
 	internal ExecutionHandle(
 		ExecutionId id,
-		Task<Result<TResult>> completion,
 		ExecutionBoard board,
+		Task<Result<TResult>> completion,
 		Action cancelExecution
 	)
 	{
 		Id = id;
-		Completion = completion;
 		_board = board;
+		Completion = completion;
 		_cancelExecution = cancelExecution;
 	}
 
@@ -28,5 +28,8 @@ public sealed class ExecutionHandle<TResult>
 	public ExecutionEntry? Entry => _board.TryGet(Id, out var entry) ? entry : null;
 	public ExecutionStatus? Status => Entry?.Status;
 
+	/// <summary>
+	/// Requests cooperative cancellation for this execution.
+	/// </summary>
 	public void Cancel() => _cancelExecution();
 }
