@@ -39,9 +39,11 @@ public sealed class NotificationService
 
 		var notification = new Notification(NotificationId.New(), recipient, channel, subject, body, _clock.UtcNow);
 		var result = await SendNotificationAsync(notification, token);
-		var entry = CreateEntry(notification, result);
 
-		var saved = await _store.SaveAsync(entry, token);
+		var entry = CreateEntry(notification, result);
+		var saveToken = IsCancelled(result) ? CancellationToken.None : token;
+		var saved = await _store.SaveAsync(entry, saveToken);
+
 		if (saved.IsFailure)
 			return Result<NotificationEntry>.Fail(saved.Error);
 
@@ -63,8 +65,15 @@ public sealed class NotificationService
 	private NotificationEntry CreateEntry(Notification notification, Result result)
 	{
 		var completedAt = _clock.UtcNow;
-		return result.IsSuccess
-			? NotificationEntry.Sent(notification, completedAt)
-			: NotificationEntry.Failed(notification, completedAt, result.Error);
+		if (result.IsSuccess)
+			return NotificationEntry.Sent(notification, completedAt);
+
+		if (IsCancelled(result))
+			return NotificationEntry.Cancelled(notification, completedAt, result.Error);
+
+		return NotificationEntry.Failed(notification, completedAt, result.Error);
 	}
+
+	private static bool IsCancelled(Result result) =>
+		result.IsFailure && result.Error.Code == NotificationErrors.CancelledCode;
 }

@@ -56,6 +56,29 @@ public sealed class NotificationServiceTests
 	}
 
 	[Fact]
+	public async Task SendAsync_StoresCancelledEntry()
+	{
+		var clock = new FakeClock();
+		var gateway = new FakeNotificationGateway();
+		var store = new FakeNotificationStore();
+
+		var service = new NotificationService(gateway, store, clock);
+		gateway.CancelNext();
+
+		var result = await service.SendAsync(
+			new NotificationRecipient("principal-1"),
+			new NotificationChannel("in-app"),
+			"Subject",
+			"Body"
+		);
+
+		Assert.True(result.IsFailure);
+		Assert.Empty(gateway.Sent);
+		var cancelled = Assert.Single(store.Entries);
+		Assert.Equal(NotificationStatus.Cancelled, cancelled.Status);
+	}
+
+	[Fact]
 	public async Task SendAsync_ReturnsFailureWhenStoreFails()
 	{
 		var clock = new FakeClock();

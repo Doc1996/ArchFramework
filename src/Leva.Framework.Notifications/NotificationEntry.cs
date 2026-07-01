@@ -21,9 +21,6 @@ public sealed record NotificationEntry(
 	public static NotificationEntry Failed(Notification notification, DateTimeOffset completedAt, Error error) =>
 		new(notification, NotificationStatus.Failed, completedAt, error);
 
-	public static NotificationEntry Cancelled(
-		Notification notification,
-		DateTimeOffset completedAt,
-		Error? error = null
-	) => new(notification, NotificationStatus.Cancelled, completedAt, error);
+	public static NotificationEntry Cancelled(Notification notification, DateTimeOffset completedAt, Error error) =>
+		new(notification, NotificationStatus.Cancelled, completedAt, error);
 }

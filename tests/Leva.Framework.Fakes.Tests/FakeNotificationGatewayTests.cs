@@ -21,6 +21,16 @@ public sealed class FakeNotificationGatewayTests
 		Assert.Empty(gateway.Sent);
 	}
 
+	[Fact]
+	public async Task SendAsync_CanCancelNextSendWithoutRecordingNotification()
+	{
+		var gateway = new FakeNotificationGateway();
+		gateway.CancelNext();
+
+		await Assert.ThrowsAsync<OperationCanceledException>(() => gateway.SendAsync(TestNotification()));
+		Assert.Empty(gateway.Sent);
+	}
+
 	private static Notification TestNotification()
 	{
 		return new(

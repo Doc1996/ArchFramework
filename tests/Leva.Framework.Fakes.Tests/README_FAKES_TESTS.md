@@ -12,5 +12,5 @@
 `FakeRuntimeTests` - Verifies fake states, routines, behaviors, and complete fake contexts.
 `FakeContextTests` - Verifies default fake wiring, provided fake instances, and engine integration.
 `FakePrincipalTests` - Verifies principal stores, session stores, session sources, authentication policies, and authorization policies.
-`FakeNotificationGatewayTests` - Verifies one-shot notification gateway failure behavior and captured sends.
+`FakeNotificationGatewayTests` - Verifies one-shot notification gateway failure/cancellation behavior and captured sends.
 `ResultAssert` - Shared helper used by framework tests to unwrap successful `Result` and `Result<T>` values.
