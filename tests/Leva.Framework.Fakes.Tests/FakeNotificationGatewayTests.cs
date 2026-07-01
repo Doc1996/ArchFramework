@@ -26,7 +26,7 @@ public sealed class FakeNotificationGatewayTests
 		return new(
 			NotificationId.New(),
 			new NotificationRecipient("principal-1"),
-			NotificationChannel.InApp,
+			new NotificationChannel("in-app"),
 			"Subject",
 			"Body",
 			DateTimeOffset.UtcNow

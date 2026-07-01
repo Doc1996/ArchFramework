@@ -5,8 +5,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="../../src/Leva.Framework.Fakes/Leva.Framework.Fakes.csproj" />
 		<ProjectReference Include="../../src/Leva.Framework.Core/Leva.Framework.Core.csproj" />
+		<ProjectReference Include="../../src/Leva.Framework.Fakes/Leva.Framework.Fakes.csproj" />
 		<ProjectReference Include="../../src/Leva.Framework.Identity/Leva.Framework.Identity.csproj" />
 		<ProjectReference Include="../../src/Leva.Framework.Identity.Local/Leva.Framework.Identity.Local.csproj" />
 		<ProjectReference Include="../../src/Leva.Framework.Identity.Memory/Leva.Framework.Identity.Memory.csproj" />

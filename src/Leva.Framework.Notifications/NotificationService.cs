@@ -38,31 +38,33 @@ public sealed class NotificationService
 		ArgumentException.ThrowIfNullOrWhiteSpace(body);
 
 		var notification = new Notification(NotificationId.New(), recipient, channel, subject, body, _clock.UtcNow);
+		var result = await SendNotificationAsync(notification, token);
+		var entry = CreateEntry(notification, result);
+
+		var saved = await _store.SaveAsync(entry, token);
+		if (saved.IsFailure)
+			return Result<NotificationEntry>.Fail(saved.Error);
+
+		return result.IsSuccess ? Result<NotificationEntry>.Ok(entry) : Result<NotificationEntry>.Fail(result.Error);
+	}
+
+	private async Task<Result> SendNotificationAsync(Notification notification, CancellationToken token)
+	{
 		try
 		{
-			var result = await _gateway.SendAsync(notification, token);
-			var entry = result.IsSuccess
-				? NotificationEntry.Sent(notification, _clock.UtcNow)
-				: NotificationEntry.Failed(notification, _clock.UtcNow, result.Error);
-
-			var saved = await _store.SaveAsync(entry, token);
-			if (saved.IsFailure)
-				return Result<NotificationEntry>.Fail(saved.Error);
-
-			return result.IsSuccess
-				? Result<NotificationEntry>.Ok(entry)
-				: Result<NotificationEntry>.Fail(result.Error);
+			return await _gateway.SendAsync(notification, token);
 		}
 		catch (OperationCanceledException)
 		{
-			var entry = NotificationEntry.Cancelled(
-				notification,
-				_clock.UtcNow,
-				NotificationErrors.Failed("send", "Notification send was cancelled.")
-			);
-
-			await _store.SaveAsync(entry, CancellationToken.None);
-			return Result<NotificationEntry>.Fail(entry.Error!);
+			return Result.Fail(NotificationErrors.Cancelled("send"));
 		}
+	}
+
+	private NotificationEntry CreateEntry(Notification notification, Result result)
+	{
+		var completedAt = _clock.UtcNow;
+		return result.IsSuccess
+			? NotificationEntry.Sent(notification, completedAt)
+			: NotificationEntry.Failed(notification, completedAt, result.Error);
 	}
 }

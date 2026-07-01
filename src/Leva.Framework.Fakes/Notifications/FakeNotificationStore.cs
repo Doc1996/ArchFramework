@@ -33,7 +33,7 @@ public sealed class FakeNotificationStore : INotificationStore
 		}
 
 		if (error is not null)
-			return Task.FromResult(Result.Fail(error));
+			return Task.FromResult(Result.Fail(error.Value));
 
 		_entries.Set(entry.NotificationId, entry);
 		return Task.FromResult(Result.Ok());

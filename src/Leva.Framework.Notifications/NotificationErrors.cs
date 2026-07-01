@@ -16,6 +16,9 @@ public static class NotificationErrors
 	public static Error UnsupportedChannel(NotificationChannel channel) =>
 		new("notification.unsupported_channel", $"Notification channel '{channel}' is not supported.");
 
+	public static Error Cancelled(string operation, string? details = null) =>
+		new("notification.cancelled", WithDetails($"Notification operation '{operation}' was cancelled.", details));
+
 	private static string WithDetails(string message, string? details) =>
 		string.IsNullOrWhiteSpace(details) ? message : $"{message} {details}";
 }

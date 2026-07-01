@@ -46,7 +46,7 @@ public sealed class MemoryNotificationTests
 		var entry = ResultAssert.Success(
 			await services.NotificationService.SendAsync(
 				new NotificationRecipient("principal-1"),
-				NotificationChannel.InApp,
+				new NotificationChannel("in-app"),
 				"Subject",
 				"Body"
 			)
@@ -62,7 +62,7 @@ public sealed class MemoryNotificationTests
 		return new(
 			NotificationId.New(),
 			new NotificationRecipient("principal-1", "user@example.com", "User One"),
-			NotificationChannel.Email,
+			new NotificationChannel("email"),
 			"Subject",
 			"Body",
 			DateTimeOffset.UtcNow

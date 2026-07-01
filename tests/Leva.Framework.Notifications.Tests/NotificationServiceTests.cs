@@ -18,7 +18,7 @@ public sealed class NotificationServiceTests
 		var entry = ResultAssert.Success(
 			await service.SendAsync(
 				new NotificationRecipient("principal-1", "user@example.com", "User One"),
-				NotificationChannel.Email,
+				new NotificationChannel("email"),
 				"Subject",
 				"Body"
 			)
@@ -44,7 +44,7 @@ public sealed class NotificationServiceTests
 
 		var result = await service.SendAsync(
 			new NotificationRecipient("principal-1"),
-			NotificationChannel.InApp,
+			new NotificationChannel("in-app"),
 			"Subject",
 			"Body"
 		);
@@ -68,7 +68,7 @@ public sealed class NotificationServiceTests
 
 		var result = await service.SendAsync(
 			new NotificationRecipient("principal-1"),
-			NotificationChannel.InApp,
+			new NotificationChannel("in-app"),
 			"Subject",
 			"Body"
 		);

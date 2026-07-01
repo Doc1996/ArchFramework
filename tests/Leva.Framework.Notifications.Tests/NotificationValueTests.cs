@@ -16,6 +16,7 @@ public sealed class NotificationValueTests
 	[Fact]
 	public void NotificationChannel_RejectsEmptyValues()
 	{
-		Assert.Throws<ArgumentException>(() => new NotificationChannel(""));
+		var exception = Assert.Throws<ArgumentException>(() => new NotificationChannel(""));
+		Assert.NotNull(exception);
 	}
 }

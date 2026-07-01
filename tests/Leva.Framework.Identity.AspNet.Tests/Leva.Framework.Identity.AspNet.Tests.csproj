@@ -9,11 +9,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="../../src/Leva.Framework.Fakes/Leva.Framework.Fakes.csproj" />
 		<ProjectReference Include="../../src/Leva.Framework.Core/Leva.Framework.Core.csproj" />
+		<ProjectReference Include="../../src/Leva.Framework.Fakes/Leva.Framework.Fakes.csproj" />
 		<ProjectReference Include="../../src/Leva.Framework.Identity/Leva.Framework.Identity.csproj" />
-		<ProjectReference Include="../../src/Leva.Framework.Identity.Memory/Leva.Framework.Identity.Memory.csproj" />
 		<ProjectReference Include="../../src/Leva.Framework.Identity.AspNet/Leva.Framework.Identity.AspNet.csproj" />
+		<ProjectReference Include="../../src/Leva.Framework.Identity.Memory/Leva.Framework.Identity.Memory.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
