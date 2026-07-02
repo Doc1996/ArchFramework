@@ -47,14 +47,13 @@ DIAGRAM_*.png     Wiring diagram for normal use
 Diagram colors are consistent across libraries:
 
 ```text
-Green   Application code
-Blue    Framework concrete service/class
+Green   Application or tests
+Blue    Framework or provider implementation
 Yellow  Interface or contract
-Purple  Provider implementation
-Orange  Method or call
-Gray    External framework or infrastructure
 White   Value, entry, payload, ID, or model
 ```
+
+Function and method names are written in italics and include `()`. Arrow labels use a small shared vocabulary such as `uses`, `calls`, `creates`, `implements`, `stores`, `returns`, `sends`, and `maps`.
 
 ## Build and test
 
