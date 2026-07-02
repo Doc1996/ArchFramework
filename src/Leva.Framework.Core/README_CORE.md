@@ -2,20 +2,7 @@
 
 `Leva.Framework.Core` is the shared vocabulary layer of ArchFramework. It defines stable contracts, IDs, result types, snapshots, synchronization helpers, and small value objects used by the rest of the framework.
 
-## Purpose and dependencies
-
 Core exists so framework libraries can share the same language without creating dependency cycles. It contains concepts, not runtime execution, storage, UI, notifications, devices, providers, or application-specific behavior. `Leva.Framework.Core` depends only on .NET base libraries. Other framework libraries may depend on Core, but Core must not depend on Engine, Fakes, Storage, Presentation, Notifications, Authentication, provider implementations, or application projects.
-
-```text
-Leva.Framework.Core
-  -> .NET only
-
-Leva.Framework.Engine
-Leva.Framework.Execution
-Leva.Framework.Fakes
-future provider libraries
-  -> Leva.Framework.Core
-```
 
 ## Project overview
 

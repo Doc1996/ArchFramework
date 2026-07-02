@@ -2,15 +2,12 @@
 
 `Leva.Framework.Identity.Local` is the local/offline provider implementation of `Leva.Framework.Identity`. It authenticates principals with local names and protected secrets without depending on ASP.NET Core or external identity providers.
 
-## Purpose and dependencies
-
 Local identity exists for desktop tools, kiosk applications, robotics and medical-device software, internal utilities, demos, and offline applications that need local sign-in without a web authentication stack. It depends on `Leva.Framework.Identity`, `Leva.Framework.Core`, and .NET cryptography libraries. It does not depend on Engine, Storage, ASP.NET Core, databases, UI frameworks, email systems, or external identity providers.
 
 ```text
 Leva.Framework.Identity.Local
-  -> Leva.Framework.Identity
   -> Leva.Framework.Core
-  -> .NET cryptography libraries
+  -> Leva.Framework.Identity
 ```
 
 ## Project overview

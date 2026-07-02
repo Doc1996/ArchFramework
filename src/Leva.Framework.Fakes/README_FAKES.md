@@ -2,21 +2,14 @@
 
 `Leva.Framework.Fakes` provides reusable test doubles and shared test helpers for Core, Engine, provider-neutral Identity, and provider-neutral Notifications libraries. It helps tests assemble deterministic runtime scenarios without duplicating production engine behavior.
 
-## Purpose and dependencies
-
 Fakes exist for unit tests, integration-style framework tests, demos, and application tests that need predictable clocks, queues, events, logs, transitions, states, routines, behaviors, status updates, alarms, identity sources, authentication policies, authorization policies, notification gateway/storage behavior, result assertions, or a ready-made fake context. `Leva.Framework.Fakes` may depend on Core, Engine, Identity, and Notifications because it is a testing support library for those projects. Engine, Identity, and Notifications must never depend on Fakes. Fakes should not depend on application projects, UI providers, storage providers, notification providers, concrete authentication providers, or external infrastructure.
 
 ```text
 Leva.Framework.Fakes
+  -> Leva.Framework.Core
   -> Leva.Framework.Engine
   -> Leva.Framework.Identity
   -> Leva.Framework.Notifications
-  -> Leva.Framework.Core
-
-Leva.Framework.Engine
-Leva.Framework.Identity
-Leva.Framework.Notifications
-  -> Leva.Framework.Core
 ```
 
 ## Project overview

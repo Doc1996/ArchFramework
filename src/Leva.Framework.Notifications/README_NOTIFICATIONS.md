@@ -2,23 +2,12 @@
 
 `Leva.Framework.Notifications` is the provider-neutral notification contract layer of ArchFramework. It defines notifications, recipients, channels, notification entries, gateways, stores, and the application-facing notification service used by provider libraries and applications.
 
-## Purpose and dependencies
-
 Notifications exists so applications can send user-facing or system-facing messages without coupling workflows, states, services, or hosts to a specific delivery technology. It contains compact contracts, small notification values, and framework-owned orchestration. It does not contain ASP.NET integration, email delivery, push delivery, SignalR/browser updates, queues, retries, templates, user preferences, read/unread inbox state, provider credentials, or application-specific notification categories.
 
 `Leva.Framework.Notifications` depends on `Leva.Framework.Core` so notification operations use the same `Result`, `Result<T>`, `Error`, and `IClock` values as the rest of the framework. Core must not depend on Notifications, and Engine should not depend on Notifications directly; hosts and application access objects should connect notifications explicitly at the application boundary.
 
 ```text
 Leva.Framework.Notifications
-  -> Leva.Framework.Core
-  -> .NET base libraries
-
-Applications / hosts
-notification providers
-  -> Leva.Framework.Notifications
-  -> Leva.Framework.Core
-
-Leva.Framework.Engine
   -> Leva.Framework.Core
 ```
 

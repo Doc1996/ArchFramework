@@ -2,20 +2,10 @@
 
 `Leva.Framework.Storage.Files` is the local file provider implementation of `Leva.Framework.Storage`. It stores repositories and journals as JSON files under one root directory.
 
-## Purpose and dependencies
-
-`Leva.Framework.Storage.Files` depends on `Leva.Framework.Storage`, `Leva.Framework.Core`, and .NET file/JSON libraries. It does not depend on Engine, Memory, SQLite, EF Core, databases, or application projects.
-
 ```text
-Leva.Framework.Core
-  -> .NET only
-
-Leva.Framework.Storage
-  -> Leva.Framework.Core
-
 Leva.Framework.Storage.Files
-  -> Leva.Framework.Storage
   -> Leva.Framework.Core
+  -> Leva.Framework.Storage
 ```
 
 ## Project overview

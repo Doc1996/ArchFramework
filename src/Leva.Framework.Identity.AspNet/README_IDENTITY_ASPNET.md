@@ -2,21 +2,14 @@
 
 `Leva.Framework.Identity.AspNet` is the ASP.NET Core adapter for `Leva.Framework.Identity`. It connects framework principals and auth sessions to ASP.NET Core authentication, authorization, HTTP cookies, built in endpoints, Google sign-in, and JWT bearer tokens.
 
-## Purpose and dependencies
-
 ASP.NET Core identity exists so web hosts can use the provider-neutral Identity library through normal ASP.NET Core middleware and endpoint patterns. It does not implement a new identity model, database store, account registration system, profile management, or application-specific authorization rules.
 
 `Leva.Framework.Identity.AspNet` depends on `Leva.Framework.Identity`, `Leva.Framework.Core`, and the ASP.NET Core shared framework. Identity remains provider-neutral and must not depend on ASP.NET Core. Google and JWT support live in this library because, for this framework, they are web-host authentication mechanisms rather than desktop/local identity providers.
 
 ```text
 Leva.Framework.Identity.AspNet
+  -> Leva.Framework.Core
   -> Leva.Framework.Identity
-  -> Leva.Framework.Core
-  -> Microsoft.AspNetCore.App
-
-Leva.Framework.Identity
-  -> Leva.Framework.Core
-  -> .NET base libraries
 ```
 
 ## Project overview

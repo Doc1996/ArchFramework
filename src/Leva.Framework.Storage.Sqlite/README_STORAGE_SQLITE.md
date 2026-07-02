@@ -2,21 +2,12 @@
 
 `Leva.Framework.Storage.Sqlite` is the SQLite provider implementation of `Leva.Framework.Storage`. It stores repositories and journals in one SQLite database file.
 
-## Purpose and dependencies
-
-`Leva.Framework.Storage.Sqlite` depends on `Leva.Framework.Storage`, `Leva.Framework.Core`, `Microsoft.Data.Sqlite`, and SQLite native provider packages. It does not depend on Engine, Memory, Files, EF Core, or application projects.
-
 ```text
-Leva.Framework.Core
-  -> .NET only
-
-Leva.Framework.Storage
-  -> Leva.Framework.Core
-
 Leva.Framework.Storage.Sqlite
-  -> Leva.Framework.Storage
   -> Leva.Framework.Core
+  -> Leva.Framework.Storage
   -> Microsoft.Data.Sqlite
+  -> SQLitePCLRaw.lib.e_sqlite3
 ```
 
 ## Project overview

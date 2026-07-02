@@ -2,23 +2,12 @@
 
 `Leva.Framework.Identity` is the provider-neutral identity contract layer of ArchFramework. It defines principals, auth sessions, authentication, authorization, audit records, and state-facing principal access used by provider libraries and applications.
 
-## Purpose and dependencies
-
 Identity exists so applications and provider libraries can share the same identity vocabulary without coupling the framework to a specific login provider, account store, web framework, token format, password system, or external identity service. It contains contracts, small principal values, and framework-owned orchestration services, not concrete account persistence, ASP.NET integration, Google sign-in, JWT handling, or application-specific profile data.
 
 `Leva.Framework.Identity` depends on `Leva.Framework.Core` so identity operations use the same `Result`, `Result<T>`, and `Error` model as the rest of the framework. Core must not depend on Identity, and Engine should not depend on Identity directly; hosts and application access objects should connect identity explicitly at the application boundary.
 
 ```text
 Leva.Framework.Identity
-  -> Leva.Framework.Core
-  -> .NET base libraries
-
-Applications / hosts
-identity providers
-  -> Leva.Framework.Identity
-  -> Leva.Framework.Core
-
-Leva.Framework.Engine
   -> Leva.Framework.Core
 ```
 

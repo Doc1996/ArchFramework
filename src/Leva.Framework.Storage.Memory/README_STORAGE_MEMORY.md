@@ -2,20 +2,10 @@
 
 `Leva.Framework.Storage.Memory` is the in-memory provider implementation of `Leva.Framework.Storage`. It stores repositories and journals in process for tests, demos, samples, and short-lived hosts.
 
-## Purpose and dependencies
-
-`Leva.Framework.Storage.Memory` depends on `Leva.Framework.Storage`, `Leva.Framework.Core`, and .NET base libraries. It does not depend on Engine, Files, SQLite, EF Core, databases, or application projects.
-
 ```text
-Leva.Framework.Core
-  -> .NET only
-
-Leva.Framework.Storage
-  -> Leva.Framework.Core
-
 Leva.Framework.Storage.Memory
-  -> Leva.Framework.Storage
   -> Leva.Framework.Core
+  -> Leva.Framework.Storage
 ```
 
 ## Project overview

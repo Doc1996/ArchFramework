@@ -2,21 +2,14 @@
 
 `Leva.Framework.Notifications.SignalR` is the SignalR notification gateway for `Leva.Framework.Notifications`. It sends framework notifications to connected ASP.NET Core SignalR users through a strongly typed hub and client payload contract.
 
-## Purpose and dependencies
-
 Notifications.SignalR exists so web hosts can deliver live in-app/browser notifications without putting ASP.NET Core or SignalR concepts into the provider-neutral Notifications library. It does not implement email, mobile push, browser push subscriptions, notification storage, queues, retries, templates, user preferences, read/unread inbox state, or application-specific notification categories.
 
 `Leva.Framework.Notifications.SignalR` depends on `Leva.Framework.Notifications`, `Leva.Framework.Core`, and the ASP.NET Core shared framework. Notifications remains provider-neutral and must not depend on SignalR. Applications are responsible for registering an `INotificationStore`, registering `NotificationService`, configuring ASP.NET Core authentication/user identifiers when user targeting is required, and mapping the notification hub endpoint.
 
 ```text
 Leva.Framework.Notifications.SignalR
+  -> Leva.Framework.Core
   -> Leva.Framework.Notifications
-  -> Leva.Framework.Core
-  -> Microsoft.AspNetCore.App
-
-Leva.Framework.Notifications
-  -> Leva.Framework.Core
-  -> .NET base libraries
 ```
 
 ## Project overview

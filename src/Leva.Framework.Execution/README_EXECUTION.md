@@ -2,21 +2,16 @@
 
 `Leva.Framework.Execution` runs requested work on background tasks and tracks lifecycle, progress, cancellation, and typed results.
 
-## Purpose and dependencies
-
 Execution provides reusable infrastructure for work that should not run inline inside application flow. It is intended for long-running calculations, import/export operations, external API calls, device operations, image processing, collision checking, and native or external delegated work.
-
-`Leva.Framework.Execution` depends on `Leva.Framework.Core` for results, errors, clocks, logging, and shared framework primitives.
-
-```text
-Leva.Framework.Execution
-  -> Leva.Framework.Core
-  -> .NET base libraries
-```
 
 Execution does not depend on Engine. Engine remains responsible for workflow orchestration through events, states, transitions, routines, behaviors, alarms, statuses, snapshots, and runtime history. Execution is responsible only for running work and exposing its lifecycle and result.
 
 Execution intentionally does not include external process execution, native interop helpers, process lifetime management, or workflow decisions. Those concerns belong to application code or separate framework libraries when they become necessary.
+
+```text
+Leva.Framework.Execution
+  -> Leva.Framework.Core
+```
 
 ## Project overview
 

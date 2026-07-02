@@ -2,21 +2,10 @@
 
 `Leva.Framework.Engine` is the runtime implementation of ArchFramework. It executes the event-driven state-machine model defined by Core.
 
-## Purpose and dependencies
-
 Engine turns Core contracts into deterministic runtime behavior. It owns event queueing, dispatching, transition draining, state execution, routine execution, fallback behavior execution, alarms, statuses, runtime history, logging, and snapshot creation/loading. `Leva.Framework.Engine` depends on `Leva.Framework.Core`. Engine must not depend on Fakes, Storage implementations, UI providers, notification providers, authentication providers, database providers, devices, or application projects.
 
 ```text
 Leva.Framework.Engine
-  -> Leva.Framework.Core
-
-Applications / hosts
-  -> Leva.Framework.Engine
-  -> Leva.Framework.Core
-
-Leva.Framework.Fakes
-future provider libraries
-  -> Leva.Framework.Engine
   -> Leva.Framework.Core
 ```
 

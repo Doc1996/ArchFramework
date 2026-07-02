@@ -2,20 +2,12 @@
 
 `Leva.Framework.Notifications.Memory` is the in-process notification provider for ArchFramework. It provides a memory gateway, memory store, and composition helper for development, samples, local demos, and simple tests.
 
-## Purpose and dependencies
-
 Notifications.Memory exists so applications and tests can use the provider-neutral notification contracts without configuring ASP.NET, email, push, SignalR, or other external delivery infrastructure. It is a real in-memory provider: sends succeed and are recorded in memory. Test-specific failure behavior belongs in `Leva.Framework.Fakes`, not in this provider.
-
-`Leva.Framework.Notifications.Memory` depends on `Leva.Framework.Notifications` and `Leva.Framework.Core`. It does not depend on Engine, Storage, Identity, ASP.NET, email providers, push providers, or application projects.
 
 ```text
 Leva.Framework.Notifications.Memory
+  -> Leva.Framework.Core
   -> Leva.Framework.Notifications
-  -> Leva.Framework.Core
-  -> .NET base libraries
-
-Leva.Framework.Notifications
-  -> Leva.Framework.Core
 ```
 
 ## Project overview
