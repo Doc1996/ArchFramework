@@ -6,7 +6,7 @@ ArchFramework is a clean .NET framework for event-driven, state-machine applicat
 
 ArchFramework keeps important application behavior out of random services, UI callbacks, and uncontrolled background code. Work enters the runtime as typed events, flows through a deterministic dispatcher, reaches the active state or routine, can fall back to behaviors, and only then applies requested transitions. This makes the application easier to reason about, test, log, persist, secure, and recover.
 
-The framework is split into small libraries. `Leva.Framework.Core` defines the shared vocabulary. `Leva.Framework.Engine` implements the runtime. `Leva.Framework.Execution` runs requested work on background tasks with progress, cancellation, and typed results. `Leva.Framework.Fakes` provides reusable test doubles and shared test helpers. `Leva.Framework.Storage` defines provider-neutral persistence contracts. Storage provider libraries implement those contracts for memory, files, and SQLite. `Leva.Framework.Notifications` defines provider-neutral notification contracts, and `Leva.Framework.Notifications.Memory` provides an in-memory notification provider. `Leva.Framework.Identity` defines provider-neutral principal, auth session, authentication, authorization, audit, and state-facing principal access concepts. `Leva.Framework.Identity.Memory` provides an in-memory identity provider for tests and demos. `Leva.Framework.Identity.Local` provides local/offline secret-based identity for desktop, kiosk, and internal tools. `Leva.Framework.Identity.AspNet` adapts framework identity auth sessions to ASP.NET Core authentication, authorization, cookies, built in endpoints, Google sign-in, and JWT bearer tokens.
+The framework is split into small libraries. `Leva.Framework.Core` defines the shared vocabulary. `Leva.Framework.Engine` implements the runtime. `Leva.Framework.Execution` runs requested work on background tasks with progress, cancellation, and typed results. `Leva.Framework.Fakes` provides reusable test doubles and shared test helpers. `Leva.Framework.Storage` defines provider-neutral persistence contracts. Storage provider libraries implement those contracts for memory, files, and SQLite. `Leva.Framework.Notifications` defines provider-neutral notification contracts, `Leva.Framework.Notifications.Memory` provides an in-memory notification provider, and `Leva.Framework.Notifications.SignalR` provides live ASP.NET Core SignalR notification delivery. `Leva.Framework.Identity` defines provider-neutral principal, auth session, authentication, authorization, audit, and state-facing principal access concepts. `Leva.Framework.Identity.Memory` provides an in-memory identity provider for tests and demos. `Leva.Framework.Identity.Local` provides local/offline secret-based identity for desktop, kiosk, and internal tools. `Leva.Framework.Identity.AspNet` adapts framework identity auth sessions to ASP.NET Core authentication, authorization, cookies, built in endpoints, Google sign-in, and JWT bearer tokens.
 
 ## Library structure
 
@@ -21,6 +21,7 @@ Leva.Framework.Storage.Files   -> local JSON/file-system storage provider
 Leva.Framework.Storage.Sqlite  -> local SQLite storage provider
 Leva.Framework.Notifications   -> notification values, gateway/store/service contracts
 Leva.Framework.Notifications.Memory -> in-memory notification provider
+Leva.Framework.Notifications.SignalR -> ASP.NET Core SignalR notification provider
 Leva.Framework.Identity        -> principals, auth sessions, authentication, authorization, audit
 Leva.Framework.Identity.Memory -> in-memory principal/auth-session/auth provider
 Leva.Framework.Identity.Local  -> local/offline credential and secret auth provider
@@ -62,6 +63,7 @@ Leva.Framework.Identity.Local
   -> Leva.Framework.Core
 
 Leva.Framework.Notifications.Memory
+Leva.Framework.Notifications.SignalR
   -> Leva.Framework.Notifications
   -> Leva.Framework.Core
 

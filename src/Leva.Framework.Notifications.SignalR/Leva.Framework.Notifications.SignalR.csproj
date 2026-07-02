@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="../Leva.Framework.Core/Leva.Framework.Core.csproj" />
+		<ProjectReference Include="../Leva.Framework.Notifications/Leva.Framework.Notifications.csproj" />
+	</ItemGroup>
+</Project>
