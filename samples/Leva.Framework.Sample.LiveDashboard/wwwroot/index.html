@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8" />
 	<title>LiveDashboard sample</title>
-	<link rel="stylesheet" href="/sample.css?v=6" />
+	<link rel="stylesheet" href="/sample.css" />
 </head>
 <body>
 	<h1>LiveDashboard</h1>
@@ -18,6 +18,7 @@
 		<button id="send">Send sample notification</button>
 		<button id="check">Run server self-check</button>
 		<button id="refresh">Refresh stored history</button>
+		<button id="clear">Clear browser view</button>
 	</section>
 
 	<section>
@@ -27,10 +28,11 @@
 
 	<section>
 		<h2>Stored notification entries</h2>
+		<p id="history-summary" class="muted">Stored history has not been refreshed yet.</p>
 		<ul id="history"></ul>
 	</section>
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
-	<script src="/sample.js?v=6"></script>
+	<script src="/sample.js"></script>
 </body>
 </html>

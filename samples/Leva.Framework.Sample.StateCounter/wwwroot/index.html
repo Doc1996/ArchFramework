@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
-	<title>CounterWorkflow sample</title>
-	<link rel="stylesheet" href="/sample.css?v=6" />
+	<title>StateCounter sample</title>
+	<link rel="stylesheet" href="/sample.css" />
 </head>
 <body>
-	<h1>CounterWorkflow</h1>
+	<h1>StateCounter</h1>
 	<p>
-		Builds an Engine <code>Context</code>, registers states, queues events, runs the event loop, and creates
-		a report through <code>ExecutionRunner</code>.
+		Builds an Engine <code>Context</code>, registers states and a behavior, queues immediate and delayed events,
+		raises an alarm/status, and creates a report through <code>ExecutionRunner</code>.
 	</p>
 
 	<section>
@@ -25,6 +25,8 @@
 			<div class="card"><strong>Count</strong><br /><span id="count">-</span></div>
 			<div class="card"><strong>Runtime entries</strong><br /><span id="runtime-count">-</span></div>
 			<div class="card"><strong>Execution entries</strong><br /><span id="execution-count">-</span></div>
+			<div class="card"><strong>Alarms</strong><br /><span id="alarm-count">-</span></div>
+			<div class="card"><strong>Statuses</strong><br /><span id="status-count">-</span></div>
 		</div>
 		<p><strong>Report:</strong> <span id="report">-</span></p>
 	</section>
@@ -32,6 +34,16 @@
 	<section>
 		<h2>Checks</h2>
 		<ul id="checks"></ul>
+	</section>
+
+	<section>
+		<h2>Alarms</h2>
+		<ul id="alarms"></ul>
+	</section>
+
+	<section>
+		<h2>Statuses</h2>
+		<ul id="statuses"></ul>
 	</section>
 
 	<section>
@@ -44,6 +56,6 @@
 		<ul id="executions"></ul>
 	</section>
 
-	<script src="/sample.js?v=6"></script>
+	<script src="/sample.js"></script>
 </body>
 </html>

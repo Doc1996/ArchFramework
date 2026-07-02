@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>LocalIdentity sample</title>
+	<link rel="stylesheet" href="/sample.css" />
+</head>
+<body>
+	<h1>LocalIdentity</h1>
+	<p>
+		Creates local principals, authenticates local secrets, stores the framework auth session in a cookie,
+		and protects an ASP.NET Core endpoint with a framework permission.
+	</p>
+
+	<section>
+		<h2>Scenario checks</h2>
+		<p class="muted">
+			Run all checks owns the full login/logout sequence. Manual actions below only inspect or change the current browser session.
+		</p>
+		<button id="all">Run all checks</button>
+		<ul id="checks"></ul>
+	</section>
+
+	<section>
+		<h2>Manual actions</h2>
+		<button id="manual-login-admin">Login as admin</button>
+		<button id="manual-login-operator">Login as operator</button>
+		<button id="manual-logout">Logout</button>
+		<button id="manual-principal">Show current principal</button>
+		<button id="manual-admin">Try admin area</button>
+		<button id="manual-wrong">Try wrong password</button>
+	</section>
+
+	<section>
+		<h2>Last response</h2>
+		<pre id="output">No request yet.</pre>
+	</section>
+
+	<script src="/sample.js"></script>
+</body>
+</html>

@@ -24,30 +24,29 @@ async function readBody(response) {
 	}
 }
 
-async function postLogout() {
-	const response = await fetch('/sample/logout', { method: 'POST', credentials: 'include', cache: 'no-store' });
+async function request(path, options = {}) {
+	const response = await fetch(path, { credentials: 'include', cache: 'no-store', ...options });
 	return { response, body: await readBody(response) };
+}
+
+async function postLogout() {
+	return request('/sample/logout', { method: 'POST' });
 }
 
 async function getPrincipal() {
-	const response = await fetch('/identity/principal', { credentials: 'include', cache: 'no-store' });
-	return { response, body: await readBody(response) };
+	return request('/identity/principal');
 }
 
 async function getAdminArea() {
-	const response = await fetch('/account/admin-area', { credentials: 'include', cache: 'no-store' });
-	return { response, body: await readBody(response) };
+	return request('/account/admin-area');
 }
 
-async function postLogin(secret) {
-	const response = await fetch('/identity/login', {
+async function postLogin(name, secret) {
+	return request('/identity/login', {
 		method: 'POST',
-		credentials: 'include',
-		cache: 'no-store',
 		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({ method: 'local.secret', name: 'admin', secret })
+		body: JSON.stringify({ method: 'local.secret', name, secret })
 	});
-	return { response, body: await readBody(response) };
 }
 
 async function expectAnonymousPrincipal(label) {
@@ -56,42 +55,38 @@ async function expectAnonymousPrincipal(label) {
 	return addCheck(label, response.ok && body?.isAuthenticated === false);
 }
 
-async function expectAuthenticatedPrincipal() {
+async function expectAuthenticatedPrincipal(label, role, permission) {
 	const { response, body } = await getPrincipal();
 	writeResponse(body);
-	return addCheck('authenticated principal has admin role and account.manage permission',
+	return addCheck(label,
 		response.ok
 		&& body?.isAuthenticated === true
-		&& body?.roles?.includes('admin')
-		&& body?.permissions?.includes('account.manage'));
+		&& body?.roles?.includes(role)
+		&& (permission === null || body?.permissions?.includes(permission)));
 }
 
-async function expectAnonymousAdminRejected() {
+async function expectAdminRejected(label) {
 	const { response, body } = await getAdminArea();
 	writeResponse(body ?? `HTTP ${response.status}`);
-	return addCheck('anonymous admin access is rejected with 401', response.status === 401);
+	return addCheck(label, response.status === 401 || response.status === 403);
 }
 
 async function expectAdminAllowed() {
 	const { response, body } = await getAdminArea();
 	writeResponse(body ?? `HTTP ${response.status}`);
-	return addCheck('authorization policy allows admin area after login', response.ok && body?.requiredPermission === 'account.manage');
+	return addCheck('admin principal can access account.manage endpoint', response.ok && body?.requiredPermission === 'account.manage');
 }
 
-async function expectCorrectLogin() {
-	const { response, body } = await postLogin('password');
+async function expectLogin(name, label) {
+	const { response, body } = await postLogin(name, 'password');
 	writeResponse(body);
-	return addCheck('login succeeds and writes auth cookie', response.ok && body?.isAuthenticated === true);
+	return addCheck(label, response.ok && body?.isAuthenticated === true);
 }
 
 async function expectWrongPasswordRejected() {
-	const { response, body } = await postLogin('wrong');
+	const { response, body } = await postLogin('admin', 'wrong');
 	writeResponse(body ?? `HTTP ${response.status}`);
 	return addCheck('wrong password is rejected', response.status === 401);
-}
-
-async function resetToAnonymous() {
-	await postLogout();
 }
 
 async function runExclusive(action, clearChecks = false) {
@@ -116,39 +111,51 @@ async function runExclusive(action, clearChecks = false) {
 }
 
 async function showManualResult(label, action) {
+	// Manual buttons intentionally do not write PASS/FAIL test results because they depend on current cookie state.
 	const { response, body } = await action();
 	writeResponse({ action: label, status: response.status, body });
 }
 
 document.getElementById('all').addEventListener('click', () => runExclusive(async () => {
-	// Run all checks owns the complete stateful sequence. No helper check secretly logs in or out.
-	await resetToAnonymous();
+	// The deterministic scenario owns every session transition so auth checks cannot interleave with stale cookies.
+	await postLogout();
 	await expectAnonymousPrincipal('initial principal is anonymous');
-	await expectAnonymousAdminRejected();
-	await expectCorrectLogin();
-	await expectAuthenticatedPrincipal();
+	await expectAdminRejected('anonymous admin access is rejected');
+
+	await expectLogin('operator', 'operator login succeeds');
+	await expectAuthenticatedPrincipal('operator principal is authenticated without account.manage', 'operator', null);
+	await expectAdminRejected('operator cannot access account.manage endpoint');
+
+	await postLogout();
+	await expectLogin('admin', 'admin login succeeds');
+	await expectAuthenticatedPrincipal('admin principal has admin role and account.manage permission', 'admin', 'account.manage');
 	await expectAdminAllowed();
+
 	await expectWrongPasswordRejected();
-	await resetToAnonymous();
+	await postLogout();
 	await expectAnonymousPrincipal('logout returns to anonymous principal');
 }, true));
 
-document.getElementById('manual-login').addEventListener('click', () => runExclusive(async () => {
-	await showManualResult('login as admin', () => postLogin('password'));
-}, false));
+document.getElementById('manual-login-admin').addEventListener('click', () => runExclusive(async () => {
+	await showManualResult('login as admin', () => postLogin('admin', 'password'));
+}));
+
+document.getElementById('manual-login-operator').addEventListener('click', () => runExclusive(async () => {
+	await showManualResult('login as operator', () => postLogin('operator', 'password'));
+}));
 
 document.getElementById('manual-logout').addEventListener('click', () => runExclusive(async () => {
 	await showManualResult('logout', postLogout);
-}, false));
+}));
 
 document.getElementById('manual-principal').addEventListener('click', () => runExclusive(async () => {
 	await showManualResult('show current principal', getPrincipal);
-}, false));
+}));
 
 document.getElementById('manual-admin').addEventListener('click', () => runExclusive(async () => {
 	await showManualResult('try admin area', getAdminArea);
-}, false));
+}));
 
 document.getElementById('manual-wrong').addEventListener('click', () => runExclusive(async () => {
-	await showManualResult('try wrong password', () => postLogin('wrong'));
-}, false));
+	await showManualResult('try wrong password', () => postLogin('admin', 'wrong'));
+}));

@@ -33,7 +33,7 @@ function renderScenarios(items) {
 	}
 }
 
-async function runTicketDesk() {
+async function runStorageDesk() {
 	if (running)
 		return;
 
@@ -43,7 +43,7 @@ async function runTicketDesk() {
 	summary.className = 'muted';
 
 	try {
-		const response = await fetch('/ticketdesk/run', { method: 'POST' });
+		const response = await fetch('/storagedesk/run', { method: 'POST' });
 		const result = await response.json();
 
 		document.getElementById('sent').textContent = result.notificationsSent;
@@ -62,4 +62,4 @@ async function runTicketDesk() {
 	}
 }
 
-runButton.addEventListener('click', runTicketDesk);
+runButton.addEventListener('click', runStorageDesk);

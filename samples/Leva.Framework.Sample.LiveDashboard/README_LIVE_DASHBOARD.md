@@ -1,6 +1,6 @@
 # Leva.Framework.Sample.LiveDashboard
 
-Web sample for Notifications.SignalR, a memory notification store, and ASP.NET Core. The browser connects as SignalR user `demo`, sends framework notifications, receives live messages, and refreshes stored history.
+Web sample for Notifications.SignalR with a memory-backed visible history. It sends framework notifications to the browser in real time and shows stored notification entries separately.
 
 ```text
 Leva.Framework.Sample.LiveDashboard
@@ -11,35 +11,38 @@ Leva.Framework.Sample.LiveDashboard
   -> Microsoft.AspNetCore
 ```
 
-## Wiring
+## Setup shown by the sample
 
 ```text
 Program.cs
-  -> registers IClock as SystemClock
-  -> registers QueryStringUserIdProvider as IUserIdProvider
-  -> calls AddSignalRNotifications() for SignalR hub/gateway setup
-  -> registers MemoryNotificationStore as INotificationStore after SignalR setup
-  -> registers NotificationService using SignalR gateway + memory store
-  -> calls MapSignalRNotifications()
+  -> registers QueryStringUserIdProvider for demo user mapping
+  -> calls AddSignalRNotifications() for the SignalR gateway and hub
+  -> registers MemoryNotificationStore as the sample history store
+  -> registers NotificationService explicitly
+  -> maps MapSignalRNotifications()
   -> maps dashboard endpoints
 
-/dashboard/notify
-  -> calls NotificationService.SendAsync(..., SignalRNotificationOptions.DefaultChannel, ...)
-  -> SignalRNotificationGateway sends to Clients.User("demo")
-  -> NotificationService stores NotificationEntry in MemoryNotificationStore
-
-/dashboard/history
-  -> reads the same MemoryNotificationStore instance
-  -> returns DashboardNotificationEntry DTOs to the browser
+DashboardNotificationHistory
+  -> reads the concrete MemoryNotificationStore used by the page
+  -> exposes small dashboard DTOs instead of raw framework objects
 ```
 
-## Files
+## Behavior shown
 
-`Program.cs` - SignalR/notification service setup and dashboard endpoints.
-`QueryStringUserIdProvider.cs` - Maps `?user=demo` to the SignalR user id.
-`DashboardNotificationEntry.cs` - Browser-facing history DTO.
-`DashboardSelfCheck.cs` - Browser-facing self-check result.
-`wwwroot/` - Browser page, CSS, SignalR client, and JavaScript checks.
+```text
+Browser connects as user demo
+POST /dashboard/notify -> NotificationService -> SignalR gateway -> browser receives message
+MemoryNotificationStore -> stored history shown by Refresh stored history
+```
+
+The browser has two separate views:
+
+```text
+Live notifications -> messages received through SignalR in the current browser tab
+Stored history     -> notification entries stored on the server
+```
+
+**Clear browser view** only clears the browser display. It does not clear the server-side memory store. **Refresh stored history** reads the stored server history again and re-renders the history list. The sample host sets a short shutdown timeout so Ctrl+C stops quickly even with an open SignalR connection.
 
 ## Run
 
@@ -47,13 +50,11 @@ Program.cs
 dotnet run --project samples/Leva.Framework.Sample.LiveDashboard
 ```
 
-Expected behavior:
+## Expected result
 
 ```text
 Connected to SignalR as user demo.
-PASS: server accepted notification send.
-PASS: browser received SignalR notification.
-PASS: refreshed stored notification entries.
+Send notification -> browser receives live notification
+Refresh stored history -> stored count is updated
+Self-check -> PASS
 ```
-
-The sample host sets a two-second shutdown timeout because active SignalR connections can otherwise make `Ctrl+C` wait. That timeout belongs in the application host, not in the framework provider.

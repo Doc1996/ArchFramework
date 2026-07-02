@@ -23,8 +23,9 @@
   <Folder Name="/samples/">
     <Project Path="samples/Leva.Framework.Sample.CounterWorkflow/Leva.Framework.Sample.CounterWorkflow.csproj" />
     <Project Path="samples/Leva.Framework.Sample.LiveDashboard/Leva.Framework.Sample.LiveDashboard.csproj" />
-    <Project Path="samples/Leva.Framework.Sample.LocalAccount/Leva.Framework.Sample.LocalAccount.csproj" />
+    <Project Path="samples/Leva.Framework.Sample.LocalIdentity/Leva.Framework.Sample.LocalIdentity.csproj" />
     <Project Path="samples/Leva.Framework.Sample.TicketDesk/Leva.Framework.Sample.TicketDesk.csproj" />
+    <Project Path="samples/Leva.Framework.Sample.WebIdentity/Leva.Framework.Sample.WebIdentity.csproj" />
   </Folder>
 
   <Folder Name="/tests/">
