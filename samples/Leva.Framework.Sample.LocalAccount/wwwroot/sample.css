@@ -1,0 +1,61 @@
+body {
+	font-family: sans-serif;
+	max-width: 980px;
+	margin: 3rem auto;
+	line-height: 1.5;
+}
+
+button {
+	padding: .6rem 1rem;
+	margin: .25rem .25rem .25rem 0;
+}
+
+button:disabled {
+	opacity: .6;
+}
+
+section {
+	border: 1px solid #ddd;
+	border-radius: .5rem;
+	padding: 1rem;
+	margin: 1rem 0;
+}
+
+.grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+	gap: .75rem;
+}
+
+.card {
+	background: #f7f7f7;
+	border-radius: .4rem;
+	padding: .8rem;
+}
+
+.good {
+	color: #126b2f;
+}
+
+.bad {
+	color: #9d1c1c;
+}
+
+.muted {
+	color: #666;
+}
+
+pre {
+	background: #f6f6f6;
+	padding: 1rem;
+	overflow: auto;
+}
+
+code {
+	background: #f4f4f4;
+	padding: .15rem .3rem;
+}
+
+li {
+	margin: .45rem 0;
+}

@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>TicketDesk sample</title>
+	<link rel="stylesheet" href="/sample.css?v=6" />
+</head>
+<body>
+	<h1>TicketDesk</h1>
+	<p>
+		Runs one ticket workflow against memory, file, and SQLite storage while using memory identity and memory notifications.
+	</p>
+
+	<section>
+		<h2>Run</h2>
+		<button id="run">Run ticket desk checks</button>
+		<p id="summary" class="muted">No run yet.</p>
+	</section>
+
+	<section>
+		<h2>Notification summary</h2>
+		<div class="grid">
+			<div class="card"><strong>Sent</strong><br /><span id="sent">-</span></div>
+			<div class="card"><strong>Stored entries</strong><br /><span id="stored">-</span></div>
+		</div>
+	</section>
+
+	<section>
+		<h2>Storage scenarios</h2>
+		<div id="scenarios" class="grid"></div>
+	</section>
+
+	<section>
+		<h2>Checks</h2>
+		<ul id="checks"></ul>
+	</section>
+
+	<script src="/sample.js?v=6"></script>
+</body>
+</html>

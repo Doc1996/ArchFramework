@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>LocalAccount sample</title>
+	<link rel="stylesheet" href="/sample.css?v=6" />
+</head>
+<body>
+	<h1>LocalAccount</h1>
+	<p>
+		Creates one local principal, authenticates it with a local secret, stores the auth session in a cookie, and protects an ASP.NET Core endpoint with a framework permission.
+	</p>
+
+	<section>
+		<h2>Configured account</h2>
+		<p><code>name: admin</code></p>
+		<p><code>secret: password</code></p>
+		<p><code>permission: account.manage</code></p>
+	</section>
+
+	<section>
+		<h2>Scenario checks</h2>
+		<p class="muted">
+			This button owns the whole login/logout sequence, so the result is deterministic.
+		</p>
+		<button id="all">Run all checks</button>
+		<ul id="checks"></ul>
+	</section>
+
+	<section>
+		<h2>Manual actions</h2>
+		<p class="muted">
+			These buttons show the current browser session state. They do not create PASS/FAIL test results.
+		</p>
+		<button id="manual-login">Login as admin</button>
+		<button id="manual-logout">Logout</button>
+		<button id="manual-principal">Show current principal</button>
+		<button id="manual-admin">Try admin area</button>
+		<button id="manual-wrong">Try wrong password</button>
+	</section>
+
+	<section>
+		<h2>Last response</h2>
+		<pre id="output">No request yet.</pre>
+	</section>
+
+	<script src="/sample.js?v=6"></script>
+</body>
+</html>

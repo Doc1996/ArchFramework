@@ -20,6 +20,13 @@
     <Project Path="src/Leva.Framework.Storage.Sqlite/Leva.Framework.Storage.Sqlite.csproj" />
   </Folder>
 
+  <Folder Name="/samples/">
+    <Project Path="samples/Leva.Framework.Sample.CounterWorkflow/Leva.Framework.Sample.CounterWorkflow.csproj" />
+    <Project Path="samples/Leva.Framework.Sample.LiveDashboard/Leva.Framework.Sample.LiveDashboard.csproj" />
+    <Project Path="samples/Leva.Framework.Sample.LocalAccount/Leva.Framework.Sample.LocalAccount.csproj" />
+    <Project Path="samples/Leva.Framework.Sample.TicketDesk/Leva.Framework.Sample.TicketDesk.csproj" />
+  </Folder>
+
   <Folder Name="/tests/">
     <Project Path="tests/Leva.Framework.Core.Tests/Leva.Framework.Core.Tests.csproj" />
     <Project Path="tests/Leva.Framework.Engine.Tests/Leva.Framework.Engine.Tests.csproj" />

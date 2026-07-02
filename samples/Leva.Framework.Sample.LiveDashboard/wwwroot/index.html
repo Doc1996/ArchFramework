@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>LiveDashboard sample</title>
+	<link rel="stylesheet" href="/sample.css?v=6" />
+</head>
+<body>
+	<h1>LiveDashboard</h1>
+	<p>
+		Connects as SignalR user <code>demo</code>, sends framework notifications, stores entries, and pushes live messages to the browser.
+	</p>
+
+	<section>
+		<h2>Status</h2>
+		<p id="connection" class="muted">Connecting...</p>
+		<p id="last-check" class="muted">No check has run yet.</p>
+		<button id="send">Send sample notification</button>
+		<button id="check">Run server self-check</button>
+		<button id="refresh">Refresh stored history</button>
+	</section>
+
+	<section>
+		<h2>Live notifications received by browser</h2>
+		<ul id="notifications"></ul>
+	</section>
+
+	<section>
+		<h2>Stored notification entries</h2>
+		<ul id="history"></ul>
+	</section>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
+	<script src="/sample.js?v=6"></script>
+</body>
+</html>

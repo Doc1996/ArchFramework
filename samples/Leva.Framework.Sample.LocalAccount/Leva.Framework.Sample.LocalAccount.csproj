@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+	<ItemGroup>
+		<ProjectReference Include="../../src/Leva.Framework.Core/Leva.Framework.Core.csproj" />
+		<ProjectReference Include="../../src/Leva.Framework.Identity/Leva.Framework.Identity.csproj" />
+		<ProjectReference Include="../../src/Leva.Framework.Identity.AspNet/Leva.Framework.Identity.AspNet.csproj" />
+		<ProjectReference Include="../../src/Leva.Framework.Identity.Local/Leva.Framework.Identity.Local.csproj" />
+		<ProjectReference Include="../../src/Leva.Framework.Identity.Memory/Leva.Framework.Identity.Memory.csproj" />
+	</ItemGroup>
+</Project>

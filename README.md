@@ -9,7 +9,7 @@ The repository is organized around small libraries. Each library has a focused R
 ```text
 src/       Framework libraries and provider implementations
 tests/     Unit tests for framework libraries
-samples/   Planned runnable sample applications
+samples/   Small runnable sample applications
 ```
 
 ## Libraries
@@ -33,6 +33,15 @@ Leva.Framework.Identity.AspNet         ASP.NET Core identity integration
 Leva.Framework.Notifications           Provider-neutral notification model, gateway, store, service
 Leva.Framework.Notifications.Memory    In-memory notification provider
 Leva.Framework.Notifications.SignalR   ASP.NET Core SignalR notification provider
+```
+
+## Samples
+
+```text
+Leva.Framework.Sample.CounterWorkflow   Core, Engine, Execution, and Fakes in a small workflow
+Leva.Framework.Sample.TicketDesk        Storage providers, Identity.Memory, and Notifications.Memory in a ticketing flow
+Leva.Framework.Sample.LiveDashboard     Notifications.SignalR in a minimal live web dashboard
+Leva.Framework.Sample.LocalAccount      Identity.Local and Identity.AspNet in a minimal account host
 ```
 
 ## Documentation convention
@@ -63,4 +72,10 @@ From the repository root:
 dotnet restore ArchFramework.slnx
 dotnet build ArchFramework.slnx
 dotnet test ArchFramework.slnx
+```
+
+Run one sample:
+
+```bash
+dotnet run --project samples/Leva.Framework.Sample.CounterWorkflow
 ```
