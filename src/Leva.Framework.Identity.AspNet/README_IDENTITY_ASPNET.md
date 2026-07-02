@@ -10,6 +10,7 @@ ASP.NET Core identity exists so web hosts can use the provider-neutral Identity 
 Leva.Framework.Identity.AspNet
   -> Leva.Framework.Core
   -> Leva.Framework.Identity
+  -> Microsoft.AspNetCore
 ```
 
 ## Project overview

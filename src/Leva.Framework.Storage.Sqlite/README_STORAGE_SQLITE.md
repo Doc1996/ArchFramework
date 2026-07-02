@@ -7,7 +7,6 @@ Leva.Framework.Storage.Sqlite
   -> Leva.Framework.Core
   -> Leva.Framework.Storage
   -> Microsoft.Data.Sqlite
-  -> SQLitePCLRaw.lib.e_sqlite3
 ```
 
 ## Project overview

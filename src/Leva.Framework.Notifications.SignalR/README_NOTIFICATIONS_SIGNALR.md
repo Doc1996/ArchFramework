@@ -10,6 +10,7 @@ Notifications.SignalR exists so web hosts can deliver live in-app/browser notifi
 Leva.Framework.Notifications.SignalR
   -> Leva.Framework.Core
   -> Leva.Framework.Notifications
+  -> Microsoft.AspNetCore
 ```
 
 ## Project overview
