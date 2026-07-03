@@ -43,13 +43,11 @@ memory          -> files                 -> sqlite
 
 Each storage provider runs the same application flow. The sample checks that the ticket is saved, two activity entries are written, and two notification entries are stored.
 
-## Run
+## Run and expected result
 
 ```bash
 dotnet run --project samples/Leva.Framework.Sample.StorageDesk
 ```
-
-## Expected result
 
 ```text
 memory: PASS

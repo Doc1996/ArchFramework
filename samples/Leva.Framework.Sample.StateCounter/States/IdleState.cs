@@ -8,6 +8,7 @@ internal sealed class IdleState : IState<CounterAccess>
 	public string Name => nameof(IdleState);
 
 	public Task EnterAsync(CounterAccess access, CancellationToken token) => Task.CompletedTask;
+
 	public Task ExitAsync(CounterAccess access, CancellationToken token) => Task.CompletedTask;
 
 	public Task<bool> HandleAsync(CounterAccess access, IEvent appEvent, CancellationToken token)

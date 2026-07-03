@@ -4,6 +4,7 @@ const buttons = [...document.querySelectorAll('button')];
 const googleStatus = document.getElementById('google-status');
 const googleCallback = document.getElementById('google-callback');
 const googleLogin = document.getElementById('google-login');
+const googlePrincipal = document.getElementById('google-principal');
 let running = false;
 let jwtToken = null;
 
@@ -29,7 +30,7 @@ async function readBody(response) {
 }
 
 async function request(path, options = {}) {
-	const response = await fetch(path, { cache: 'no-store', ...options });
+	const response = await fetch(path, { credentials: 'same-origin', cache: 'no-store', ...options });
 	return { response, body: await readBody(response) };
 }
 
@@ -86,6 +87,35 @@ async function loadGoogleStatus() {
 	googleLogin.disabled = !body.isConfigured;
 }
 
+async function loadGooglePrincipal(writeToOutput = false) {
+	const { response, body } = await request('/sample/google/principal');
+	if (writeToOutput)
+		writeResponse(body);
+
+	if (!response.ok) {
+		googlePrincipal.textContent = 'Google sign-in state could not be read.';
+		googlePrincipal.className = 'bad';
+		return;
+	}
+
+	if (body.isAuthenticated) {
+		const label = body.email || body.name || 'authenticated Google user';
+		googlePrincipal.textContent = `Google signed in: ${label}`;
+		googlePrincipal.className = 'good';
+		return;
+	}
+
+	googlePrincipal.textContent = 'Google user is not signed in.';
+	googlePrincipal.className = 'muted';
+}
+
+async function clearSession() {
+	jwtToken = null;
+	const { response, body } = await request('/sample/logout', { method: 'POST' });
+	writeResponse({ status: response.status, body, jwtTokenCleared: true });
+	await loadGooglePrincipal();
+}
+
 document.getElementById('jwt-checks').addEventListener('click', () => runExclusive(async () => {
 	// The deterministic JWT scenario proves token issuing, missing-token rejection, invalid-token rejection, and valid-token authorization.
 	const missing = await callJwtApi(null);
@@ -135,4 +165,11 @@ googleLogin.addEventListener('click', () => {
 	window.location.href = '/identity/google/login';
 });
 
+document.getElementById('google-refresh').addEventListener('click', () => runExclusive(async () => {
+	await loadGooglePrincipal(true);
+}));
+
+document.getElementById('logout').addEventListener('click', () => runExclusive(clearSession));
+
 loadGoogleStatus();
+loadGooglePrincipal();

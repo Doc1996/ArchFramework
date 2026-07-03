@@ -20,7 +20,14 @@ internal static class StateCounterRunner
 		// The access factory is the bridge between reusable Engine access and application-specific state data.
 		// States receive CounterAccess, not the whole Context, so they stay easy to test and reuse.
 		CounterAccess CreateAccess(IAccess access) =>
-			new(access.Transition, access.LogSink, model, executionRunner, () => context!.AlarmBoard, () => context!.StatusBoard);
+			new(
+				access.Transition,
+				access.LogSink,
+				model,
+				executionRunner,
+				() => context!.AlarmBoard,
+				() => context!.StatusBoard
+			);
 
 		// ContextBuilder wires the state machine, event loop, runtime log, behaviors, alarms, and status boards.
 		context = new ContextBuilder()
@@ -58,7 +65,10 @@ internal static class StateCounterRunner
 			Check("warning alarm was raised when target was reached", context.AlarmBoard.AlarmEntries.Count == 1),
 			Check("status board captured latest target count", context.StatusBoard.StatusEntries.Count == 1),
 			Check("execution produced the report", model.Report == "Counter finished with value 2."),
-			Check("runtime log captured events, transitions, behavior, alarm, and status", context.RuntimeLog.LogEntries.Count > 0),
+			Check(
+				"runtime log captured events, transitions, behavior, alarm, and status",
+				context.RuntimeLog.LogEntries.Count > 0
+			),
 			Check("execution board captured one execution", executionBoard.Entries.Count == 1),
 		};
 

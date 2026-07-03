@@ -43,15 +43,11 @@ EvaluateCounterEvent    -> TargetReachedBehavior updates status, raises warning 
 CompletedState          -> ExecutionRunner runs CounterReportExecution
 ```
 
-## Run
+## Run and expected result
 
 ```bash
 dotnet run --project samples/Leva.Framework.Sample.StateCounter
 ```
-
-Open the page and click **Run workflow checks**.
-
-## Expected result
 
 ```text
 Sample result: PASS

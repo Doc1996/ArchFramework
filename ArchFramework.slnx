@@ -21,10 +21,10 @@
   </Folder>
 
   <Folder Name="/samples/">
-    <Project Path="samples/Leva.Framework.Sample.CounterWorkflow/Leva.Framework.Sample.CounterWorkflow.csproj" />
     <Project Path="samples/Leva.Framework.Sample.LiveDashboard/Leva.Framework.Sample.LiveDashboard.csproj" />
     <Project Path="samples/Leva.Framework.Sample.LocalIdentity/Leva.Framework.Sample.LocalIdentity.csproj" />
-    <Project Path="samples/Leva.Framework.Sample.TicketDesk/Leva.Framework.Sample.TicketDesk.csproj" />
+    <Project Path="samples/Leva.Framework.Sample.StateCounter/Leva.Framework.Sample.StateCounter.csproj" />
+    <Project Path="samples/Leva.Framework.Sample.StorageDesk/Leva.Framework.Sample.StorageDesk.csproj" />
     <Project Path="samples/Leva.Framework.Sample.WebIdentity/Leva.Framework.Sample.WebIdentity.csproj" />
   </Folder>
 

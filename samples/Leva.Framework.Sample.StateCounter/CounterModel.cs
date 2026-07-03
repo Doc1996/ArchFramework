@@ -10,6 +10,8 @@ internal sealed class CounterModel
 	public bool TargetEvaluated { get; private set; }
 
 	public void Increment() => Count++;
+
 	public void MarkTargetEvaluated() => TargetEvaluated = true;
+
 	public void SetReport(string report) => Report = report;
 }

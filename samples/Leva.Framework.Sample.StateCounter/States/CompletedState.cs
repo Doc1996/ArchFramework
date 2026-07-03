@@ -22,5 +22,7 @@ internal sealed class CompletedState : IState<CounterAccess>
 	}
 
 	public Task ExitAsync(CounterAccess access, CancellationToken token) => Task.CompletedTask;
-	public Task<bool> HandleAsync(CounterAccess access, IEvent appEvent, CancellationToken token) => Task.FromResult(false);
+
+	public Task<bool> HandleAsync(CounterAccess access, IEvent appEvent, CancellationToken token) =>
+		Task.FromResult(false);
 }

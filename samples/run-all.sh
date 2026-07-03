@@ -1,17 +1,26 @@
 #!/usr/bin/env bash
 set -e
 
+pids=()
+
+start_sample() {
+	dotnet run --project "$1" --urls "$2" &
+	pids+=("$!")
+}
+
 cleanup() {
-	kill 0 2>/dev/null || true
+	for pid in "${pids[@]}"; do
+		kill "$pid" 2>/dev/null || true
+	done
 }
 
 trap cleanup SIGINT SIGTERM EXIT
 
-dotnet run --project samples/Leva.Framework.Sample.StateCounter --urls http://localhost:5101 &
-dotnet run --project samples/Leva.Framework.Sample.StorageDesk --urls http://localhost:5102 &
-dotnet run --project samples/Leva.Framework.Sample.LiveDashboard --urls http://localhost:5103 &
-dotnet run --project samples/Leva.Framework.Sample.LocalIdentity --urls http://localhost:5104 &
-dotnet run --project samples/Leva.Framework.Sample.WebIdentity --urls http://localhost:5105 &
+start_sample samples/Leva.Framework.Sample.StateCounter http://localhost:5101
+start_sample samples/Leva.Framework.Sample.StorageDesk http://localhost:5102
+start_sample samples/Leva.Framework.Sample.LiveDashboard http://localhost:5103
+start_sample samples/Leva.Framework.Sample.LocalIdentity http://localhost:5104
+start_sample samples/Leva.Framework.Sample.WebIdentity http://localhost:5105
 
 echo "StateCounter:  http://localhost:5101"
 echo "StorageDesk:   http://localhost:5102"

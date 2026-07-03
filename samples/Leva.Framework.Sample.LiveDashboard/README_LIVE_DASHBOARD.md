@@ -42,19 +42,18 @@ Live notifications -> messages received through SignalR in the current browser t
 Stored history     -> notification entries stored on the server
 ```
 
-**Clear browser view** only clears the browser display. It does not clear the server-side memory store. **Refresh stored history** reads the stored server history again and re-renders the history list. The sample host sets a short shutdown timeout so Ctrl+C stops quickly even with an open SignalR connection.
+**Clear page view** only clears the browser display. It does not clear the server-side memory store. **Refresh stored history** reads the server history again and re-renders the history list. The sample host sets a short shutdown timeout so Ctrl+C stops quickly even with an open SignalR connection.
 
-## Run
+## Run and expected result
 
 ```bash
 dotnet run --project samples/Leva.Framework.Sample.LiveDashboard
 ```
 
-## Expected result
-
 ```text
 Connected to SignalR as user demo.
-Send notification -> browser receives live notification
-Refresh stored history -> stored count is updated
-Self-check -> PASS
+Send notification -> Notification sent.
+Refresh stored history -> Stored history refreshed with N entries.
+Clear page view -> Page view cleared.
+Run self-check -> Self-check passed.
 ```

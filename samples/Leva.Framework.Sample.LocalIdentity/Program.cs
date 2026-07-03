@@ -9,18 +9,18 @@ using FrameworkSystemClock = Leva.Framework.Core.SystemClock;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Memory stores keep the sample self-contained; a real app would replace these with durable stores.
+// Memory stores keep the sample self-contained.
 var principalStore = new MemoryPrincipalStore();
 var sessionStore = new MemoryAuthSessionStore();
 var sessionService = new AuthSessionService(sessionStore);
 
-// LocalPrincipalServices groups the local credential store, secret protection, credential service, and local auth policy.
+// LocalPrincipalServices groups the local credential pieces used by the sample.
 var localServices = LocalPrincipalServices.Create(principalStore);
 
-// AuthenticationService receives one or more policies; here only the local-secret policy is enabled.
+// AuthenticationService uses the local-secret policy in this sample.
 var authentication = new FrameworkAuthenticationService([localServices.AuthenticationPolicy], sessionService);
 
-// AuthorizationService stays framework-level; ASP.NET Core only adapts requests to this service.
+// Authorization stays framework-level; ASP.NET Core adapts requests to it.
 var authorization = new FrameworkAuthorizationService([new BuiltInAuthorizationPolicy()]);
 var adminPermission = new PrincipalPermission("account.manage");
 
@@ -38,13 +38,13 @@ var operatorUser = new Principal(
 	Roles: new HashSet<PrincipalRole> { new("operator") }
 );
 
-// The sample creates two principals: admin can access the protected endpoint; operator can log in but cannot.
+// Admin can access the protected endpoint; operator can log in but cannot.
 principalStore.Add(admin, "admin");
 principalStore.Add(operatorUser, "operator");
 await localServices.CredentialService.CreateAsync("admin", "password", admin.Id);
 await localServices.CredentialService.CreateAsync("operator", "password", operatorUser.Id);
 
-// Register the same framework service instances that were composed above so ASP.NET endpoints use them.
+// Register the composed framework services for the ASP.NET adapters.
 builder.Services.AddSingleton<IClock, FrameworkSystemClock>();
 builder.Services.AddSingleton<IPrincipalStore>(principalStore);
 builder.Services.AddSingleton<ILocalCredentialStore>(localServices.Credentials);
@@ -55,21 +55,20 @@ builder.Services.AddSingleton(sessionService);
 builder.Services.AddSingleton(authentication);
 builder.Services.AddSingleton(authorization);
 
-// AddAspNetPrincipalServices adapts the framework identity services to ASP.NET Core auth middleware.
+// Adapt framework identity services to ASP.NET Core auth middleware.
 builder.Services.AddAspNetPrincipalServices(options =>
 {
 	options.AllowHeaderSession = true;
 	options.SecureCookie = false;
 });
 
-// ASP.NET Core owns endpoint policies, but the requirement itself uses framework permission concepts.
+// ASP.NET Core owns the policy; the requirement uses framework permission concepts.
 builder.Services.AddAuthorization(options =>
 {
 	options.AddPolicy(
 		"AccountManage",
 		policy =>
 			policy.Requirements.Add(
-				// The ASP.NET policy delegates the actual permission requirement to Leva.Framework.Identity.
 				new AspNetAuthorizationRequirement(AuthorizationRequirement.Permission(adminPermission))
 			)
 	);
@@ -91,13 +90,13 @@ app.UseStaticFiles(
 	}
 );
 
-// ASP.NET Core middleware reads the framework auth session cookie and populates HttpContext.User.
+// Middleware reads the framework session cookie and populates HttpContext.User.
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapGet("/favicon.ico", () => Results.NoContent());
 
-// This sample helper clears only the framework auth-session cookie so browser checks can start from anonymous state.
+// Helper endpoint clears the framework auth-session cookie for repeatable checks.
 app.MapPost(
 	"/sample/logout",
 	(HttpContext context) =>
@@ -107,10 +106,10 @@ app.MapPost(
 	}
 );
 
-// The framework extension exposes login and current-principal endpoints for this sample host.
+// Expose framework login and current-principal endpoints.
 app.MapAspNetIdentityEndpoints();
 
-// RequireAuthorization proves that ASP.NET Core middleware can enforce a framework permission.
+// Prove that ASP.NET Core middleware can enforce a framework permission.
 app.MapGet(
 		"/account/admin-area",
 		(HttpContext context) =>

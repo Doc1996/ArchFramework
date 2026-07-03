@@ -11,6 +11,9 @@ using FrameworkSystemClock = Leva.Framework.Core.SystemClock;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Samples may run as Production; load user secrets explicitly for local Google OAuth.
+builder.Configuration.AddUserSecrets<Program>(optional: true);
+
 var principalStore = new MemoryPrincipalStore();
 var sessionStore = new MemoryAuthSessionStore();
 var sessionService = new AuthSessionService(sessionStore);
@@ -29,6 +32,7 @@ var admin = new Principal(
 principalStore.Add(admin, "admin");
 await localServices.CredentialService.CreateAsync("admin", "password", admin.Id);
 
+// Google can be configured through user secrets, .NET environment variables, or explicit environment variables.
 var googleClientId =
 	builder.Configuration["Google:ClientId"] ?? Environment.GetEnvironmentVariable("LEVA_GOOGLE_CLIENT_ID");
 var googleClientSecret =
@@ -43,22 +47,21 @@ builder.Services.AddSingleton<IAuthSessionStore>(sessionStore);
 builder.Services.AddSingleton(sessionService);
 builder.Services.AddSingleton(authorization);
 
-// AuthenticationService is composed from framework policies registered in DI. Local credentials issue
-// the sample JWT, while Google is added only when the external OAuth client is configured.
+// Compose framework authentication policies for the ASP.NET adapters.
 builder.Services.AddSingleton<AuthenticationPolicy>(localServices.AuthenticationPolicy);
 builder.Services.AddSingleton<FrameworkAuthenticationService>(provider => new FrameworkAuthenticationService(
 	provider.GetServices<AuthenticationPolicy>().ToArray(),
 	sessionService
 ));
 
-// Cookie/session identity is still registered so Google callback can sign the user into the browser.
+// Cookie/session identity lets the Google callback sign the user into the browser.
 builder.Services.AddAspNetPrincipalServices(options =>
 {
 	options.AllowHeaderSession = true;
 	options.SecureCookie = false;
 });
 
-// The JWT provider issues and validates compact bearer tokens from framework auth sessions.
+// The JWT provider issues and validates bearer tokens from framework auth sessions.
 builder.Services.AddAspNetJwtPrincipalServices(options =>
 {
 	options.Issuer = "Leva.Framework.Sample.WebIdentity";
@@ -84,7 +87,7 @@ builder.Services.AddAuthorization(options =>
 		"JwtApiUse",
 		policy =>
 		{
-			// This endpoint must be authenticated by the framework JWT handler, not by the cookie handler.
+			// Require JWT authentication here, not the cookie handler.
 			policy.AuthenticationSchemes.Add(AspNetJwtDefaults.AuthenticationScheme);
 			policy.Requirements.Add(
 				new AspNetAuthorizationRequirement(AuthorizationRequirement.Permission(apiPermission))
@@ -101,6 +104,7 @@ app.UseStaticFiles(
 	{
 		OnPrepareResponse = context =>
 		{
+			// Samples change often while developing, so disable browser caching for local static files.
 			context.Context.Response.Headers.CacheControl = "no-store, no-cache, must-revalidate";
 			context.Context.Response.Headers.Pragma = "no-cache";
 			context.Context.Response.Headers.Expires = "0";
@@ -125,7 +129,7 @@ app.MapPost(
 app.MapAspNetJwtEndpoints();
 
 if (googleConfigured)
-	// Real Google login needs an external client id/secret and callback URL registered in Google Cloud.
+	// Real Google login needs a configured OAuth client and registered callback URL.
 	app.MapAspNetGoogleEndpoints();
 else
 {
@@ -150,7 +154,29 @@ app.MapGet(
 			callbackUrl,
 			googleConfigured
 				? "Google auth is configured. The login button will start the real OAuth flow."
-				: "Google auth is not configured. Set LEVA_GOOGLE_CLIENT_ID and LEVA_GOOGLE_CLIENT_SECRET to try the real OAuth flow."
+				: "Google auth is not configured. Set Google:ClientId and Google:ClientSecret with user secrets, or set LEVA_GOOGLE_CLIENT_ID and LEVA_GOOGLE_CLIENT_SECRET."
+		);
+	}
+);
+
+app.MapGet(
+	"/sample/google/principal",
+	(HttpContext context) =>
+	{
+		var roles = context.User.FindAll(ClaimTypes.Role).Select(claim => claim.Value).ToArray();
+		var permissions = context
+			.User.FindAll(AspNetClaimsPrincipalMapper.PermissionClaimType)
+			.Select(claim => claim.Value)
+			.ToArray();
+		var name = context.User.Identity?.Name ?? context.User.FindFirst("name")?.Value;
+		var email = context.User.FindFirst(ClaimTypes.Email)?.Value ?? context.User.FindFirst("email")?.Value;
+
+		return new WebIdentityGooglePrincipal(
+			context.User.Identity?.IsAuthenticated == true,
+			name,
+			email,
+			roles,
+			permissions
 		);
 	}
 );

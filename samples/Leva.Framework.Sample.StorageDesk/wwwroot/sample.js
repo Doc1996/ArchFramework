@@ -43,7 +43,7 @@ async function runStorageDesk() {
 	summary.className = 'muted';
 
 	try {
-		const response = await fetch('/storagedesk/run', { method: 'POST' });
+		const response = await fetch('/storagedesk/run', { method: 'POST', cache: 'no-store' });
 		const result = await response.json();
 
 		document.getElementById('sent').textContent = result.notificationsSent;

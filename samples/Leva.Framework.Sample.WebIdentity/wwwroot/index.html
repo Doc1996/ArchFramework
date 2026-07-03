@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
-	<title>WebIdentity sample</title>
+	<title>WebIdentity Sample</title>
 	<link rel="stylesheet" href="/sample.css" />
 </head>
 <body>
@@ -35,7 +35,10 @@
 		<h2>Google OAuth</h2>
 		<p id="google-status" class="muted">Loading Google configuration status...</p>
 		<p><code id="google-callback">-</code></p>
+		<p id="google-principal" class="muted">Google sign-in state has not been checked yet.</p>
 		<button id="google-login">Start Google login</button>
+		<button id="google-refresh">Refresh Google sign-in</button>
+		<button id="logout">Clear browser session</button>
 	</section>
 
 	<section>

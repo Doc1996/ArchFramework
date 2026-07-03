@@ -9,9 +9,8 @@ internal sealed class DashboardNotificationHistory(MemoryNotificationStore store
 
 	public async Task RecordAsync(NotificationEntry entry, CancellationToken token)
 	{
-		// NotificationService normally stores entries through INotificationStore. The sample records the returned
-		// entry into the concrete MemoryNotificationStore as well so the browser history always reads the same source.
-		// MemoryNotificationStore is keyed by NotificationId, so this save is idempotent if the service already stored it.
+		// Keep the visible dashboard history tied to the same concrete memory store.
+		// Save is idempotent because MemoryNotificationStore is keyed by NotificationId.
 		await store.SaveAsync(entry, token);
 	}
 

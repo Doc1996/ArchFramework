@@ -15,12 +15,7 @@ internal sealed class TargetReachedBehavior : IBehavior<CounterAccess>
 		// rules separate from individual state handlers.
 		access.Model.MarkTargetEvaluated();
 		access.StatusBoard.Set(
-			new StatusEntry(
-				"StateCounter",
-				"TargetCount",
-				access.Model.Count,
-				DateTimeOffset.UtcNow
-			)
+			new StatusEntry("StateCounter", "TargetCount", access.Model.Count, DateTimeOffset.UtcNow)
 		);
 
 		if (access.Model.Count >= CounterModel.WarningLimit)

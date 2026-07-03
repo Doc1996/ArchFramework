@@ -60,13 +60,11 @@ logout                    -> returns to anonymous principal
 
 The manual buttons show the current browser session state. They do not produce PASS/FAIL results because authentication state is intentionally stateful.
 
-## Run
+## Run and expected result
 
 ```bash
 dotnet run --project samples/Leva.Framework.Sample.LocalIdentity
 ```
-
-## Expected result
 
 ```text
 PASS: initial principal is anonymous

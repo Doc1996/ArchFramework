@@ -32,6 +32,7 @@ Google setup
   -> AddAspNetGooglePrincipalServices(...) only when client id/secret exist
   -> MapAspNetGoogleEndpoints() only when Google is configured
   -> /sample/google/status tells the browser whether Google is ready
+  -> /sample/google/principal shows the current signed-in browser user
 ```
 
 ## JWT behavior shown
@@ -51,6 +52,7 @@ JWT works without external setup.
 ```text
 Google not configured  -> page shows setup instructions
 Google configured      -> page exposes sign-in flow
+Google callback        -> page can show the signed-in browser user
 ```
 
 Google OAuth requires external credentials, so this part is optional. Basic Google OAuth sign-in with profile/email scopes usually has no direct Google OAuth fee, but public production apps can still be subject to Google consent-screen verification, quota limits, and policy requirements.
@@ -99,15 +101,13 @@ export LEVA_GOOGLE_CLIENT_ID="<client-id>"
 export LEVA_GOOGLE_CLIENT_SECRET="<client-secret>"
 ```
 
-When both values are configured, the page enables the Google sign-in button. Without them, the page shows Google as not configured instead of failing. The page also prints the callback URL for the currently running host; that printed callback URL is the source of truth if you run on a different port.
+When both values are configured, the page enables the Google sign-in button. Without them, the page shows Google as not configured instead of failing. The page also prints the callback URL for the currently running host; that printed callback URL is the source of truth if you run on a different port. After the callback succeeds, **Refresh Google sign-in** shows the signed-in browser user.
 
-## Run
+## Run and expected result
 
 ```bash
 dotnet run --project samples/Leva.Framework.Sample.WebIdentity
 ```
-
-## Expected result
 
 ```text
 PASS: missing bearer token is rejected
@@ -116,4 +116,5 @@ PASS: local credential login issues JWT
 PASS: valid JWT can access protected API
 PASS: wrong password cannot issue JWT
 Google OAuth: configured only after client id/secret are provided
+Google sign-in: signed-in browser user is visible after callback
 ```

@@ -7,7 +7,6 @@ const alarms = document.getElementById('alarms');
 const statuses = document.getElementById('statuses');
 let running = false;
 
-
 function friendlyStatus(status) {
 	if (status.source === 'StateCounter' && status.name === 'TargetCount')
 		return `Target count: ${status.value}`;

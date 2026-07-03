@@ -41,18 +41,22 @@ function renderHistory(entries) {
 		appendMuted(history, `${entry.status}: ${entry.subject} -> ${entry.recipient} (${new Date(entry.completedAt).toLocaleTimeString()})`);
 }
 
-async function refreshHistory() {
+async function refreshHistory(updateStatus = true) {
 	try {
-		// Stored history is server state. Refreshing it should always re-render the visible history list.
+		// Stored history is server state. Refreshing it re-renders the visible history list.
 		const response = await fetch('/dashboard/history', { cache: 'no-store' });
 		if (!response.ok)
 			throw new Error(`HTTP ${response.status}`);
 
 		const entries = await response.json();
 		renderHistory(entries);
-		setStatus(`PASS: refreshed ${entries.length} stored notification entries at ${new Date().toLocaleTimeString()}.`, true);
+		if (updateStatus)
+			setStatus(`Stored history refreshed with ${entries.length} entries.`, true);
 	} catch (error) {
-		setStatus(`FAIL: stored history refresh failed: ${error}`, false);
+		if (updateStatus)
+			setStatus(`Stored history refresh failed: ${error}`, false);
+		else
+			console.error(error);
 	}
 }
 
@@ -60,8 +64,8 @@ function clearBrowserView() {
 	// This is intentionally browser-only. It does not call the server and does not clear MemoryNotificationStore.
 	notifications.replaceChildren();
 	history.replaceChildren();
-	historySummary.textContent = 'Browser view cleared. Server stored history was not cleared.';
-	lastCheck.textContent = 'Browser view cleared. Click Refresh stored history to read server entries again.';
+	historySummary.textContent = 'Page view cleared. Server history was not cleared.';
+	lastCheck.textContent = 'Page view cleared. Refresh stored history to read server entries again.';
 	lastCheck.className = 'muted';
 }
 
@@ -86,36 +90,35 @@ const connection = new signalR.HubConnectionBuilder()
 
 connection.on('ReceiveNotification', notification => {
 	prepend(notifications, `${notification.subject}: ${notification.body}`, true);
-	setStatus('PASS: browser received SignalR notification.', true);
 });
 
 document.getElementById('send').addEventListener('click', () => runExclusive(async () => {
 	const response = await fetch('/dashboard/notify', { method: 'POST', cache: 'no-store' });
 	if (!response.ok) {
-		setStatus('FAIL: server rejected notification send.', false);
+		setStatus('Notification send failed.', false);
 		return;
 	}
 
 	await response.json();
-	setStatus('PASS: server accepted notification send.', true);
-	await refreshHistory();
+	await refreshHistory(false);
+	setStatus('Notification sent.', true);
 }));
 
 document.getElementById('check').addEventListener('click', () => runExclusive(async () => {
 	const response = await fetch('/dashboard/self-check', { method: 'POST', cache: 'no-store' });
 	const result = await response.json();
-	setStatus(`${result.passed ? 'PASS' : 'FAIL'}: ${result.message}`, result.passed);
-	await refreshHistory();
+	await refreshHistory(false);
+	setStatus(result.passed ? 'Self-check passed.' : `Self-check failed: ${result.message}`, result.passed);
 }));
 
 document.getElementById('refresh').addEventListener('click', () => runExclusive(refreshHistory));
-document.getElementById('clear').addEventListener('click', () => runExclusive(async () => clearBrowserView()));
+document.getElementById('clear').addEventListener('click', () => runExclusive(clearBrowserView));
 
 connection.start()
 	.then(async () => {
 		connectionStatus.textContent = 'Connected to SignalR as user demo.';
 		connectionStatus.className = 'good';
-		await refreshHistory();
+		await refreshHistory(false);
 	})
 	.catch(error => {
 		connectionStatus.textContent = `SignalR connection failed: ${error}`;

@@ -104,7 +104,7 @@ internal static class StorageDeskRunner
 	)
 	{
 		// File provider shows the same repository/journal contracts backed by JSON files.
-		var rootDirectory = Path.Combine(Path.GetTempPath(), $"leva-ticketdesk-files-{Guid.NewGuid():N}");
+		var rootDirectory = Path.Combine(Path.GetTempPath(), $"leva-storagedesk-files-{Guid.NewGuid():N}");
 		var provider = new FileStorageProvider(rootDirectory);
 		return await RunScenarioAsync(
 			"files",
@@ -125,7 +125,7 @@ internal static class StorageDeskRunner
 	)
 	{
 		// SQLite provider shows the same contracts backed by one database file.
-		var databasePath = Path.Combine(Path.GetTempPath(), $"leva-ticketdesk-{Guid.NewGuid():N}.sqlite");
+		var databasePath = Path.Combine(Path.GetTempPath(), $"leva-storagedesk-{Guid.NewGuid():N}.sqlite");
 		var provider = new SqliteStorageProvider(databasePath);
 		return await RunScenarioAsync(
 			"sqlite",

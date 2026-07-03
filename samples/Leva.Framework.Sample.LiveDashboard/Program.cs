@@ -8,8 +8,7 @@ using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// This is sample-host behavior, not framework behavior. A real application should choose
-// its own graceful shutdown timeout for active SignalR/websocket connections.
+// Sample host behavior: stop quickly even with an open SignalR connection.
 builder.Services.Configure<HostOptions>(options =>
 {
 	options.ShutdownTimeout = TimeSpan.FromSeconds(2);
@@ -18,16 +17,15 @@ builder.Services.Configure<HostOptions>(options =>
 builder.Services.AddSingleton<IClock, SystemClock>();
 builder.Services.AddSingleton<IUserIdProvider, QueryStringUserIdProvider>();
 
-// SignalR is the live delivery provider. It registers the framework INotificationGateway.
+// SignalR is the live delivery provider for framework notifications.
 builder.Services.AddSignalRNotifications();
 
-// The browser history deliberately uses one concrete memory store that is also exposed through INotificationStore.
+// The visible page history reads this concrete memory store.
 builder.Services.AddSingleton<MemoryNotificationStore>();
 builder.Services.AddSingleton<INotificationStore>(provider => provider.GetRequiredService<MemoryNotificationStore>());
 builder.Services.AddSingleton<DashboardNotificationHistory>();
 
-// The application endpoint uses NotificationService. It sends through SignalRNotificationGateway and produces
-// NotificationEntry values; DashboardNotificationHistory records those entries for the visible sample history.
+// NotificationService sends through SignalR and returns entries for the visible history.
 builder.Services.AddSingleton<NotificationService>();
 
 var app = builder.Build();
@@ -47,7 +45,7 @@ app.UseStaticFiles(
 );
 app.MapGet("/favicon.ico", () => Results.NoContent());
 
-// MapSignalRNotifications exposes the framework notification hub used by the browser page.
+// Expose the framework notification hub used by the browser page.
 app.MapSignalRNotifications();
 
 app.MapPost(
@@ -108,7 +106,7 @@ static async Task<Result<NotificationEntry>> SendAndRecordDemoNotificationAsync(
 	CancellationToken token
 )
 {
-	// NotificationService owns the reusable notification flow: create notification, call gateway, and create entry.
+	// Use the reusable notification service, then record the returned entry for the page.
 	var result = await notifications.SendAsync(
 		new NotificationRecipient("demo", DisplayName: "Demo user"),
 		SignalRNotificationOptions.DefaultChannel,

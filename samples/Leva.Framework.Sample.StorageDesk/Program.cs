@@ -3,6 +3,7 @@ using Leva.Framework.Sample.StorageDesk;
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
+// The host stays thin; StorageDeskRunner composes identity, notifications, and storage providers.
 app.UseDefaultFiles();
 app.UseStaticFiles(
 	new StaticFileOptions

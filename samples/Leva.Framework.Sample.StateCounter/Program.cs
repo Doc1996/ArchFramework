@@ -3,6 +3,7 @@ using Leva.Framework.Sample.StateCounter;
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
+// The host is intentionally thin; the sample workflow composition lives in StateCounterRunner.
 app.UseDefaultFiles();
 app.UseStaticFiles(
 	new StaticFileOptions
