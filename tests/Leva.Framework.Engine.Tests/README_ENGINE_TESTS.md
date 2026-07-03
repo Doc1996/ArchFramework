@@ -14,5 +14,6 @@
 `StateMachineTransitionTests` - Verifies reentry, routine cancellation during transition, transition loop guard, and double-start protection.
 `DispatcherAndRoutineTests` - Verifies behavior fallback, alarm handling, and routine completion.
 `DispatcherOrderTests` - Verifies deterministic dispatcher ordering, behavior-requested transitions, and unhandled logging.
+`DispatcherShortCircuitTests` - Verifies dispatcher short-circuit rules when alarms, states, or routines handle events.
 `SnapshotTests` - Verifies snapshot creation and loading of board snapshots.
 `SnapshotEdgeTests` - Verifies snapshot pre-start guard, single-item restore, and replacement of previous board entries.

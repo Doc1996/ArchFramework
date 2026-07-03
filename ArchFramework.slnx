@@ -29,6 +29,7 @@
   </Folder>
 
   <Folder Name="/tests/">
+    <Project Path="tests/Leva.Framework.Contract.Tests/Leva.Framework.Contract.Tests.csproj" />
     <Project Path="tests/Leva.Framework.Core.Tests/Leva.Framework.Core.Tests.csproj" />
     <Project Path="tests/Leva.Framework.Engine.Tests/Leva.Framework.Engine.Tests.csproj" />
     <Project Path="tests/Leva.Framework.Execution.Tests/Leva.Framework.Execution.Tests.csproj" />

@@ -16,13 +16,9 @@ Static files are served with no-cache headers so browser changes are visible dur
 ## Applications
 
 `Leva.Framework.Sample.StateCounter` - Shows Core, Engine, Execution, and Fakes through states, events, delayed events, behavior, alarms, statuses, runtime log, and execution report.
-
 `Leva.Framework.Sample.StorageDesk` - Shows Storage.Memory, Storage.Files, Storage.Sqlite, Identity.Memory, and Notifications.Memory through the same ticket workflow.
-
 `Leva.Framework.Sample.LiveDashboard` - Shows Notifications.SignalR with a browser SignalR client and memory-backed notification history.
-
 `Leva.Framework.Sample.LocalIdentity` - Shows Identity.Local and Identity.AspNet through local credentials, auth-session cookie, and framework permission authorization.
-
 `Leva.Framework.Sample.WebIdentity` - Shows Identity.AspNet JWT bearer tokens and optional Google OAuth sign-in.
 
 ## Running
