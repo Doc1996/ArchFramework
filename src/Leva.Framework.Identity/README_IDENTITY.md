@@ -17,7 +17,7 @@ Identity is intentionally provider-neutral. It defines who a principal is, how a
 
 Authentication and authorization are separate concepts. Authentication establishes identity through an `AuthenticationMethod` and `AuthenticationPolicy`. Authorization checks whether an established identity satisfies an `AuthorizationRequirement` through an `AuthorizationPolicy`. `AuthenticationService` and `AuthorizationService` are framework-owned orchestration classes that coordinate policies, auth sessions, results, and audit output.
 
-Auth sessions represent active signed-in principal state. `AuthSessionService` creates, loads, signs out, expires, and deletes auth sessions using `IAuthSessionStore` and `AuthSessionPolicy`. Provider libraries decide where identities and auth sessions are stored. A memory provider can keep them in process, a local provider can use application storage and password hashing, an ASP.NET Core provider can resolve the current auth session from web context, and later Google or JWT providers can plug in without changing this library.
+Auth sessions represent active signed-in principal state. `AuthSessionService` creates, loads, signs out, expires, and deletes auth sessions using `IAuthSessionStore` and `AuthSessionPolicy`. Provider libraries decide where identities and auth sessions are stored. A memory provider can keep them in memory, a local provider can use application storage and password hashing, an ASP.NET Core provider can resolve the current auth session from web context, and later Google or JWT providers can plug in without changing this library.
 
 Identity keeps profile data minimal. `Principal` contains principal ID, display name, email, roles, permissions, and claims. Application-specific profile fields such as phone number, address, age, avatar, locale, or preferences should live in application models or provider-specific claims, not in the framework identity model.
 
@@ -39,7 +39,7 @@ Audit records are separate from runtime logs. `AuditEntry` records security-rele
 `AuthSessionId` - Identifies one active or historical auth session.
 `AuthSession` - Represents an established auth session with principal, status, creation time, optional expiration time, and optional sign-out time.
 `AuthSessionStatus` - Describes auth session lifecycle state.
-`AuthSessionPolicy` - Creates auth auth session IDs, calculates expiration times, and checks whether auth sessions are expired.
+`AuthSessionPolicy` - Creates auth session IDs, calculates expiration times, and checks whether auth sessions are expired.
 `IAuthSessionStore` - Stores and loads auth sessions without exposing provider-specific storage details.
 `AuthSessionService` - Creates, loads, signs out, expires, and deletes auth sessions.
 `AuthSessionSource` - Resolves the current auth session from the host or provider-specific execution context.

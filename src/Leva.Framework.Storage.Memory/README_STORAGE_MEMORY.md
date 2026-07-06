@@ -1,6 +1,6 @@
 # Leva.Framework.Storage.Memory
 
-`Leva.Framework.Storage.Memory` is the in-memory provider implementation of `Leva.Framework.Storage`. It stores repositories and journals in process for tests, demos, samples, and short-lived hosts.
+`Leva.Framework.Storage.Memory` is the in-memory provider implementation of `Leva.Framework.Storage`. It stores repositories and journals in memory for tests, demos, samples, and short-lived hosts.
 
 ```text
 Leva.Framework.Storage.Memory

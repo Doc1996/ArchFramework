@@ -2,7 +2,7 @@
 
 `Leva.Framework.Core` is the shared vocabulary layer of ArchFramework. It defines stable contracts, IDs, result types, snapshots, synchronization helpers, and small value objects used by the rest of the framework.
 
-Core exists so framework libraries can share the same language without creating dependency cycles. It contains concepts, not runtime execution, storage, UI, notifications, devices, providers, or application-specific behavior. `Leva.Framework.Core` depends only on .NET base libraries. Other framework libraries may depend on Core, but Core must not depend on Engine, Fakes, Storage, Presentation, Notifications, Authentication, provider implementations, or application projects.
+Core exists so framework libraries can share the same language without creating dependency cycles. It contains concepts, not runtime execution, storage, UI, notifications, devices, providers, or application-specific behavior. `Leva.Framework.Core` depends only on .NET base libraries. Other framework libraries may depend on Core, but Core must not depend on Engine, Fakes, Storage, Presentation, Notifications, Identity, provider implementations, or application projects.
 
 ## Project overview
 
@@ -27,7 +27,7 @@ Core does not decide how events are queued, how states are executed, how data is
 `ITransition` - Allows runtime objects to request state changes without directly controlling the state machine.
 `IClock` - Provides runtime time through an abstraction so framework logic can be deterministic and replaceable in tests.
 `SystemClock` - Production `IClock` implementation based on UTC system time.
-`ILogSink` - Receives diagnostic log entries emitted by the runtime or infrastructure. The contract is write-only; memory and fake sinks may expose snapshots or clearing as concrete test conveniences.
+`ILogSink` - Receives diagnostic log entries emitted by the runtime or infrastructure. The contract is write-only; memory and fake sinks may expose snapshot lists or clearing as concrete test conveniences.
 
 ### Identifier values
 
@@ -56,5 +56,5 @@ Core does not decide how events are queued, how states are executed, how data is
 
 ### Synchronization helpers
 
-`SyncList<T>` - Small synchronized list helper used by framework libraries that need safe snapshots of in-memory collections.
-`SyncDictionary<TKey, TValue>` - Small synchronized dictionary helper used by framework libraries that need safe snapshots of keyed in-memory collections.
+`SyncList<T>` - Small synchronized list helper used by framework libraries that need snapshot copies of in-memory collections.
+`SyncDictionary<TKey, TValue>` - Small synchronized dictionary helper used by framework libraries that need snapshot copies of keyed in-memory collections.

@@ -83,7 +83,7 @@ internal static class StorageDeskRunner
 		CancellationToken token
 	)
 	{
-		// Memory provider keeps repository and journal data in-process.
+		// Memory provider keeps repository and journal data in memory.
 		var provider = new MemoryStorageProvider();
 		return await RunScenarioAsync(
 			"memory",

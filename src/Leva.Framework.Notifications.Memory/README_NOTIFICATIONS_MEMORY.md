@@ -1,6 +1,6 @@
 # Leva.Framework.Notifications.Memory
 
-`Leva.Framework.Notifications.Memory` is the in-process notification provider for ArchFramework. It provides a memory gateway, memory store, and composition helper for development, samples, local demos, and simple tests.
+`Leva.Framework.Notifications.Memory` is the in-memory notification provider for ArchFramework. It provides a memory gateway, memory store, and composition helper for development, samples, local demos, and simple tests.
 
 Notifications.Memory exists so applications and tests can use the provider-neutral notification contracts without configuring ASP.NET, email, push, SignalR, or other external delivery infrastructure. It is a real in-memory provider: sends succeed and are recorded in memory. Test-specific failure behavior belongs in `Leva.Framework.Fakes`, not in this provider.
 
@@ -12,7 +12,7 @@ Leva.Framework.Notifications.Memory
 
 ## Project overview
 
-The memory provider keeps all notification state in process. `MemoryNotificationGateway` records notifications sent through the gateway and returns successful results. `MemoryNotificationStore` stores notification entries by `NotificationId`. Both use the synchronized collection helpers from Core, so snapshots are safe to read while multiple sends or store operations happen concurrently.
+The memory provider keeps all notification state in memory. `MemoryNotificationGateway` records notifications sent through the gateway and returns successful results. `MemoryNotificationStore` stores notification entries by `NotificationId`. Both use the synchronized collection helpers from Core, so readers get snapshot copies while multiple sends or store operations happen concurrently.
 
 `MemoryNotificationServices` groups the memory gateway, memory store, and `NotificationService` for convenient composition. It follows the same service-group pattern as the memory and local identity libraries.
 

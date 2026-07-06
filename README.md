@@ -38,10 +38,10 @@ Leva.Framework.Notifications.SignalR   ASP.NET Core SignalR notification provide
 ## Samples
 
 ```text
-Leva.Framework.Sample.CounterWorkflow   Core, Engine, Execution, and Fakes in a small workflow
-Leva.Framework.Sample.TicketDesk        Storage providers, Identity.Memory, and Notifications.Memory in a ticketing flow
+Leva.Framework.Sample.StateCounter      Core, Engine, Execution, and Fakes in a small state-counter flow
+Leva.Framework.Sample.StorageDesk       Storage providers, Identity.Memory, and Notifications.Memory in a ticketing flow
 Leva.Framework.Sample.LiveDashboard     Notifications.SignalR in a minimal live web dashboard
-Leva.Framework.Sample.LocalAccount      Identity.Local and Identity.AspNet in a minimal account host
+Leva.Framework.Sample.LocalIdentity     Identity.Local and Identity.AspNet in a minimal account host
 ```
 
 ## Documentation convention
@@ -77,5 +77,5 @@ dotnet test ArchFramework.slnx
 Run one sample:
 
 ```bash
-dotnet run --project samples/Leva.Framework.Sample.CounterWorkflow
+dotnet run --project samples/Leva.Framework.Sample.StateCounter
 ```

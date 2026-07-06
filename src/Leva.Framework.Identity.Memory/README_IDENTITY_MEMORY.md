@@ -1,6 +1,6 @@
 # Leva.Framework.Identity.Memory
 
-`Leva.Framework.Identity.Memory` is the in-memory provider implementation of `Leva.Framework.Identity`. It stores principals and auth sessions in process and authenticates principal names for tests, demos, samples, and early applications.
+`Leva.Framework.Identity.Memory` is the in-memory provider implementation of `Leva.Framework.Identity`. It stores principals and auth sessions in memory and authenticates principal names for tests, demos, samples, and early applications.
 
 Memory identity exists for tests, demos, samples, and short-lived local application scenarios where durable identity storage is not required. It depends on `Leva.Framework.Identity` and `Leva.Framework.Core`; it does not depend on Engine, Storage, ASP.NET Core, databases, password hashing packages, or external identity providers.
 

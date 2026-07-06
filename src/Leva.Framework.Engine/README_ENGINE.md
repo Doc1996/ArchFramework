@@ -2,7 +2,7 @@
 
 `Leva.Framework.Engine` is the runtime implementation of ArchFramework. It executes the event-driven state-machine model defined by Core.
 
-Engine turns Core contracts into deterministic runtime behavior. It owns event queueing, dispatching, transition draining, state execution, routine execution, fallback behavior execution, alarms, statuses, runtime history, logging, and snapshot creation/loading. `Leva.Framework.Engine` depends on `Leva.Framework.Core`. Engine must not depend on Fakes, Storage implementations, UI providers, notification providers, authentication providers, database providers, devices, or application projects.
+Engine turns Core contracts into deterministic runtime behavior. It owns event queueing, dispatching, transition draining, state execution, routine execution, fallback behavior execution, alarms, statuses, runtime history, logging, and snapshot creation/loading. `Leva.Framework.Engine` depends on `Leva.Framework.Core`. Engine must not depend on Fakes, Storage implementations, UI providers, notification providers, identity providers, database providers, devices, or application projects.
 
 ```text
 Leva.Framework.Engine
@@ -30,7 +30,7 @@ This separation keeps state changes predictable. Runtime code requests transitio
 ```text
 AlarmBoard   -> active alarms
 StatusBoard  -> latest statuses
-RuntimeLog   -> chronological LogEntry history
+RuntimeLog   -> chronological runtime history
 LogSink      -> diagnostic output
 Context      -> runtime composition root
 ```
@@ -69,17 +69,15 @@ Engine intentionally does not depend on `Leva.Framework.Execution`. Long-running
 
 ### Runtime boards and hooks
 
-`AlarmBoard` - Stores active alarms and exposes safe snapshots of alarm entries.
+`AlarmBoard` - Stores active alarms and returns snapshot copies of alarm entries.
 `IAlarmSupervisor` - Hook that can map events to alarm behavior and optionally handle events before state logic.
 `NullAlarmSupervisor` - Default alarm supervisor that intentionally handles nothing.
-`StatusBoard` - Stores latest-known status values and exposes safe snapshots.
+`StatusBoard` - Stores latest-known status values and returns snapshot copies.
 `IStatusUpdater` - Hook that can update status memory from incoming events.
 `NullStatusUpdater` - Default status updater that intentionally updates nothing.
 
 ### Runtime logging
 
 `RuntimeLog` - Stores chronological runtime history and mirrors entries to an `ILogSink`.
-`LogEntry` - Core value representing one structured runtime log entry.
-`LogCategory` - Core value that groups runtime log entries by broad framework area.
 `MemoryLogSink` - Thread-safe in-memory log sink for diagnostics and tests.
 `NullLogSink` - Log sink implementation that intentionally ignores log entries.

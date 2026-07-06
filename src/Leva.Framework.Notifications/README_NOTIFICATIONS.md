@@ -17,7 +17,7 @@ Notifications is intentionally provider-neutral. A `Notification` represents one
 
 Sending is separated from orchestration. `INotificationGateway` is the provider boundary that sends a notification through a concrete mechanism and returns only `Result`. It does not create stored entries, choose channels, retry, queue work, or simulate failures. `NotificationService` creates the notification, calls the gateway, creates the sent, failed, or cancelled `NotificationEntry`, stores the entry through `INotificationStore`, and returns the entry to the caller.
 
-The core library is not tied to Storage. `INotificationStore` is only the notification-specific boundary for storing entries during the current provider workflow. Memory can keep entries in process, ASP.NET can expose notifications through a web host, email providers can send messages through SMTP or external services, and push providers can send browser/mobile push notifications without changing this library.
+The core library is not tied to Storage. `INotificationStore` is only the notification-specific boundary for storing entries during the current provider flow. Memory can keep entries in memory, ASP.NET can expose notifications through a web host, email providers can send messages through SMTP or external services, and push providers can send browser/mobile push notifications without changing this library.
 
 ## Files and classes
 
