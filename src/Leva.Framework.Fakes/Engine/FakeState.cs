@@ -5,33 +5,24 @@ namespace Leva.Framework.Fakes;
 /// <summary>
 /// Configurable state fake that records lifecycle and handling counts.
 /// </summary>
-public sealed class FakeState : IState<FakeAccess>
+public sealed class FakeState(
+	StateId id,
+	string? name = null,
+	Func<FakeAccess, CancellationToken, Task>? enter = null,
+	Func<FakeAccess, CancellationToken, Task>? exit = null,
+	Func<FakeAccess, IEvent, CancellationToken, Task<bool>>? handle = null
+) : IState<FakeAccess>
 {
-	private readonly Func<FakeAccess, CancellationToken, Task>? _enter;
-	private readonly Func<FakeAccess, CancellationToken, Task>? _exit;
-	private readonly Func<FakeAccess, IEvent, CancellationToken, Task<bool>>? _handle;
+	private readonly Func<FakeAccess, CancellationToken, Task>? _enter = enter;
+	private readonly Func<FakeAccess, CancellationToken, Task>? _exit = exit;
+	private readonly Func<FakeAccess, IEvent, CancellationToken, Task<bool>>? _handle = handle;
 
-	public StateId Id { get; }
-	public string Name { get; }
+	public StateId Id { get; } = id;
+	public string Name { get; } = name ?? id.Value;
 	public int EnterCount { get; private set; }
 	public int ExitCount { get; private set; }
 	public int HandleCount { get; private set; }
 	public List<IEvent> HandledEvents { get; } = [];
-
-	public FakeState(
-		StateId id,
-		string? name = null,
-		Func<FakeAccess, CancellationToken, Task>? enter = null,
-		Func<FakeAccess, CancellationToken, Task>? exit = null,
-		Func<FakeAccess, IEvent, CancellationToken, Task<bool>>? handle = null
-	)
-	{
-		Id = id;
-		Name = name ?? id.Value;
-		_enter = enter;
-		_exit = exit;
-		_handle = handle;
-	}
 
 	public async Task EnterAsync(FakeAccess access, CancellationToken token)
 	{

@@ -13,15 +13,15 @@ public sealed class FakeEventQueue(IClock? clock = null) : IEventQueue
 	private readonly Queue<QueuedEvent> _normal = new();
 	private readonly Queue<QueuedEvent> _low = new();
 
-	private readonly SemaphoreSlim _available = new(0);
 	private readonly IClock _clock = clock ?? new FakeClock();
+	private readonly SemaphoreSlim _asyncLock = new(0);
 	public int Count => _critical.Count + _high.Count + _normal.Count + _low.Count;
 
 	public EventId Enqueue(IEvent appEvent, EventPriority priority = EventPriority.Normal)
 	{
 		var queuedEvent = new QueuedEvent(appEvent, priority, _clock.UtcNow);
 		GetQueue(priority).Enqueue(queuedEvent);
-		_available.Release();
+		_asyncLock.Release();
 
 		return appEvent.Id;
 	}
@@ -44,7 +44,7 @@ public sealed class FakeEventQueue(IClock? clock = null) : IEventQueue
 	{
 		while (true)
 		{
-			await _available.WaitAsync(token);
+			await _asyncLock.WaitAsync(token);
 			if (TryDequeue(out var queuedEvent) && queuedEvent is not null)
 				return queuedEvent;
 		}

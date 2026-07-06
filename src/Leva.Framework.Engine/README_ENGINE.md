@@ -83,9 +83,3 @@ Engine intentionally does not depend on `Leva.Framework.Execution`. Long-running
 `LogCategory` - Core value that groups runtime log entries by broad framework area.
 `MemoryLogSink` - Thread-safe in-memory log sink for diagnostics and tests.
 `NullLogSink` - Log sink implementation that intentionally ignores log entries.
-
-### Snapshot support
-
-`Context.CreateSnapshot` - Captures current state ID, active alarms, statuses, and optional host data into a `Snapshot`.
-`Context.LoadSnapshotAsync` - Restores alarms, statuses, and state-machine position from a `Snapshot`.
-

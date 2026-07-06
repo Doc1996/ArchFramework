@@ -42,6 +42,7 @@ public sealed class RuntimeLog(IClock clock, ILogSink logSink)
 
 		foreach (var detail in nonNullDetails)
 			AddProperties(properties, detail!, complexDetailCount > 1);
+
 		return properties.Count == 0 ? null : properties;
 	}
 
@@ -152,7 +153,6 @@ public sealed class RuntimeLog(IClock clock, ILogSink logSink)
 	{
 		var name = type.Name;
 		var genericSeparatorIndex = name.IndexOf('`', StringComparison.Ordinal);
-
 		return genericSeparatorIndex < 0 ? name : name[..genericSeparatorIndex];
 	}
 

@@ -5,33 +5,24 @@ namespace Leva.Framework.Fakes;
 /// <summary>
 /// Configurable routine fake with mutable lifecycle status.
 /// </summary>
-public sealed class FakeRoutine : IRoutine<FakeAccess>
+public sealed class FakeRoutine(
+	RoutineId id,
+	string? name = null,
+	Func<FakeAccess, CancellationToken, Task>? start = null,
+	Func<FakeAccess, CancellationToken, Task>? cancel = null,
+	Func<FakeAccess, IEvent, CancellationToken, Task<bool>>? handle = null
+) : IRoutine<FakeAccess>
 {
-	private readonly Func<FakeAccess, CancellationToken, Task>? _start;
-	private readonly Func<FakeAccess, CancellationToken, Task>? _cancel;
-	private readonly Func<FakeAccess, IEvent, CancellationToken, Task<bool>>? _handle;
+	private readonly Func<FakeAccess, CancellationToken, Task>? _start = start;
+	private readonly Func<FakeAccess, CancellationToken, Task>? _cancel = cancel;
+	private readonly Func<FakeAccess, IEvent, CancellationToken, Task<bool>>? _handle = handle;
 
-	public RoutineId Id { get; }
-	public string Name { get; }
+	public RoutineId Id { get; } = id;
+	public string Name { get; } = name ?? id.Value;
 	public RoutineStatus Status { get; private set; } = RoutineStatus.NotStarted;
 	public int StartCount { get; private set; }
 	public int CancelCount { get; private set; }
 	public int HandleCount { get; private set; }
-
-	public FakeRoutine(
-		RoutineId id,
-		string? name = null,
-		Func<FakeAccess, CancellationToken, Task>? start = null,
-		Func<FakeAccess, CancellationToken, Task>? cancel = null,
-		Func<FakeAccess, IEvent, CancellationToken, Task<bool>>? handle = null
-	)
-	{
-		Id = id;
-		Name = name ?? id.Value;
-		_start = start;
-		_cancel = cancel;
-		_handle = handle;
-	}
 
 	public async Task StartAsync(FakeAccess access, CancellationToken token)
 	{

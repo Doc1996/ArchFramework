@@ -6,18 +6,13 @@ namespace Leva.Framework.Fakes;
 /// <summary>
 /// Configurable status updater fake.
 /// </summary>
-public sealed class FakeStatusUpdater : IStatusUpdater
+public sealed class FakeStatusUpdater(StatusBoard statusBoard, Func<IEvent, CancellationToken, Task>? update = null)
+	: IStatusUpdater
 {
-	private readonly Func<IEvent, CancellationToken, Task>? _update;
+	private readonly Func<IEvent, CancellationToken, Task>? _update = update;
 
-	public StatusBoard StatusBoard { get; }
+	public StatusBoard StatusBoard { get; } = statusBoard;
 	public int UpdateCount { get; private set; }
-
-	public FakeStatusUpdater(StatusBoard statusBoard, Func<IEvent, CancellationToken, Task>? update = null)
-	{
-		StatusBoard = statusBoard;
-		_update = update;
-	}
 
 	public async Task UpdateAsync(IEvent appEvent, CancellationToken token)
 	{
