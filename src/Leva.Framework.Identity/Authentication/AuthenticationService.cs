@@ -15,8 +15,8 @@ public sealed class AuthenticationService
 	public AuthenticationService(
 		IEnumerable<AuthenticationPolicy> policies,
 		AuthSessionService sessionService,
-		IAuditSink? auditSink = null,
-		IClock? clock = null
+		IClock? clock = null,
+		IAuditSink? auditSink = null
 	)
 	{
 		ArgumentNullException.ThrowIfNull(policies);

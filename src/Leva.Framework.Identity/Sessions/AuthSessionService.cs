@@ -15,8 +15,8 @@ public sealed class AuthSessionService
 	public AuthSessionService(
 		IAuthSessionStore sessionStore,
 		AuthSessionPolicy? policy = null,
-		IAuditSink? auditSink = null,
-		IClock? clock = null
+		IClock? clock = null,
+		IAuditSink? auditSink = null
 	)
 	{
 		ArgumentNullException.ThrowIfNull(sessionStore);

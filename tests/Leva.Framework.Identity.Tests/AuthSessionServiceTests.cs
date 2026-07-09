@@ -31,7 +31,11 @@ public sealed class AuthSessionServiceTests
 	{
 		var store = new FakeAuthSessionStore();
 		var audit = new MemoryAuditSink();
-		var service = new AuthSessionService(store, new AuthSessionPolicy(TimeSpan.FromMilliseconds(-1)), audit);
+		var service = new AuthSessionService(
+			store,
+			new AuthSessionPolicy(TimeSpan.FromMilliseconds(-1)),
+			auditSink: audit
+		);
 
 		var session = ResultAssert.Success(await service.CreateAsync(TestPrincipal()));
 		var result = await service.LoadAsync(session.SessionId);

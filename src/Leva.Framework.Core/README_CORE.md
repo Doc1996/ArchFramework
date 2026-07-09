@@ -27,7 +27,7 @@ Core does not decide how events are queued, how states are executed, how data is
 `ITransition` - Allows runtime objects to request state changes without directly controlling the state machine.
 `IClock` - Provides runtime time through an abstraction so framework logic can be deterministic and replaceable in tests.
 `SystemClock` - Production `IClock` implementation based on UTC system time.
-`ILogSink` - Receives diagnostic log entries emitted by the runtime or infrastructure. The contract is write-only; memory and fake sinks may expose snapshot lists or clearing as concrete test conveniences.
+`ILogSink` - Receives diagnostic log entries emitted by the runtime or infrastructure. The contract is write-only; memory and fake sinks may expose copied lists or clearing as concrete test conveniences.
 
 ### Identifier values
 

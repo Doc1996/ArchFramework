@@ -28,7 +28,7 @@ public sealed class AuthenticationServiceTests
 		var service = new AuthenticationService(
 			[unmatched, matched],
 			new AuthSessionService(sessionStore, auditSink: audit),
-			audit
+			auditSink: audit
 		);
 
 		var result = await service.AuthenticateAsync(new AuthenticationRequest(method, "user", "secret"));
@@ -52,7 +52,7 @@ public sealed class AuthenticationServiceTests
 		var service = new AuthenticationService(
 			[],
 			new AuthSessionService(new FakeAuthSessionStore()),
-			new MemoryAuditSink()
+			auditSink: new MemoryAuditSink()
 		);
 		var result = await service.AuthenticateAsync(new AuthenticationRequest(new AuthenticationMethod("missing")));
 
@@ -73,7 +73,7 @@ public sealed class AuthenticationServiceTests
 		var service = new AuthenticationService(
 			[policy],
 			new AuthSessionService(new FakeAuthSessionStore(), auditSink: audit),
-			audit
+			auditSink: audit
 		);
 		var result = await service.AuthenticateAsync(new AuthenticationRequest(method, "user", "bad"));
 
@@ -92,7 +92,7 @@ public sealed class AuthenticationServiceTests
 		var sessionService = new AuthSessionService(sessionStore, auditSink: audit);
 
 		var session = ResultAssert.Success(await sessionService.CreateAsync(TestPrincipal()));
-		var authentication = new AuthenticationService([], sessionService, audit);
+		var authentication = new AuthenticationService([], sessionService, auditSink: audit);
 		var result = await authentication.SignOutAsync(session.SessionId);
 
 		ResultAssert.Success(result);

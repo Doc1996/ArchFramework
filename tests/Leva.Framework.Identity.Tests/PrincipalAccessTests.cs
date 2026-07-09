@@ -10,7 +10,7 @@ public sealed class PrincipalAccessTests
 	public async Task GetSessionAsync_ReturnsCurrentSessionFromSource()
 	{
 		var source = new FakeAuthSessionSource { Session = TestSession() };
-		var access = new PrincipalAccess(source, new AuthorizationService([], new MemoryAuditSink()));
+		var access = new PrincipalAccess(source, new AuthorizationService([], auditSink: new MemoryAuditSink()));
 		var result = await access.GetSessionAsync();
 
 		Assert.Equal(source.Session, ResultAssert.Success(result));
@@ -23,7 +23,7 @@ public sealed class PrincipalAccessTests
 		var session = TestSession();
 		var access = new PrincipalAccess(
 			new FakeAuthSessionSource { Session = session },
-			new AuthorizationService([], new MemoryAuditSink())
+			new AuthorizationService([], auditSink: new MemoryAuditSink())
 		);
 
 		var result = await access.GetPrincipalAsync();
@@ -35,7 +35,7 @@ public sealed class PrincipalAccessTests
 	{
 		var access = new PrincipalAccess(
 			new FakeAuthSessionSource { Session = TestSession() },
-			new AuthorizationService([], new MemoryAuditSink())
+			new AuthorizationService([], auditSink: new MemoryAuditSink())
 		);
 
 		var result = await access.IsSignedInAsync();
@@ -54,7 +54,7 @@ public sealed class PrincipalAccessTests
 
 		var access = new PrincipalAccess(
 			new FakeAuthSessionSource { Session = session },
-			new AuthorizationService([policy], new MemoryAuditSink())
+			new AuthorizationService([policy], auditSink: new MemoryAuditSink())
 		);
 		var result = await access.RequireAsync(requirement);
 
@@ -67,7 +67,7 @@ public sealed class PrincipalAccessTests
 	{
 		var access = new PrincipalAccess(
 			new FakeAuthSessionSource { Error = PrincipalErrors.Unavailable("test") },
-			new AuthorizationService([], new MemoryAuditSink())
+			new AuthorizationService([], auditSink: new MemoryAuditSink())
 		);
 		var result = await access.RequireAsync(AuthorizationRequirement.SignedIn);
 

@@ -69,10 +69,10 @@ Engine intentionally does not depend on `Leva.Framework.Execution`. Long-running
 
 ### Runtime boards and hooks
 
-`AlarmBoard` - Stores active alarms and returns snapshot copies of alarm entries.
+`AlarmBoard` - Stores active alarms and returns copied alarm-entry lists.
 `IAlarmSupervisor` - Hook that can map events to alarm behavior and optionally handle events before state logic.
 `NullAlarmSupervisor` - Default alarm supervisor that intentionally handles nothing.
-`StatusBoard` - Stores latest-known status values and returns snapshot copies.
+`StatusBoard` - Stores latest-known status values and returns copied status-entry lists.
 `IStatusUpdater` - Hook that can update status memory from incoming events.
 `NullStatusUpdater` - Default status updater that intentionally updates nothing.
 

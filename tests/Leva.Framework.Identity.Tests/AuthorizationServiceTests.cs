@@ -9,7 +9,7 @@ public sealed class AuthorizationServiceTests
 	[Fact]
 	public async Task AuthorizeAsync_ReturnsDeniedWhenPrincipalIsMissing()
 	{
-		var service = new AuthorizationService([new BuiltInAuthorizationPolicy()], new MemoryAuditSink());
+		var service = new AuthorizationService([new BuiltInAuthorizationPolicy()], auditSink: new MemoryAuditSink());
 		var requirement = AuthorizationRequirement.SignedIn;
 		var result = await service.AuthorizeAsync(new AuthorizationRequest(null, requirement));
 		var authorization = ResultAssert.Success(result);
@@ -22,7 +22,7 @@ public sealed class AuthorizationServiceTests
 	public async Task AuthorizeAsync_ReturnsFailureWhenNoPolicyCanEvaluateRequirement()
 	{
 		var requirement = AuthorizationRequirement.SignedIn;
-		var service = new AuthorizationService([], new MemoryAuditSink());
+		var service = new AuthorizationService([], auditSink: new MemoryAuditSink());
 		var result = await service.AuthorizeAsync(new AuthorizationRequest(null, requirement));
 
 		Assert.True(result.IsFailure);
@@ -43,7 +43,7 @@ public sealed class AuthorizationServiceTests
 		};
 
 		var audit = new MemoryAuditSink();
-		var service = new AuthorizationService([first, second], audit);
+		var service = new AuthorizationService([first, second], auditSink: audit);
 		var principal = new Principal(new PrincipalId("user-1"), "User One");
 
 		var result = await service.AuthorizeAsync(new AuthorizationRequest(principal, requirement));
@@ -69,7 +69,7 @@ public sealed class AuthorizationServiceTests
 		};
 
 		var audit = new MemoryAuditSink();
-		var service = new AuthorizationService([policy], audit);
+		var service = new AuthorizationService([policy], auditSink: audit);
 		var principal = new Principal(new PrincipalId("user-1"), "User One");
 
 		var result = await service.AuthorizeAsync(new AuthorizationRequest(principal, requirement));
@@ -92,7 +92,7 @@ public sealed class AuthorizationServiceTests
 			Result = Result<AuthorizationResult>.Fail(PrincipalErrors.Failed("authorize", "boom")),
 		};
 
-		var service = new AuthorizationService([policy], new MemoryAuditSink());
+		var service = new AuthorizationService([policy], auditSink: new MemoryAuditSink());
 		var principal = new Principal(new PrincipalId("user-1"), "User One");
 		var result = await service.AuthorizeAsync(new AuthorizationRequest(principal, requirement));
 

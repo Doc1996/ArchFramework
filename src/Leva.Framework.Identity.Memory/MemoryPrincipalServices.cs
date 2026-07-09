@@ -32,17 +32,17 @@ public sealed class MemoryPrincipalServices
 	public MemoryAuthSessionSource SessionSource { get; }
 	public PrincipalAccess Access { get; }
 
-	public static MemoryPrincipalServices Create(IAuditSink? auditSink = null, AuthSessionPolicy? sessionPolicy = null)
+	public static MemoryPrincipalServices Create(AuthSessionPolicy? sessionPolicy = null, IAuditSink? auditSink = null)
 	{
 		var principals = new MemoryPrincipalStore();
 		var sessions = new MemoryAuthSessionStore();
-		var sessionService = new AuthSessionService(sessions, sessionPolicy, auditSink);
+		var sessionService = new AuthSessionService(sessions, sessionPolicy, auditSink: auditSink);
 		var authentication = new AuthenticationService(
 			[new MemoryAuthenticationPolicy(principals)],
 			sessionService,
-			auditSink
+			auditSink: auditSink
 		);
-		var authorization = new AuthorizationService([new BuiltInAuthorizationPolicy()], auditSink);
+		var authorization = new AuthorizationService([new BuiltInAuthorizationPolicy()], auditSink: auditSink);
 		var sessionSource = new MemoryAuthSessionSource(sessionService);
 		var access = new PrincipalAccess(sessionSource, authorization);
 

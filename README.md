@@ -21,7 +21,7 @@ Leva.Framework.Execution               Execution runner, execution board, entrie
 Leva.Framework.Fakes                   Test doubles and shared result assertions
 
 Leva.Framework.Storage                 Provider-neutral repository and journal contracts
-Leva.Framework.Storage.Memory          In-process storage provider
+Leva.Framework.Storage.Memory          In-memory storage provider
 Leva.Framework.Storage.Files           Local JSON/file-system storage provider
 Leva.Framework.Storage.Sqlite          Local SQLite storage provider
 
@@ -42,6 +42,7 @@ Leva.Framework.Sample.StateCounter      Core, Engine, Execution, and Fakes in a 
 Leva.Framework.Sample.StorageDesk       Storage providers, Identity.Memory, and Notifications.Memory in a ticketing flow
 Leva.Framework.Sample.LiveDashboard     Notifications.SignalR in a minimal live web dashboard
 Leva.Framework.Sample.LocalIdentity     Identity.Local and Identity.AspNet in a minimal account host
+Leva.Framework.Sample.WebIdentity       Identity.AspNet JWT and optional Google OAuth sign-in
 ```
 
 ## Documentation convention

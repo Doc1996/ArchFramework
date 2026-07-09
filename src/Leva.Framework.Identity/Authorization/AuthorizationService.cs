@@ -13,8 +13,8 @@ public sealed class AuthorizationService
 
 	public AuthorizationService(
 		IEnumerable<AuthorizationPolicy> policies,
-		IAuditSink? auditSink = null,
-		IClock? clock = null
+		IClock? clock = null,
+		IAuditSink? auditSink = null
 	)
 	{
 		ArgumentNullException.ThrowIfNull(policies);

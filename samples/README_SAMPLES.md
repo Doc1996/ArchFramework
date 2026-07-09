@@ -1,17 +1,17 @@
 # Samples
 
-The samples are small runnable ASP.NET Core applications that show how the reusable framework libraries are wired in real hosts. They are not exhaustive verification suites. They show the main usage path with visible browser feedback, while detailed behavior verification belongs in library test projects.
+The samples are small runnable applications that show how the reusable framework libraries are wired in real hosts. They are not exhaustive verification suites. They show the main usage path, while detailed behavior verification belongs in library test projects.
 
 Each sample follows the same shape:
 
 ```text
-Program.cs       -> ASP.NET Core host, service setup, endpoint mapping
+Program.cs       -> host setup, endpoint mapping, or console entry point
 *.cs             -> sample domain/use-case code and framework wiring
 wwwroot/         -> static page, CSS, JavaScript checks
 README_*.md      -> compact wiring notes and expected behavior
 ```
 
-Static files are served with no-cache headers so browser changes are visible during development.
+Web samples serve static files with no-cache headers so browser changes are visible during development.
 
 ## Applications
 
@@ -36,7 +36,7 @@ chmod +x samples/run-all.sh
 ./samples/run-all.sh
 ```
 
-Open the printed local URL and use the page buttons.
+For web samples, open the printed local URL and use the page buttons.
 
 ## Library coverage
 
@@ -56,5 +56,5 @@ Identity.AspNet            -> LocalIdentity, WebIdentity
 Notifications              -> StorageDesk, LiveDashboard
 Notifications.Memory       -> StorageDesk, LiveDashboard
 Notifications.SignalR      -> LiveDashboard
-Microsoft.AspNetCore       -> all samples as minimal web hosts
+Microsoft.AspNetCore       -> web samples as minimal web hosts
 ```
