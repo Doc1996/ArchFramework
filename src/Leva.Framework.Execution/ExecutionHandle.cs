@@ -28,8 +28,5 @@ public sealed class ExecutionHandle<TResult>
 	public ExecutionEntry? Entry => _board.TryGet(Id, out var entry) ? entry : null;
 	public ExecutionStatus? Status => Entry?.Status;
 
-	/// <summary>
-	/// Requests cooperative cancellation for this execution.
-	/// </summary>
 	public void Cancel() => _cancelExecution();
 }

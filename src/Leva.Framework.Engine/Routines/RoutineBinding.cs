@@ -3,19 +3,6 @@ using Leva.Framework.Core;
 namespace Leva.Framework.Engine;
 
 /// <summary>
-/// Type-erased routine binding used by the routine runner.
-/// </summary>
-internal interface IRoutineBinding
-{
-	string Name { get; }
-	RoutineStatus Status { get; }
-
-	Task StartAsync(IAccess access, CancellationToken token);
-	Task CancelAsync(CancellationToken token);
-	Task<bool> HandleAsync(IEvent appEvent, CancellationToken token);
-}
-
-/// <summary>
 /// Binds a routine to the access factory that creates its state-specific capability surface.
 /// </summary>
 internal sealed class RoutineBinding<TAccess>(IRoutine<TAccess> routine, Func<IAccess, TAccess> createAccess)
