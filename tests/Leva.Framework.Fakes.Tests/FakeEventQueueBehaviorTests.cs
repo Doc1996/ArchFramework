@@ -11,10 +11,10 @@ public sealed class FakeEventQueueBehaviorTests
 	{
 		var queue = new FakeEventQueue();
 		var appEvent = new FakeEvent("Later");
-		using var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(2));
+		using var tokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(2));
 
-		var dequeueTask = queue.DequeueAsync(cancellation.Token);
-		await Task.Delay(20, cancellation.Token);
+		var dequeueTask = queue.DequeueAsync(tokenSource.Token);
+		await Task.Delay(20, tokenSource.Token);
 		queue.Enqueue(appEvent);
 
 		var queuedEvent = await dequeueTask;
@@ -25,10 +25,10 @@ public sealed class FakeEventQueueBehaviorTests
 	public async Task DequeueAsync_ThrowsWhenCancelled()
 	{
 		var queue = new FakeEventQueue();
-		using var cancellation = new CancellationTokenSource();
-		var dequeueTask = queue.DequeueAsync(cancellation.Token);
+		using var tokenSource = new CancellationTokenSource();
+		var dequeueTask = queue.DequeueAsync(tokenSource.Token);
 
-		cancellation.Cancel();
+		tokenSource.Cancel();
 		await Assert.ThrowsAnyAsync<OperationCanceledException>(() => dequeueTask);
 	}
 

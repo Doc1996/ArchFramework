@@ -12,10 +12,10 @@ public sealed class EventQueueLifecycleTests
 	{
 		var queue = CreateQueue();
 		var appEvent = new FakeEvent("Later");
-		using var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(2));
+		using var tokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(2));
 
-		var dequeueTask = queue.DequeueAsync(cancellation.Token);
-		await Task.Delay(100, cancellation.Token);
+		var dequeueTask = queue.DequeueAsync(tokenSource.Token);
+		await Task.Delay(100, tokenSource.Token);
 		queue.Enqueue(appEvent);
 
 		var queuedEvent = await dequeueTask;
@@ -26,10 +26,10 @@ public sealed class EventQueueLifecycleTests
 	public async Task DequeueAsync_ThrowsWhenCancelledWhileWaiting()
 	{
 		var queue = CreateQueue();
-		using var cancellation = new CancellationTokenSource();
-		var dequeueTask = queue.DequeueAsync(cancellation.Token);
+		using var tokenSource = new CancellationTokenSource();
+		var dequeueTask = queue.DequeueAsync(tokenSource.Token);
 
-		cancellation.Cancel();
+		tokenSource.Cancel();
 		await Assert.ThrowsAnyAsync<OperationCanceledException>(() => dequeueTask);
 	}
 
@@ -71,10 +71,10 @@ public sealed class EventQueueLifecycleTests
 	{
 		var queue = CreateQueue();
 		var appEvent = new FakeEvent("ExternalCancel");
-		using var cancellation = new CancellationTokenSource();
+		using var tokenSource = new CancellationTokenSource();
 
-		await queue.EnqueueDelayedAsync(appEvent, TimeSpan.FromSeconds(1), token: cancellation.Token);
-		cancellation.Cancel();
+		await queue.EnqueueDelayedAsync(appEvent, TimeSpan.FromSeconds(1), token: tokenSource.Token);
+		tokenSource.Cancel();
 		await Task.Delay(100);
 		Assert.False(queue.TryDequeue(out _));
 	}

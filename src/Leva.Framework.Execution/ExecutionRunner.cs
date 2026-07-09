@@ -14,7 +14,13 @@ public sealed class ExecutionRunner(ExecutionBoard board)
 		if (board.TryGetExecution<TRequest, TResult>(out var execution) && execution is not null)
 			return Start(request, execution, token);
 
-		return StartFailed<TResult>(ExecutionErrors.NotRegistered(typeof(TRequest), typeof(TResult)));
+		var error = ExecutionErrors.NotRegistered(typeof(TRequest), typeof(TResult));
+		var executionId = ExecutionId.New();
+		var task = Task.FromResult(Result<TResult>.Fail(error));
+
+		board.Start(executionId, UnregisteredExecutionName);
+		board.Fail(executionId, error);
+		return new ExecutionHandle<TResult>(executionId, board, task, static () => { });
 	}
 
 	public ExecutionHandle<TResult> Start<TRequest, TResult>(
@@ -32,20 +38,6 @@ public sealed class ExecutionRunner(ExecutionBoard board)
 		board.Start(executionId, execution.GetType().Name);
 		var completion = Task.Run(() => RunAsync(request, execution, progress, executionId, tokenSource));
 		return new ExecutionHandle<TResult>(executionId, board, completion, () => CancelExecution(tokenSource));
-	}
-
-	private ExecutionHandle<TResult> StartFailed<TResult>(Error error)
-	{
-		var executionId = ExecutionId.New();
-		board.Start(executionId, UnregisteredExecutionName);
-		board.Fail(executionId, error);
-
-		return new ExecutionHandle<TResult>(
-			executionId,
-			board,
-			Task.FromResult(Result<TResult>.Fail(error)),
-			static () => { }
-		);
 	}
 
 	private async Task<Result<TResult>> RunAsync<TRequest, TResult>(

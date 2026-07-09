@@ -13,7 +13,7 @@ public sealed class EventQueue(IClock clock, RuntimeLog runtimeLog) : IEventQueu
 	private readonly ConcurrentQueue<QueuedEvent> _normal = new();
 	private readonly ConcurrentQueue<QueuedEvent> _low = new();
 
-	private readonly ConcurrentDictionary<EventId, CancellationTokenSource> _delayedSources = new();
+	private readonly ConcurrentDictionary<EventId, CancellationTokenSource> _tokenSources = new();
 	private readonly SemaphoreSlim _asyncLock = new(0);
 	public int Count => _critical.Count + _high.Count + _normal.Count + _low.Count;
 
@@ -37,25 +37,25 @@ public sealed class EventQueue(IClock clock, RuntimeLog runtimeLog) : IEventQueu
 		if (delay < TimeSpan.Zero)
 			throw new ArgumentOutOfRangeException(nameof(delay), "Delay must not be negative.");
 
-		var delayedSource = CancellationTokenSource.CreateLinkedTokenSource(token);
-		if (!_delayedSources.TryAdd(appEvent.Id, delayedSource))
+		var tokenSource = CancellationTokenSource.CreateLinkedTokenSource(token);
+		if (!_tokenSources.TryAdd(appEvent.Id, tokenSource))
 		{
-			delayedSource.Dispose();
+			tokenSource.Dispose();
 			throw new InvalidOperationException($"Event '{appEvent.Id.Value}' is already scheduled.");
 		}
 
 		LogEvent("Event delayed.", appEvent, priority, new { Delay = delay });
-		_ = RunDelayedAsync(appEvent, delay, priority, delayedSource);
+		_ = RunDelayedAsync(appEvent, delay, priority, tokenSource);
 
 		return ValueTask.FromResult(appEvent.Id);
 	}
 
 	public bool Cancel(EventId eventId)
 	{
-		if (!_delayedSources.TryRemove(eventId, out var delayedSource))
+		if (!_tokenSources.TryRemove(eventId, out var tokenSource))
 			return false;
 
-		delayedSource.Cancel();
+		tokenSource.Cancel();
 		return true;
 	}
 
@@ -91,13 +91,13 @@ public sealed class EventQueue(IClock clock, RuntimeLog runtimeLog) : IEventQueu
 		IEvent appEvent,
 		TimeSpan delay,
 		EventPriority priority,
-		CancellationTokenSource delayedSource
+		CancellationTokenSource tokenSource
 	)
 	{
 		try
 		{
-			await Task.Delay(delay, delayedSource.Token);
-			if (_delayedSources.TryRemove(appEvent.Id, out _))
+			await Task.Delay(delay, tokenSource.Token);
+			if (_tokenSources.TryRemove(appEvent.Id, out _))
 				Enqueue(appEvent, priority);
 		}
 		catch (OperationCanceledException)
@@ -110,8 +110,8 @@ public sealed class EventQueue(IClock clock, RuntimeLog runtimeLog) : IEventQueu
 		}
 		finally
 		{
-			_delayedSources.TryRemove(appEvent.Id, out _);
-			delayedSource.Dispose();
+			_tokenSources.TryRemove(appEvent.Id, out _);
+			tokenSource.Dispose();
 		}
 	}
 
