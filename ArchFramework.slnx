@@ -14,6 +14,8 @@
     <Project Path="src/Leva.Framework.Notifications.Memory/Leva.Framework.Notifications.Memory.csproj" />
     <Project Path="src/Leva.Framework.Notifications.SignalR/Leva.Framework.Notifications.SignalR.csproj" />
 
+    <Project Path="src/Leva.Framework.Presentation/Leva.Framework.Presentation.csproj" />
+
     <Project Path="src/Leva.Framework.Storage/Leva.Framework.Storage.csproj" />
     <Project Path="src/Leva.Framework.Storage.Files/Leva.Framework.Storage.Files.csproj" />
     <Project Path="src/Leva.Framework.Storage.Memory/Leva.Framework.Storage.Memory.csproj" />
@@ -43,6 +45,8 @@
     <Project Path="tests/Leva.Framework.Notifications.Tests/Leva.Framework.Notifications.Tests.csproj" />
     <Project Path="tests/Leva.Framework.Notifications.Memory.Tests/Leva.Framework.Notifications.Memory.Tests.csproj" />
     <Project Path="tests/Leva.Framework.Notifications.SignalR.Tests/Leva.Framework.Notifications.SignalR.Tests.csproj" />
+
+    <Project Path="tests/Leva.Framework.Presentation.Tests/Leva.Framework.Presentation.Tests.csproj" />
 
     <Project Path="tests/Leva.Framework.Storage.Tests/Leva.Framework.Storage.Tests.csproj" />
     <Project Path="tests/Leva.Framework.Storage.Files.Tests/Leva.Framework.Storage.Files.Tests.csproj" />

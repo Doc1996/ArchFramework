@@ -1,6 +1,6 @@
 # ArchFramework
 
-ArchFramework is a modular .NET framework for building event-driven applications with explicit runtime workflows, provider-neutral storage, identity, notifications, execution tracking, and reusable test fakes.
+ArchFramework is a modular .NET framework for building event-driven applications with explicit runtime workflows, provider-neutral storage, identity, notifications, execution tracking, presentation state, and reusable test fakes.
 
 The repository is organized around small libraries. Each library has a focused README and a local wiring diagram that shows which services to instantiate or inject, which interfaces providers implement, and which methods are normally called.
 
@@ -33,6 +33,8 @@ Leva.Framework.Identity.AspNet         ASP.NET Core identity integration
 Leva.Framework.Notifications           Provider-neutral notification model, gateway, store, service
 Leva.Framework.Notifications.Memory    In-memory notification provider
 Leva.Framework.Notifications.SignalR   ASP.NET Core SignalR notification provider
+
+Leva.Framework.Presentation            UI-neutral view, command, form, dialog, navigation, and message state
 ```
 
 ## Samples
