@@ -1,7 +1,7 @@
 namespace Leva.Framework.Core;
 
 /// <summary>
-/// Describes how important a runtime log entry is.
+/// Defines the severity level of a diagnostic log entry.
 /// </summary>
 public enum LogLevel
 {

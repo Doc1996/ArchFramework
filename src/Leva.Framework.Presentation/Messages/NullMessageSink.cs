@@ -5,5 +5,5 @@ namespace Leva.Framework.Presentation;
 /// </summary>
 public sealed class NullMessageSink : IMessageSink
 {
-	public void Show(MessageEntry message) { }
+	public void Write(MessageEntry message) { }
 }

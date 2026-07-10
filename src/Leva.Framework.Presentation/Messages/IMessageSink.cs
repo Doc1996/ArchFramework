@@ -5,5 +5,5 @@ namespace Leva.Framework.Presentation;
 /// </summary>
 public interface IMessageSink
 {
-	void Show(MessageEntry message);
+	void Write(MessageEntry message);
 }

@@ -10,7 +10,7 @@ public sealed class MemoryMessageSink : IMessageSink
 	private readonly SyncList<MessageEntry> _messageEntries = new();
 	public IReadOnlyList<MessageEntry> MessageEntries => _messageEntries.List();
 
-	public void Show(MessageEntry message) => _messageEntries.Add(message);
+	public void Write(MessageEntry message) => _messageEntries.Add(message);
 
 	public void Clear() => _messageEntries.Clear();
 }

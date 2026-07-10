@@ -9,8 +9,8 @@ public sealed class MessageSinkTests
 	public void MemoryMessageSink_StoresMessages()
 	{
 		var sink = new MemoryMessageSink();
-		sink.Show(MessageEntry.Info("Loading."));
-		sink.Show(MessageEntry.Success("Saved."));
+		sink.Write(MessageEntry.Info("Loading."));
+		sink.Write(MessageEntry.Success("Saved."));
 
 		Assert.Equal(2, sink.MessageEntries.Count);
 		Assert.Equal("Loading.", sink.MessageEntries[0].Text);
@@ -21,7 +21,7 @@ public sealed class MessageSinkTests
 	public void MemoryMessageSink_Clear_RemovesMessages()
 	{
 		var sink = new MemoryMessageSink();
-		sink.Show(MessageEntry.Info("Loading."));
+		sink.Write(MessageEntry.Info("Loading."));
 		sink.Clear();
 
 		Assert.Empty(sink.MessageEntries);
@@ -31,7 +31,7 @@ public sealed class MessageSinkTests
 	public void NullMessageSink_IgnoresMessages()
 	{
 		var sink = new NullMessageSink();
-		sink.Show(MessageEntry.Error("Ignored."));
-		Assert.NotNull(sink);
+		var exception = Record.Exception(() => sink.Write(MessageEntry.Error("Ignored.")));
+		Assert.Null(exception);
 	}
 }

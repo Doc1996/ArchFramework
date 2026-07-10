@@ -5,7 +5,7 @@ namespace Leva.Framework.Presentation;
 /// </summary>
 public sealed record FormState(FormStatus Status, IReadOnlyList<MessageEntry>? Messages = null)
 {
-	public bool CanSubmit => Status is FormStatus.Clean or FormStatus.Modified;
+	public bool CanSubmit => IsValid && (Status is FormStatus.Clean or FormStatus.Modified);
 	public bool IsSubmitting => Status == FormStatus.Submitting;
 	public bool IsValid =>
 		Status != FormStatus.Invalid

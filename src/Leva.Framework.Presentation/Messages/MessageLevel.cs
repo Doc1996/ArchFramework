@@ -1,7 +1,7 @@
 namespace Leva.Framework.Presentation;
 
 /// <summary>
-/// Describes how prominently a user-facing presentation message should be shown.
+/// Defines the display level of a user-facing presentation message.
 /// </summary>
 public enum MessageLevel
 {
