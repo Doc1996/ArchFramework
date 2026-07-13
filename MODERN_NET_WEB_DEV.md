@@ -1,59 +1,195 @@
-# Modern .NET Web Development
+---
+title: "Modern .NET Web Development"
+subtitle: "A Practical Guide for Experienced C# Developers"
+date: "July 2026"
+lang: en
+---
 
-## A Practical Guide for Experienced C# Developers
+
+<!--
+Create the Pandoc header in the same directory as this Markdown file:
+
+```bash
+cat > pandoc-header.tex <<'EOF'
+% Book typography and page-break rules for Pandoc/XeLaTeX.
+
+% Wrap code blocks and text diagrams inside the page margins.
+\usepackage{fvextra}
+
+% Default wrapping for Verbatim-based environments.
+\fvset{
+  breaklines=true,
+  breakanywhere=true,
+  breakautoindent=true,
+  breaksymbolleft={},
+  breaksymbolright={}
+}
+
+% Plain, non-highlighted fenced code blocks.
+\RecustomVerbatimEnvironment{verbatim}{Verbatim}{
+  breaklines=true,
+  breakanywhere=true,
+  breakautoindent=true,
+  breaksymbolleft={},
+  breaksymbolright={}
+}
+
+% Syntax-highlighted fenced code blocks.
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{
+  commandchars=\\\{\},
+  breaklines=true,
+  breakanywhere=true,
+  breakautoindent=true,
+  breaksymbolleft={},
+  breaksymbolright={}
+}
+
+% Heading typography and Contents styling.
+\usepackage{titlesec}
+\usepackage{needspace}
+\usepackage{tocloft}
+\usepackage{etoolbox}
+
+% Store Pandoc's subtitle separately so the title page can size it cleanly.
+\makeatletter
+\providecommand{\@subtitle}{}
+\providecommand{\subtitle}[1]{\gdef\@subtitle{#1}}
+
+% Balanced title page without an author line.
+\AtBeginDocument{
+  \renewcommand{\maketitle}{%
+    \begin{titlepage}
+      \centering
+      \vspace*{0.22\textheight}
+      {\bfseries\fontsize{34}{40}\selectfont \@title\par}
+      \vspace{1.1em}
+      {\fontsize{16}{20}\selectfont \@subtitle\par}
+      \vspace{3.2em}
+      {\fontsize{11}{14}\selectfont \@date\par}
+      \vfill
+    \end{titlepage}
+  }
+}
+\makeatother
+
+% Parts remain on the same page as their first chapter, but are visually
+% stronger than the chapter title that follows.
+\titleclass{\part}{straight}
+\titleformat{\part}[block]
+  {\normalfont\bfseries\raggedright\fontsize{18}{22}\selectfont}
+  {}{0pt}{}
+\titlespacing*{\part}{0pt}{0pt}{0.35em}
+
+% Chapter titles are compact and do not occupy the width or height of a
+% traditional LaTeX chapter opening.
+\titleclass{\chapter}{straight}
+\titleformat{\chapter}[block]
+  {\normalfont\bfseries\raggedright\fontsize{15}{18}\selectfont}
+  {}{0pt}{}
+\titlespacing*{\chapter}{0pt}{0.08em}{0.55em}
+
+% Readable spacing for 1.1, 1.2, and similar section headings.
+\titleformat{\section}[hang]
+  {\normalfont\bfseries\raggedright\fontsize{13.5}{16}\selectfont}
+  {}{0pt}{}
+\titlespacing*{\section}
+  {0pt}
+  {1.25em plus 0.15em minus 0.15em}
+  {0.5em}
+
+\titleformat{\subsection}[hang]
+  {\normalfont\bfseries\raggedright\fontsize{11.5}{14}\selectfont}
+  {}{0pt}{}
+\titlespacing*{\subsection}
+  {0pt}
+  {1em plus 0.1em minus 0.1em}
+  {0.3em}
+
+\titleformat{\subsubsection}[hang]
+  {\normalfont\bfseries\raggedright\normalsize}
+  {}{0pt}{}
+\titlespacing*{\subsubsection}{0pt}{0.9em}{0.25em}
+
+% Keep a Part, its first chapter, and the opening lines together.
+\pretocmd{\part}{\Needspace{15\baselineskip}}{}{}
+\pretocmd{\chapter}{\Needspace{8\baselineskip}}{}{}
+\pretocmd{\section}{\Needspace{4\baselineskip}}{}{}
+\pretocmd{\subsection}{\Needspace{3.5\baselineskip}}{}{}
+\pretocmd{\subsubsection}{\Needspace{3\baselineskip}}{}{}
+
+% Conventional compact Contents with dotted leaders.
+\renewcommand{\contentsname}{Contents}
+\renewcommand{\cfttoctitlefont}
+  {\normalfont\bfseries\fontsize{18}{22}\selectfont}
+\renewcommand{\cftaftertoctitle}{\par}
+\setlength{\cftbeforetoctitleskip}{-0.5em}
+\setlength{\cftaftertoctitleskip}{0.9em}
+
+\renewcommand{\cftpartfont}{\normalfont\bfseries\normalsize}
+\renewcommand{\cftpartpagefont}{\normalfont\bfseries\normalsize}
+\renewcommand{\cftpartleader}{\cftdotfill{\cftdotsep}}
+\setlength{\cftbeforepartskip}{0.45em}
+\setlength{\cftpartindent}{0pt}
+\setlength{\cftpartnumwidth}{0pt}
+
+\renewcommand{\cftchapfont}{\normalfont\normalsize}
+\renewcommand{\cftchappagefont}{\normalfont\normalsize}
+\renewcommand{\cftchapleader}{\cftdotfill{\cftdotsep}}
+\setlength{\cftbeforechapskip}{0.04em}
+\setlength{\cftchapindent}{1.1em}
+\setlength{\cftchapnumwidth}{0pt}
+
+% Reduce isolated paragraph lines and avoid forced vertical stretching.
+\widowpenalty=10000
+\clubpenalty=10000
+\displaywidowpenalty=10000
+\setlength{\emergencystretch}{3em}
+\raggedbottom
+EOF
+```
+
+Generate the PDF:
+
+```bash
+pandoc "Modern .NET Web Development.md" \
+    --pdf-engine=xelatex \
+    --toc \
+    --toc-depth=1 \
+    --top-level-division=part \
+    --include-in-header=pandoc-header.tex \
+    --highlight-style=tango \
+    --variable documentclass=report \
+    --variable classoption=oneside \
+    --variable papersize=a4 \
+    --variable geometry:margin=20mm \
+    --variable fontsize=10pt \
+    --output "Modern .NET Web Development.pdf"
+```
+
+The headings are already numbered in the manuscript, so do not add
+`--number-sections`. Parts and chapters appear in the generated Contents.
+Each Part stays with its first chapter instead of using a divider page.
+Later chapters still begin on new pages.
+-->
+
+
+\vspace{1\baselineskip}
 
 This book assumes solid C# knowledge, including object-oriented design, interfaces, generics, asynchronous programming, dependency injection, testing, and application architecture. It focuses on the mechanisms specific to web development and on how the browser, HTTP, ASP.NET Core, Blazor, Entity Framework Core, security, background work, and deployment fit together.
 
 The examples target .NET 10 and follow one Product Catalog from a typed URL to a production service. Code listings show the relevant slice of each step rather than repeating unchanged surrounding files, while Appendix A collects the commands and diagnostic paths used throughout the book. The Product Catalog evolves with the chapters, so later listings extend or replace earlier chapter-local versions of the same types rather than forming one cumulative source file.
 
-# Contents
-
-## Part I — How the Web Works
-
-1. From URL to Screen
-2. HTTP and Browser–Server Communication
-
-## Part II — ASP.NET Core
-
-3. Inside an ASP.NET Core Application
-4. From Request to Application Code
-5. Application Services
-
-## Part III — Blazor
-
-6. Components and Razor
-7. Rendering and State
-8. Building Complete Interfaces
-
-## Part IV — Data
-
-9. Relational Data and SQL
-10. Entity Framework Core
-
-## Part V — Secure, Maintainable Applications
-
-11. Authentication and Authorization
-12. Application Structure
-
-## Part VI — Running a Real Application
-
-13. Features Beyond Request and Response
-14. Deployment and Operation
-15. The Complete Request Revisited
-
-## Appendices
-
-A. Practical Command and Diagnostic Reference
+\clearpage
 
 # Part I — How the Web Works
 
-# 1. From URL to Screen
+## 1. From URL to Screen
 
 A web application starts with an action that looks almost trivial: the user types an address into a browser and presses Enter. A short moment later, a page appears. Text is laid out, images arrive, buttons become interactive, and the application begins responding to input. That short delay hides a surprising amount of work. The browser must understand the address, find the correct server, create a secure connection, request the right resource, receive a response, interpret several document formats, download additional files, build an internal representation of the page, calculate its layout, and finally draw pixels on the screen. None of those steps is unique to .NET. ASP.NET Core and Blazor sit on top of this process. Understanding the path from a URL to a rendered page makes the later framework behaviour feel much less arbitrary.
 
 This chapter follows that path from beginning to end. It introduces the browser, addresses, DNS, networks, ports, secure connections, HTML, CSS, JavaScript, the DOM, and browser developer tools. HTTP messages themselves are introduced only briefly here; Chapter 2 examines them properly.
 
-## 1.1 The Browser as a Web Platform
+### 1.1 The Browser as a Web Platform
 
 It is tempting to think of a browser as a program that displays pages. That is true, but incomplete. A modern browser is also a network client, a document parser, a layout engine, a graphics engine, a JavaScript runtime, a storage system, a security boundary, and a debugging environment. When the browser opens a page, it performs several different jobs:
 
@@ -79,7 +215,7 @@ The server provides data and application logic.
 
 Later chapters will refine this model, but it is already enough to explain why web development feels different from desktop development. A desktop application usually owns its window and runs most of its logic in one process. A web application crosses a network boundary and must cooperate with a browser that the application does not control.
 
-## 1.2 URLs, DNS, Addresses, Ports, and Latency
+### 1.2 URLs, DNS, Addresses, Ports, and Latency
 
 Consider this address: `https://catalog.example.com:443/products/42?currency=eur#details`. A browser does not treat it as one opaque string. It separates it into meaningful parts:
 
@@ -131,7 +267,7 @@ Modern protocols and browsers reduce this cost by reusing connections, downloadi
 
 A port is not a physical socket. It is a number used by the operating system to deliver incoming traffic to the correct process. In development, an ASP.NET Core application often runs on an address such as `https://localhost:7184`. Here, `localhost` refers to the current computer and `7184` is the port on which the development server is listening. Another application can use a different port on the same machine without conflict. In production, users usually do not see the port because HTTPS uses port `443` by default, as in `https://catalog.example.com`. A reverse proxy or load balancer may listen on port `443` and forward the request internally to an ASP.NET Core process listening on another port. The deployment chapter will explain that arrangement in detail.
 
-## 1.3 Connections and HTTPS
+### 1.3 Connections and HTTPS
 
 Once the browser knows the server's address, it must establish communication. Traditionally, web traffic has used TCP, which provides a reliable ordered stream of bytes. Modern HTTP/3 uses QUIC, which runs over UDP while still providing reliability and secure transport features suited to web traffic. The browser selects a supported protocol automatically. Application code normally works with HTTP without manually managing TCP or QUIC. For now, the useful idea is that a logical connection is established between the browser and server:
 
@@ -157,7 +293,7 @@ Browser
 
 The cryptographic details are intentionally outside the scope of this tutorial. HTTPS protects the connection between two endpoints. It does not automatically make application code secure. A server can still contain authorization errors, SQL injection vulnerabilities, leaked secrets, or unsafe file handling. Transport security is necessary, but it is only one layer. During local development, .NET commonly uses a development certificate so that applications can run at `https://localhost:...`. The browser may warn about an untrusted certificate if the local certificate has not been installed or trusted correctly.
 
-## 1.4 Requesting the Document and Its Resources
+### 1.4 Requesting the Document and Its Resources
 
 After DNS resolution and connection setup, the browser can ask for a resource. If the user entered `https://catalog.example.com/products/42`, the browser would send an HTTP request representing that action. Conceptually, it says:
 
@@ -211,7 +347,7 @@ This explains several common observations in browser developer tools:
 
 Blazor applications also load framework resources. Depending on the hosting model and render mode, the browser may download JavaScript boot files, .NET assemblies, WebAssembly files, CSS, or establish a SignalR connection. These details will make more sense after the Blazor architecture is introduced.
 
-## 1.5 HTML, CSS, JavaScript, the DOM, and Events
+### 1.5 HTML, CSS, JavaScript, the DOM, and Events
 
 HTML describes the structure and meaning of page content. It uses elements such as headings, paragraphs, buttons, forms, links, tables, and sections.
 
@@ -304,7 +440,7 @@ User clicks button
 
 The exact transport differs between Blazor hosting models. With interactive server rendering, the browser sends event information over a connection to the server, where the component executes. With WebAssembly, the .NET runtime and component code execute in the browser. From the component author's perspective, the programming model is intentionally similar.
 
-## 1.6 Browser Storage and Security Boundaries
+### 1.6 Browser Storage and Security Boundaries
 
 Browsers can retain selected data between requests and page visits. Different mechanisms serve different purposes. Cookies are small values associated with a domain and are commonly sent with HTTP requests, often to represent an authentication session or other server-related state. `localStorage` keeps string values until the application or user removes them, while `sessionStorage` normally keeps them only for the lifetime of a browser tab.
 
@@ -321,7 +457,7 @@ https://catalog.example.com:8443
 
 Because they differ by host, scheme, or port, the browser treats them as separate security contexts. When browser code tries to call a different origin, the server may need to permit the operation using Cross-Origin Resource Sharing, or CORS. CORS is often misunderstood as a general server security mechanism. It is primarily a browser rule controlling whether frontend code may read a cross-origin response. It does not stop non-browser clients from sending requests. The browser also restricts access to local files, devices, the clipboard, camera, microphone, and other capabilities. Many operations require a secure connection, explicit user permission, or a direct user gesture. These rules sometimes feel inconvenient during development, but they are essential. Without them, opening one malicious tab could expose data from every other application the user is signed into.
 
-## 1.7 Developer Tools
+### 1.7 Developer Tools
 
 Every major browser includes developer tools. For someone new to web development, these tools are as important as the debugger in an IDE. They are usually opened with `F12`, `Ctrl+Shift+I`, or the browser's context menu. The **Elements** panel shows the current DOM and the styles applied to the selected element. It is the fastest way to discover why spacing, sizing, visibility, or CSS selection is not behaving as expected. The displayed DOM may differ from the original HTML because scripts and frameworks can modify it after loading.
 
@@ -341,7 +477,7 @@ Did CSS hide or misplace the result?
 
 Browser tools let you answer those questions rather than guessing.
 
-## 1.8 One Complete Page Load
+### 1.8 One Complete Page Load
 
 We can now connect the pieces. Assume the user enters `https://catalog.example.com/products`. The browser separates the URL into its scheme, host, default port, and path. It checks caches for the host's address, then uses DNS if necessary. The resulting IP address tells the network where to send traffic. The browser establishes a connection to the server. Because the scheme is HTTPS, it validates the server certificate and creates an encrypted channel. It sends an HTTP request for `/products`.
 
@@ -365,7 +501,7 @@ User enters URL
 
 Real applications add caching, redirects, proxies, authentication, APIs, streaming, and other behaviour, but they still build on this sequence.
 
-## 1.9 Responsibilities and the Product Catalog
+### 1.9 Responsibilities and the Product Catalog
 
 It is useful to separate browser responsibilities from server responsibilities. The browser owns:
 
@@ -429,17 +565,19 @@ Browser
 
 For now, only the browser side matters. The visible list is represented by HTML elements, styled by CSS, and displayed from the browser's DOM. Later chapters will explain where the product data comes from and how a C# component causes the DOM to change.
 
-## 1.10 What to Keep in Mind
+### 1.10 What to Keep in Mind
 
 A browser is a network client, document parser, runtime, storage system, security boundary, and renderer. A URL identifies how and where to request a resource; DNS resolves its host, ports select the service, and TLS protects an HTTPS connection. The first HTML response often triggers further requests for CSS, JavaScript, fonts, images, and Blazor resources. HTML becomes the DOM, CSS determines layout and appearance, and JavaScript or Blazor connects browser events to application behaviour. Browser storage mechanisms serve different purposes, while same-origin rules restrict how sites interact. Developer tools expose each stage. ASP.NET Core owns server-side request handling, Blazor bridges C# components to browser UI, and EF Core later connects application operations to durable data.
 
-# 2. HTTP and Browser–Server Communication
+\clearpage
+
+## 2. HTTP and Browser–Server Communication
 
 The previous chapter followed a page from a typed URL to pixels on the screen. The browser resolved a host name, established a secure connection, requested a resource, received HTML, downloaded supporting files, built the DOM, applied CSS, and made the page interactive.
 
 This chapter opens the messages that crossed the network. Those messages are HTTP requests and responses. Nearly everything an ASP.NET Core application does begins with a request and ends with a response, whether the result is a complete HTML page, a JSON document, an image, a file download, or a small update used by a Blazor application. HTTP is simple enough to understand in one sitting, but its consequences reach through the entire web stack. Its stateless nature explains cookies and sessions. Its methods and status codes shape APIs. Its headers control caching, authentication, content formats, and security. Its request–response model explains why long-running work needs special handling and why real-time communication uses technologies such as WebSockets and SignalR.
 
-## 2.1 HTTP Messages and Request Anatomy
+### 2.1 HTTP Messages and Request Anatomy
 
 HTTP stands for **Hypertext Transfer Protocol**. The name comes from the early web, where its main purpose was transferring linked documents. Modern applications use it for much more: API calls, uploads, authentication, streaming, telemetry, and communication between services. The basic model has remained the same:
 
@@ -488,7 +626,7 @@ Content-Length: 84
 
 The method expresses the intended operation. The target identifies the resource. Headers describe the request and its body. The body carries data when the operation needs it. Browsers construct these messages automatically when navigating, submitting forms, loading resources, or running client-side code. ASP.NET Core parses them before your endpoint executes, so normal application code rarely handles raw HTTP text.
 
-## 2.2 Methods and Request Targets
+### 2.2 Methods and Request Targets
 
 HTTP methods are sometimes called verbs because they describe what the client wants to do. The most common methods are:
 
@@ -515,7 +653,7 @@ DELETE /api/products/42    -> delete product 42
 
 These conventions are useful because tools, developers, browsers, proxies, and infrastructure can reason about the request before knowing the application-specific code.
 
-### Safe and idempotent methods
+#### Safe and idempotent methods
 
 Two method properties appear often in API design. A **safe** method is intended not to change server state. `GET`, `HEAD`, and `OPTIONS` are considered safe. Reading a product may still create logs or update metrics, but it should not perform a business operation such as deleting the product. An **idempotent** method can be repeated without changing the final result beyond the first successful execution. `GET`, `PUT`, and `DELETE` are intended to be idempotent. For example, deleting product `42` twice should leave the same final state as deleting it once: the product does not exist.
 
@@ -531,7 +669,7 @@ Body      -> what data is being submitted?
 
 This is not an absolute law, but it produces predictable APIs. An identifier generally belongs in the path, filtering and pagination in the query, and create or update data in the body. Query values are visible in browser history, logs, analytics, and copied links. They should not contain passwords, access tokens, or other secrets.
 
-## 2.3 Headers, Bodies, and Content Types
+### 2.3 Headers, Bodies, and Content Types
 
 Headers are name–value pairs that describe the request or response. They are case-insensitive, although standard casing improves readability. Common request headers include:
 
@@ -560,7 +698,7 @@ JSON is common for APIs. Traditional HTML forms often use `application/x-www-for
 
 A content type is not merely a file extension. It is an agreement between sender and receiver about how to interpret the body. If the client sends JSON but declares `text/plain`, automatic deserialization may fail even though the visible text looks correct. Large bodies require care. Upload limits, memory usage, streaming, timeouts, and cancellation become important. Reading a multi-gigabyte upload fully into memory is very different from processing it as a stream.
 
-## 2.4 Responses and Status Codes
+### 2.4 Responses and Status Codes
 
 A response has a structure similar to a request:
 
@@ -616,7 +754,7 @@ The most common codes are enough for most applications:
 
 The distinction between `401` and `403` is especially important. Despite its historical name, `401 Unauthorized` means the request is not successfully authenticated. `403 Forbidden` means authentication may have succeeded, but the user is not allowed to perform the operation. Status codes should be meaningful but not used as a substitute for a useful response body. An API can return structured validation details alongside `400`, or a stable error code alongside `409`. The status gives the broad category; the body gives application-specific context. Returning `200 OK` for every outcome and placing an error only inside JSON makes clients harder to build. Infrastructure, browser tools, logging systems, and HTTP libraries already understand status codes, so the application should use them.
 
-## 2.5 Representations, API Contracts, and REST
+### 2.5 Representations, API Contracts, and REST
 
 A resource is the application concept identified by an address. A representation is the data format used to describe it. The product at `/api/products/42` is the resource. JSON is one possible representation:
 
@@ -687,7 +825,7 @@ POST /api/reports/monthly/generate
 
 That is acceptable. A clear, stable contract is more important than pretending every business operation is a textbook resource update. The tutorial will use REST-style conventions because they make request design predictable, not because every application must satisfy a purity test.
 
-## 2.6 Statelessness, Cookies, Sessions, and Browser Storage
+### 2.6 Statelessness, Cookies, Sessions, and Browser Storage
 
 HTTP is described as stateless because each request is processed as an independent message. The protocol does not automatically remember that two requests came from the same user or belong to the same workflow. Consider two requests:
 
@@ -756,7 +894,7 @@ localStorage / sessionStorage
 
 This difference has security consequences. A cookie marked `HttpOnly` cannot be read by ordinary JavaScript, which helps protect it from some script-based token theft. A token stored in `localStorage` is available to scripts running in that origin. If the application has an XSS vulnerability, malicious script may read it. The correct storage mechanism depends on the hosting model, authentication design, and threat model. The security chapter will compare cookie and bearer-token approaches in detail.
 
-## 2.7 Caching, Redirects, and Content Negotiation
+### 2.7 Caching, Redirects, and Content Negotiation
 
 Web applications repeatedly request the same resources: CSS files, JavaScript bundles, images, fonts, product lists, and API responses. Caching allows a browser or intermediary to reuse a previous response when it is still valid. The server controls much of this behaviour through response headers. A static versioned file may be cached for a long time:
 
@@ -839,7 +977,7 @@ Content-Type: application/json; charset=utf-8
 
 This process is called content negotiation. Many APIs return JSON exclusively, which keeps the contract simple. ASP.NET Core controllers can support multiple output formatters, but supporting formats that no client needs creates extra testing and maintenance. Language and compression can also be negotiated. A browser may send `Accept-Language`, and it commonly advertises supported compression through `Accept-Encoding`. The server can return compressed content with a matching `Content-Encoding` such as `gzip` or `br`. Compression reduces transferred bytes, especially for HTML, CSS, JavaScript, and JSON. Images and videos are often already compressed in their own formats.
 
-## 2.8 CORS and Authentication Information
+### 2.8 CORS and Authentication Information
 
 Suppose a Blazor application is loaded from `https://app.example.com` and calls an API at `https://api.example.com`. These are different origins because their hosts differ. The browser's same-origin policy restricts frontend code from freely reading cross-origin responses. The API can grant permission through CORS response headers:
 
@@ -886,7 +1024,7 @@ Authorization: Bearer eyJhbGciOi...
 
 The server validates the cookie or token and creates an in-memory identity for the current request. ASP.NET Core then exposes that identity through `HttpContext.User`. The credential is not the user object itself. It is evidence that the server validates and turns into claims such as user identifier, name, role, or permission. Authentication and authorization are large enough to deserve their own chapter. For now, the important connection is that user identity must be reconstructed or validated from information arriving with each request.
 
-## 2.9 Errors, Timeouts, Cancellation, and Retries
+### 2.9 Errors, Timeouts, Cancellation, and Retries
 
 When server code throws an unexpected exception, the client cannot receive the exception object directly. The server turns the failure into an HTTP response. During development, ASP.NET Core may return a detailed error page to a local browser. In production, exposing stack traces, SQL details, file paths, or secrets would be dangerous. Production responses should contain safe error information while the full exception is written to server logs. An API error might use a structured format:
 
@@ -912,7 +1050,7 @@ Retries are usually safe for reads. They require more thought for state-changing
 
 Endpoint and service methods should normally pass the resulting `CancellationToken` into asynchronous database and network calls. This allows work to stop when the client disconnects, although application rules may sometimes require an operation to continue independently. Timeouts, cancellation, and retries are not decorative resilience features. They are ways of handling the fact that distributed communication cannot provide the same certainty as a local method call.
 
-## 2.10 HTTP Versions and Real-Time Communication
+### 2.10 HTTP Versions and Real-Time Communication
 
 You may encounter HTTP/1.1, HTTP/2, and HTTP/3. They preserve the same broad request–response semantics while changing how messages are transported. HTTP/1.1 made persistent connections standard but can suffer when many requests compete over limited connections. HTTP/2 multiplexes many streams over one connection and compresses headers, reducing several sources of delay. HTTP/3 runs over QUIC and improves behaviour on unreliable or changing networks, especially when packet loss occurs or a device switches between connections. Application code normally does not choose a different endpoint design for each version. ASP.NET Core and the hosting infrastructure negotiate supported protocols. The important lesson is that HTTP semantics such as methods, headers, status codes, and bodies remain useful even as the transport evolves.
 
@@ -960,7 +1098,7 @@ Viewer browsers
 
 SignalR does not replace normal APIs or database storage. HTTP endpoints still perform commands and queries. SignalR tells connected clients that something changed or delivers time-sensitive messages. Chapter 13 will return to SignalR after the tutorial has covered ASP.NET Core, Blazor, authentication, and application structure.
 
-## 2.11 Inspecting HTTP
+### 2.11 Inspecting HTTP
 
 The Network panel turns HTTP from an abstract protocol into observable behaviour. Open the panel, reload a page, and select a request. The browser usually shows:
 
@@ -1009,7 +1147,7 @@ curl -i \
 
 The same HTTP contract can be exercised without the UI, which is useful for debugging and automated testing.
 
-## 2.12 The Product Catalog HTTP Contract
+### 2.12 The Product Catalog HTTP Contract
 
 Before writing ASP.NET Core code, we can describe part of the Product Catalog as a protocol contract. List products:
 
@@ -1141,11 +1279,15 @@ User clicks Save
 
 Every later part of the tutorial fits somewhere in this path.
 
-## 2.13 What to Keep in Mind
+### 2.13 What to Keep in Mind
 
 HTTP is a message contract: the client sends a method, target, headers, and optional body; the server returns a status, headers, and optional body. Methods express intent, status codes classify outcomes, and representations such as JSON carry data rather than live C# objects. HTTP is stateless, so applications add continuity through cookies, tokens, sessions, browser storage, and persistent records. Caching, redirects, content negotiation, CORS, authentication, and structured errors all operate through the same message boundary. Timeouts are ambiguous, cancellation should flow into I/O, and retries of writes require idempotency. SignalR and related transports supplement request–response when the server must notify connected clients.
 
-# 3. Inside an ASP.NET Core Application
+\clearpage
+
+# Part II — ASP.NET Core
+
+## 3. Inside an ASP.NET Core Application
 
 The previous chapters followed a request across the network. The browser resolved a host name, opened a secure connection, sent an HTTP message, and received another message in return. We can now step across the server boundary and ask a more practical question: what is actually running on the machine that receives that request? An ASP.NET Core application is an ordinary .NET process with a web server and a request-processing pipeline. It is not a special kind of operating-system service, nor does it require a large framework-generated structure.
 
@@ -1153,7 +1295,7 @@ At its smallest, the entire application can fit into a few lines of `Program.cs`
 
 This chapter opens that host. We will create an application, inspect its files, separate development settings from runtime behaviour, understand Kestrel, and follow the process from `dotnet run` to a listening server. Middleware, routing, and application services are introduced only far enough to make the application understandable; the next two chapters examine them in depth.
 
-## 3.1 The Smallest Application and Its Project
+### 3.1 The Smallest Application and Its Project
 
 Create an empty ASP.NET Core project from a terminal:
 
@@ -1233,7 +1375,7 @@ public static class Program
 
 Top-level statements remove ceremony; they do not create a different hosting mechanism. Command-line arguments still arrive through `args`, exceptions can still fail startup, and the process still begins from one generated entry point. Types can be declared below the top-level statements in the same file, although larger applications normally move them into their own files. The template keeps everything together because it is showing the minimum, not recommending that an entire application remain in `Program.cs`.
 
-## 3.2 `Program.cs`, the Builder, and the Build Boundary
+### 3.2 `Program.cs`, the Builder, and the Build Boundary
 
 For an experienced C# developer, the most useful way to think about `Program.cs` is as the application's composition root. It is where infrastructure is selected and connected. A typical file eventually has three visible regions:
 
@@ -1290,7 +1432,7 @@ app.MapGet("/api/products", () => Results.Ok());
 
 Trying to treat the builder and application as interchangeable leads to confusion. `builder.Services` describes how objects should be created. `app` describes how the running server should process requests. Later chapters will show that these two phases are related. Middleware and endpoints can request services registered through the builder. The host creates those services according to their configured lifetime and supplies them when a request needs them.
 
-## 3.3 The Host and Kestrel
+### 3.3 The Host and Kestrel
 
 The word **host** appears frequently in ASP.NET Core documentation. It refers to the runtime environment that manages the application process and its shared infrastructure. The host is responsible for concerns such as:
 
@@ -1340,7 +1482,7 @@ Internet
 
 That arrangement can centralise TLS certificates, host several applications on one machine, apply forwarding rules, or integrate with platform-specific process management. It is common, but it does not mean Kestrel is merely a development server. Kestrel remains the server that directly hosts the ASP.NET Core application. The deployment chapter will return to this boundary. During development, the important point is simply that `dotnet run` starts a real web server inside the application process.
 
-## 3.4 Addresses, Launch Profiles, and Development HTTPS
+### 3.4 Addresses, Launch Profiles, and Development HTTPS
 
 A listening address combines a scheme, host binding, and port. The value is `http://localhost:5098`. `localhost` means the current machine. A browser on the same computer can connect, but another device on the network normally cannot use that binding. A server can instead listen on all IPv4 network interfaces at `http://0.0.0.0:5098`, or use the equivalent IPv6 any-address. This makes the process reachable through the machine's network addresses, assuming firewalls and routing allow it.
 
@@ -1392,7 +1534,7 @@ The HTTPS launch profile requires a certificate. In development, .NET can use a 
 
 This is only a development convenience. A production domain uses a certificate valid for that domain, normally issued and renewed through a trusted certificate authority or hosting platform. HTTPS should not be postponed until the final deployment step. Authentication cookies, browser capabilities, and several security features behave differently on secure and insecure origins. Developing with HTTPS exposes those differences earlier.
 
-## 3.5 Environments and Configuration
+### 3.5 Environments and Configuration
 
 ASP.NET Core applications have a named runtime environment. The conventional names are:
 
@@ -1459,7 +1601,7 @@ var currency = builder.Configuration["Catalog:DefaultCurrency"];
 
 Direct string lookup is useful for a quick demonstration, but larger applications bind related values to typed options classes. Chapter 5 will cover that approach and explain provider precedence, validation, environment variables, and secrets properly. Do not place production passwords, API keys, or signing secrets into committed `appsettings.json` files. Configuration files are convenient, but they are not secret stores.
 
-## 3.6 Content, Public Assets, and Project Structure
+### 3.6 Content, Public Assets, and Project Structure
 
 The **content root** is the application's base path for content files. It is commonly the directory containing the project during development and the published application after deployment. The builder exposes it through:
 
@@ -1499,7 +1641,7 @@ ProductCatalog/
 
 `Program.cs` contains the composition root. The project file controls building. The `appsettings` files provide configuration. `launchSettings.json` controls local launch profiles. `bin` contains build output. `obj` contains intermediate files used by the compiler and SDK. They are generated artifacts, not source code, and are normally excluded from Git. Larger templates add directories such as `Components`, `Pages`, `Controllers`, or `wwwroot`. Those names reflect selected features, not mandatory ASP.NET Core architecture. The framework does not require every application to have `Controllers`, `Services`, `Repositories`, and `Models` folders. Start with the structure that expresses the application. Add projects and folders when they separate meaningful responsibilities, not because a template or diagram suggests that every possible layer must exist from the beginning.
 
-## 3.7 Running, Startup, Lifetime, and Shutdown
+### 3.7 Running, Startup, Lifetime, and Shutdown
 
 When you execute:
 
@@ -1571,7 +1713,7 @@ Configure
 
 That model differs from a command-line utility that performs one calculation and exits. It also explains why per-request data must not be placed casually into static fields: the same process serves many users and many requests over a long period.
 
-## 3.8 One Process Serves Many Requests
+### 3.8 One Process Serves Many Requests
 
 Kestrel does not start a new application for each browser request. One running process normally handles many concurrent requests.
 
@@ -1585,7 +1727,7 @@ ASP.NET Core process
 
 Requests can overlap. One may be waiting for the database while another is serializing a response. This is why asynchronous I/O matters in web applications: waiting for network or database operations should not unnecessarily occupy a thread. It is also why shared mutable state requires care. A singleton object may be accessed by many requests at once. A static collection used as an in-memory store must be thread-safe. A request-specific object must not leak into another user's operation. ASP.NET Core's dependency injection lifetimes help express these boundaries. Singleton services belong to the whole process, scoped services normally belong to one request, and transient services are created whenever requested. Chapter 5 will explain those lifetimes using the Product Catalog. For now, remember that the process is shared while request context is not.
 
-## 3.9 The First Product Catalog Host
+### 3.9 The First Product Catalog Host
 
 Replace the initial `Program.cs` with a small but complete Product Catalog host:
 
@@ -1662,7 +1804,7 @@ Is the process running?
 
 That sequence is faster than changing several parts of the application at once.
 
-## 3.10 The Host Mental Model
+### 3.10 The Host Mental Model
 
 The Product Catalog host is small, but it already has the main shape of a production ASP.NET Core process. The .NET runtime starts the generated entry point. `CreateBuilder` prepares configuration, logging, dependency injection, the environment, and web-host defaults. `Build` creates the host and application. Kestrel opens listening endpoints. The endpoint mappings describe two possible request destinations. `Run` keeps the process alive and participates in graceful shutdown. What remains deliberately unexplained is how an incoming request moves from Kestrel to a particular endpoint. That is the job of the request pipeline and routing. The boundary currently looks like this:
 
@@ -1679,7 +1821,9 @@ Chapter 4 fills in that question mark. We will follow a request through middlewa
 
 An ASP.NET Core application is a long-running .NET process assembled in `Program.cs`. `CreateBuilder` prepares configuration, logging, dependency injection, the environment, and Kestrel; `Build` creates the application; mapped endpoints define request destinations; and `Run` owns the process lifetime. Launch profiles and development certificates affect local startup, while production configuration comes from the deployment environment. The content root and web root serve different purposes, and only configured public assets should be exposed. One process serves many concurrent requests, so service lifetimes, cancellation, shared state, and graceful shutdown matter. The host is the outer shell; the request pipeline determines which code handles each message.
 
-# 4. From Request to Application Code
+\clearpage
+
+## 4. From Request to Application Code
 
 Kestrel can accept a connection and turn incoming bytes into an HTTP request, but that still does not answer the most useful question: how does ASP.NET Core decide which C# code should run? The answer is not one mechanism. A request moves through a pipeline. Middleware can inspect it, change it, reject it, or perform work around the rest of the pipeline. Routing then matches the request to an endpoint. The endpoint reads values from the request, calls application code, and creates a response. That response travels back through the middleware before Kestrel sends it to the client. The complete path looks like this:
 
@@ -1698,7 +1842,7 @@ Client
 
 This chapter follows that path in detail. It introduces `HttpContext`, middleware order, short-circuiting, routing, route templates, Minimal APIs, controllers, model binding, results, errors, and request cancellation. The Product Catalog will grow from two fixed endpoints into a small HTTP API, but its data will remain in memory until the next chapter moves responsibility into services.
 
-## 4.1 `HttpContext` and the Middleware Pipeline
+### 4.1 `HttpContext` and the Middleware Pipeline
 
 ASP.NET Core represents the current HTTP exchange with an `HttpContext`. One context is created for each request and is available while that request moves through the pipeline. The most important parts are:
 
@@ -1751,7 +1895,7 @@ Response
 
 This shape makes middleware useful for cross-cutting work. Logging can record a request before and after it executes. Exception handling can wrap everything below it. Response compression can inspect the response produced downstream. Authentication can establish the user before an endpoint needs that identity. Middleware is not the right place for ordinary business operations such as calculating a product price or checking inventory rules. Those operations belong in application services. Middleware is best for concerns that apply to many endpoints or to the HTTP pipeline itself.
 
-## 4.2 Pipeline Composition, Short-Circuiting, and Order
+### 4.2 Pipeline Composition, Short-Circuiting, and Order
 
 ASP.NET Core exposes several ways to add pipeline behaviour. `Use` adds middleware that can call the next component:
 
@@ -1845,7 +1989,7 @@ app.Run();
 
 The exact order depends on the application and enabled features. The important habit is to read the pipeline from top to bottom and ask what state each component requires from the components before it.
 
-## 4.3 Routing, Templates, and Endpoint Metadata
+### 4.3 Routing, Templates, and Endpoint Metadata
 
 Routing matches an incoming request to an executable endpoint. An endpoint is a unit of request-handling code plus metadata describing it. When the application starts, methods such as `MapGet`, `MapPost`, `MapControllers`, and `MapRazorComponents` add endpoint definitions to a collection. When a request arrives, routing compares its method, path, host, and other relevant information against those definitions.
 
@@ -1944,7 +2088,7 @@ app.Use(async (context, next) =>
 
 This is one reason routing is more than a switch statement over paths. It creates a shared description of the selected operation that authorization, diagnostics, link generation, OpenAPI generation, and other systems can use.
 
-## 4.4 Minimal APIs and Route Groups
+### 4.4 Minimal APIs and Route Groups
 
 Minimal APIs connect a route pattern to a delegate with little surrounding ceremony.
 
@@ -2015,7 +2159,7 @@ app.MapProductEndpoints();
 
 This is organisation, not a new architectural layer. The handlers should still delegate real application work to services introduced in Chapter 5.
 
-## 4.5 Binding Request Data and Services
+### 4.5 Binding Request Data and Services
 
 A route handler declares the values it needs. ASP.NET Core obtains those values from the request or from registered services. This process is called parameter binding.
 
@@ -2101,7 +2245,7 @@ app.MapGet("/api/products", ([FromServices] ProductService service) => Results.O
 
 This is constructor injection's endpoint equivalent. The handler declares what it needs and the framework supplies it from the current request's service scope. Chapter 5 will introduce registrations, service lifetimes, scopes, options, logging, HTTP clients, and background services. For now, notice how parameter binding and dependency injection meet at the endpoint boundary: some parameters come from the request, while others come from the host.
 
-## 4.6 Results, Status Codes, and Validation
+### 4.6 Results, Status Codes, and Validation
 
 An endpoint result turns application output into an HTTP response. Minimal APIs can return plain values, `IResult`, or typed result types. Returning a string normally creates a text response:
 
@@ -2191,7 +2335,7 @@ User is not allowed to create products
 
 Keeping these distinctions clear improves status codes and error messages. It also prevents endpoint code from becoming a long sequence of unrelated checks. Chapters 8 and 12 examine data annotations, Blazor form validation, custom validation, and application-level rules. At this stage, remember that successful deserialization does not make a request valid.
 
-## 4.7 Controllers and Minimal APIs
+### 4.7 Controllers and Minimal APIs
 
 Controller-based APIs use classes and action methods rather than mapping every handler directly. First register controller services and map controller endpoints:
 
@@ -2264,7 +2408,7 @@ public ActionResult<ProductSummary> CreateProduct([FromBody] CreateProductReques
 
 With `[ApiController]`, complex types are commonly inferred from the body and route-compatible simple values from the route or query string. Explicit attributes are still useful when the source matters to readability. Controller model binding also populates model state with conversion and validation errors. The automatic API behaviour can return a structured `400` response before the action executes. The same rule applies in either endpoint model: request DTOs describe transport input. They should not silently become domain entities, persistence entities, and response models all at once.
 
-## 4.8 Endpoint Filters
+### 4.8 Endpoint Filters
 
 Endpoint filters provide behaviour around Minimal API handlers. They are narrower than middleware because they apply only to selected endpoints or groups and run after routing has selected an endpoint.
 
@@ -2296,7 +2440,7 @@ Application service
 
 Choosing the narrowest appropriate mechanism keeps responsibilities clearer.
 
-## 4.9 Errors and Request Cancellation
+### 4.9 Errors and Request Cancellation
 
 An unexpected exception should not expose a stack trace or implementation details to a production client. It should be logged on the server and translated into a controlled error response. During development, detailed exception pages are useful because the developer needs the stack trace. In production, the response should remain safe and stable. A basic configuration is:
 
@@ -2335,7 +2479,7 @@ var products = await database.Products.AsNoTracking().ToListAsync(token);
 
 Cancellation is not a failure that should always be logged as an application error. It often means the requester no longer needs the work. Code should allow the cancellation to propagate unless it has a specific reason to translate or clean up. Not every operation should be cancelled halfway through. Once a critical external side effect has begun, the application may need transactional or idempotent behaviour rather than simply abandoning it. The token is a signal, not a substitute for operation design.
 
-## 4.10 The Product Catalog API and Diagnosis
+### 4.10 The Product Catalog API and Diagnosis
 
 The following example expands the in-memory Product Catalog. It is intentionally contained in one file so that the request boundary remains visible. Chapter 5 will separate state and operations into services.
 
@@ -2476,11 +2620,13 @@ Check request method and URL
 
 Add logging where it reveals a boundary, not at every line. ASP.NET Core already logs request and routing information at useful categories. Increasing log verbosity temporarily is often better than adding permanent ad hoc output.
 
-## 4.11 What to Keep in Mind
+### 4.11 What to Keep in Mind
 
 Each request receives an `HttpContext` and moves through ordered middleware before routing selects an endpoint. Middleware can wrap later work or short-circuit it, so registration order affects security, error handling, caching, and response behaviour. Routes describe URL shapes and carry metadata used by authorization, diagnostics, and OpenAPI. Minimal APIs and controllers are two forms of the same HTTP boundary. Binding converts route, query, header, form, body, and service inputs into typed parameters; validation and business rules remain separate concerns. Results translate application outcomes into status codes and bodies, while exception handling protects production details and request cancellation prevents abandoned I/O from consuming resources. Endpoints should adapt HTTP to application operations rather than own the application.
 
-# 5. Application Services
+\clearpage
+
+## 5. Application Services
 
 Chapter 4 left the Product Catalog in an intentionally awkward state. The endpoints owned a shared list, repeated validation, generated identifiers, and decided how products should change. That kept the request path visible, but it also mixed HTTP concerns with application behaviour. A request handler should usually coordinate work rather than own it. It reads HTTP input, calls an application service, and turns the result into an HTTP response. The service owns the operation itself.
 
@@ -2488,7 +2634,7 @@ Once that boundary exists, the same operation can be called from a Minimal API, 
 
 This chapter moves the Product Catalog's behaviour out of its endpoints and into services. It then uses that example to explain service registration, request scopes, lifetimes, options, structured logging, outgoing HTTP calls, and background services.
 
-## 5.1 Endpoints Coordinate; Services Perform the Operation
+### 5.1 Endpoints Coordinate; Services Perform the Operation
 
 Consider an endpoint that creates a product. At the HTTP boundary it must read a request body, choose a status code, and return a response. Those are web concerns. Deciding whether the name is acceptable, normalising the currency, assigning an identifier, storing the product, and reporting the outcome are application concerns. When all of that code remains in the endpoint, the endpoint grows for reasons unrelated to HTTP. A second endpoint or background process must either call through the HTTP layer or copy the same rules. Tests also become unnecessarily tied to routing and serialization. A cleaner request path is:
 
@@ -2525,7 +2671,7 @@ productEndpoints.MapPost(
 
 The handler still understands HTTP, but it no longer owns product storage or validation. Its work is translation: JSON becomes a typed request, the request goes to the service, and the service result becomes an HTTP response. This pattern will appear repeatedly. Blazor components should not become repositories, controllers should not calculate business rules, and background workers should not duplicate endpoint logic. Each outer adapter should call the same application operation.
 
-## 5.2 The Service Container Connects Objects
+### 5.2 The Service Container Connects Objects
 
 A normal C# object receives its dependencies through its constructor:
 
@@ -2580,7 +2726,7 @@ public sealed class ProductsController(IProductCatalog products) : ControllerBas
 
 Later, Razor components will use `@inject` or `[Inject]`. These are different entry points into the same service container. The container is not a global dictionary that application code should query whenever it needs something. Calling `IServiceProvider.GetRequiredService<T>()` throughout the application hides dependencies and turns resolution into runtime behaviour. Constructor or parameter injection keeps dependencies visible in the type's public shape. Direct resolution is still useful at infrastructure boundaries where a scope must be created explicitly, such as application startup or a background service. It should be the exception, not the normal way a service finds its collaborators.
 
-## 5.3 Lifetimes, Request Scopes, and Captive Dependencies
+### 5.3 Lifetimes, Request Scopes, and Captive Dependencies
 
 A registration also defines how long an instance lives. The built-in container supports three main lifetimes: transient, scoped, and singleton. A **transient** service is created each time it is requested. It suits lightweight, stateless objects whose identity does not need to be shared. A **scoped** service is created once within a dependency injection scope. In an ordinary ASP.NET Core HTTP request, the framework creates one scope for the request, so all resolutions of a scoped service within that request receive the same instance. A later request gets another instance. A **singleton** service is shared for the lifetime of the application process. Every request and component that resolves it receives the same instance.
 
@@ -2614,7 +2760,7 @@ The lifetime is not a statement about how important a service is. It describes i
 
 These are defaults, not laws. The correct lifetime depends on what the service owns. A service that wraps per-request transaction state should not be singleton. A large thread-safe cache should not be recreated every time it is requested.
 
-### The request scope
+#### The request scope
 
 The request scope is one reason scoped services are common in web applications. Kestrel receives a request, ASP.NET Core creates a scope, the endpoint and its dependencies are resolved from that scope, and the scope is disposed after the request finishes.
 
@@ -2629,7 +2775,7 @@ Request ends
 
 Entity Framework Core registers `DbContext` as scoped by default because a unit of database work commonly belongs to one request. Chapter 10 will explain the important Blazor exceptions and when `IDbContextFactory<TContext>` is a better fit.
 
-### Captive dependencies
+#### Captive dependencies
 
 A longer-lived service must not hold a shorter-lived service. The clearest invalid combination is a singleton depending on a scoped service:
 
@@ -2640,7 +2786,7 @@ Singleton ProductCache
 
 The singleton would capture one scoped instance and keep it beyond its intended scope. In development, scope validation commonly detects this and fails early. Even when an invalid graph is not detected, it can produce stale state, concurrency errors, and use-after-disposal failures. The safe direction is: `Transient -> Scoped -> Singleton`. A shorter-lived object can depend on a longer-lived one because the dependency remains valid for the shorter object's entire life. The reverse direction requires a deliberate scope created only for the duration of one operation.
 
-## 5.4 Moving the Product Catalog into Services
+### 5.4 Moving the Product Catalog into Services
 
 The in-memory list from Chapter 4 must survive between requests, so its owner needs a lifetime longer than one request. A temporary in-memory store can be a singleton, but it must also be thread-safe because requests execute concurrently. First define the product model and operation contracts:
 
@@ -2791,7 +2937,7 @@ builder.Services.AddScoped<IProductCatalog, ProductCatalog>();
 
 The singleton store preserves data across requests. The scoped service can later use a scoped `DbContext`, so its lifetime already matches the likely production design.
 
-## 5.5 Ownership, Disposal, and Multiple Implementations
+### 5.5 Ownership, Disposal, and Multiple Implementations
 
 The container owns the instances it creates. If a registered service implements `IDisposable` or `IAsyncDisposable`, the container disposes it when the owning scope ends. A scoped disposable is released with the scope; a singleton is released when the application shuts down. Application code should not dispose an injected service. It did not create the instance and does not know whether another consumer shares it. The same ownership rule applies outside dependency injection: the code that creates a resource should normally own its disposal. Avoid registering a pre-created disposable unless the external owner is intentional:
 
@@ -2808,7 +2954,7 @@ builder.Services.AddSingleton<ExternalConnection>();
 
 Services should also be designed for constructor injection. They should not depend directly on static global state, read environment variables in the middle of operations, or construct infrastructure clients internally. Visible dependencies make the object easier to understand and test. Do not inject a service merely because it exists in the container. A class with ten unrelated dependencies is usually carrying too many responsibilities. Dependency injection makes an object graph possible; it does not make every object graph well designed.
 
-### Multiple implementations
+#### Multiple implementations
 
 Sometimes one contract has several implementations. Registering the same service type more than once allows `IEnumerable<T>` resolution, while keyed services allow selecting an implementation by key. Both are useful, but neither should replace a clear application concept. For example, several export formats can be represented as a collection:
 
@@ -2828,7 +2974,7 @@ public sealed class ProductExportService(IEnumerable<IProductExporter> exporters
 
 Keyed services are appropriate when a known key selects one implementation, but frequent runtime service lookup can make dependencies harder to follow. Prefer an explicit strategy service when selection contains real business logic.
 
-## 5.6 Typed Options and Structured Logging
+### 5.6 Typed Options and Structured Logging
 
 Chapter 3 introduced configuration as a combined set of key-value sources. Reading raw strings directly is useful at startup, but application services are easier to use when related settings are represented by a typed object. Suppose the Product Catalog has a default currency and a maximum page size:
 
@@ -2924,7 +3070,7 @@ catch (HttpRequestException exception)
 
 This preserves the exception type, message, and stack trace. Logging only `exception.Message` throws away most diagnostic context. The application writes through `ILogger`; providers decide where entries go. The default host includes console and debug-oriented providers. Production systems often add a central telemetry or structured logging provider so entries from multiple processes can be searched together. Application services should not know which provider is installed.
 
-## 5.7 Outgoing HTTP and Background Services
+### 5.7 Outgoing HTTP and Background Services
 
 A server frequently becomes an HTTP client itself. The Product Catalog might call a currency service, image processor, payment provider, or another internal API. These calls should not be scattered across endpoints or constructed with `new HttpClient()` for every request. `IHttpClientFactory` centralises logical client configuration and manages the lifetime of underlying handlers. A typed client keeps the external contract in one place:
 
@@ -3031,7 +3177,7 @@ A background service shares the web application's process. If the process stops,
 
 That task has no durable ownership, may outlive request-scoped dependencies, and can disappear when the process stops. A request should either await the operation or place a durable work item into a queue that a controlled background worker consumes. Shutdown also matters. `stoppingToken` tells the worker that the host is stopping. Loops and I/O should observe it and finish promptly. A deployment should not have to kill the process because a worker ignored cancellation indefinitely.
 
-## 5.8 Registration and the Final Endpoints
+### 5.8 Registration and the Final Endpoints
 
 As the application grows, `Program.cs` should remain a readable composition root rather than a long list of unrelated registrations. ASP.NET Core libraries commonly expose `Add...` extension methods that register one coherent feature. The Product Catalog can follow the same convention:
 
@@ -3164,17 +3310,21 @@ POST /api/products
 
 When Chapter 10 replaces `MemoryProductStore` with EF Core, the endpoint contract can remain almost unchanged. The new store will be scoped rather than singleton, and its methods will perform real asynchronous I/O, but the web boundary still calls `IProductCatalog`.
 
-## 5.9 What to Keep in Mind
+### 5.9 What to Keep in Mind
 
 Dependency injection separates object construction from application behaviour. Registrations define implementations and lifetimes: transient instances are created per resolution, scoped instances normally live for one request, and singletons live for the process and must be concurrency-safe. Shorter-lived services must not be captured by longer-lived ones. Typed options group configuration, structured logs preserve searchable fields, `HttpClientFactory` manages outgoing HTTP clients, and hosted services own work outside requests. In the Product Catalog, a thread-safe in-memory store and scoped application service move state and rules out of endpoints, leaving the HTTP layer responsible only for translation. Production storage can later replace the memory implementation without rewriting the callers.
 
-# 6. Components and Razor
+\clearpage
+
+# Part III — Blazor
+
+## 6. Components and Razor
 
 The Product Catalog now has an HTTP API and a set of application services, but it still has no user interface. A browser can call `GET /api/products`, receive JSON, and display the raw response, yet that is not how users expect to work with an application. They need a page that presents products clearly, reacts to clicks and form input, and updates when application state changes. Blazor provides that interface using **Razor components**. A component is a reusable piece of UI written with HTML-like markup and C#. It can receive values from a parent, raise events, hold state, render child components, use injected services, and decide what markup should appear. A complete page is a component, but so is a product card, navigation menu, dialog, form field, or status message.
 
 This chapter focuses on how components are written and connected. It covers Razor syntax, component classes, parameters, callbacks, binding, templates, cascading values, dependency injection, arbitrary HTML attributes, and CSS isolation. The next chapter will examine what happens after a component changes: render trees, rerendering, lifecycle methods, state ownership, and disposal.
 
-## 6.1 Blazor and the Component Model
+### 6.1 Blazor and the Component Model
 
 Traditional server-rendered applications generate HTML for each request. The user follows a link or submits a form, the server produces a new page, and the browser replaces the old document. JavaScript can make such pages more interactive, but the server remains responsible for most page generation. Client-side JavaScript frameworks take a different approach. The browser loads an application that maintains UI state, handles events, calls APIs, and updates selected parts of the DOM without replacing the whole page. Blazor uses a component model similar to other modern UI frameworks, but the components and most application behaviour are written in C#. Depending on the chosen render mode, a component can render on the server, become interactive through a server connection, execute in WebAssembly inside the browser, or move from server-rendered HTML to client-side execution after the application loads. The syntax used to build the component remains largely the same:
 
@@ -3246,7 +3396,7 @@ public partial class ProductList
 
 Both styles compile to the same component type. Keeping markup and code together is often clearer while the component is small. A code-behind file becomes useful when the logic grows large enough to distract from the UI structure, though a very large code-behind class can also indicate that application logic belongs in a service rather than in the component.
 
-## 6.2 Razor Syntax and Directives
+### 6.2 Razor Syntax and Directives
 
 Razor treats ordinary text as markup and uses `@` to enter C#. A property can be inserted directly into an element:
 
@@ -3379,7 +3529,7 @@ A shared base class can centralise a small amount of common component behaviour,
 
 Render modes affect where and how interaction executes. They are introduced later in this chapter and examined more closely in Chapter 7. `@code` opens the component's C# member block. It is not an event and does not execute at a particular time. It simply contributes fields, properties, methods, and lifecycle overrides to the generated class.
 
-## 6.3 Choosing Component Boundaries
+### 6.3 Choosing Component Boundaries
 
 A component is not merely a way to split a long `.razor` file. It creates a boundary with its own inputs, events, state, rendering work, and lifecycle. Good component boundaries normally follow meaningful UI responsibilities. For the Product Catalog, a useful decomposition might be:
 
@@ -3404,7 +3554,7 @@ ProductsPage
 
 If none apply, ordinary markup or a small helper method may be enough.
 
-## 6.4 Parameters, Callbacks, Events, and Binding
+### 6.4 Parameters, Callbacks, Events, and Binding
 
 A child component receives input through properties marked with `[Parameter]`. `ProductCard.razor`:
 
@@ -3604,7 +3754,7 @@ This expands conceptually to:
 
 The convention is useful, but it does not mean both components own the state. The parent still owns `_search`; the child receives the current value and requests changes through `ValueChanged`. For more control around an update, `@bind:get`, `@bind:set`, `@bind:after`, and related forms can separate reading, assigning, and post-update work. Use the simplest form that expresses the behaviour clearly. If binding starts hiding substantial validation, network calls, or business logic, an explicit event handler may be easier to understand.
 
-## 6.5 Fragments and Generic Components
+### 6.5 Fragments and Generic Components
 
 A component parameter does not have to contain data. It can contain markup. `RenderFragment` represents a block of UI that can be rendered later. The conventional parameter name for unnamed child content is `ChildContent`. `Panel.razor`:
 
@@ -3705,7 +3855,7 @@ Razor often infers `TItem` from the `Items` argument. It can also be specified e
 
 Generic components are useful for reusable lists, tables, selectors, forms, and wrappers that preserve the caller's model type. They should not be introduced merely to make a component appear flexible. A strongly typed `ProductGrid` can be clearer than a generic grid if the component contains product-specific behaviour. The same design rule used for ordinary generic code applies: create the abstraction when several real cases share the same structure, not when only one case exists.
 
-## 6.6 Cascading Values and Application Services
+### 6.6 Cascading Values and Application Services
 
 Passing a value through several layers can become noisy when intermediate components do not use it.
 
@@ -3810,7 +3960,7 @@ Interactive WebAssembly component
 
 The UI can look similar in both cases, but the process boundary is different. This distinction affects service registration, security, latency, deployment, and which assemblies may contain a component.
 
-## 6.7 Render Modes
+### 6.7 Render Modes
 
 A Blazor Web App can render components in several ways. **Static server rendering** runs the component on the server for an HTTP request and sends HTML to the browser. The rendered output is not automatically interactive after it arrives. **Interactive Server** keeps component instances on the server and sends browser events over a persistent connection. C# handlers run on the server, and DOM updates are sent back to the browser. **Interactive WebAssembly** downloads the .NET runtime and client assemblies so that component code runs in the browser. **Interactive Auto** initially uses server interactivity and can use WebAssembly on later visits after the client resources have downloaded. The same component model is used across these modes, but the execution environment matters:
 
@@ -3833,7 +3983,7 @@ A render mode can be selected globally or for a component. For example:
 
 Components using interactive WebAssembly or Auto need client-compatible code and normally live in the `.Client` project of a Blazor Web App. They cannot depend on server-only implementation details, local files, server secrets, or a server database connection. Do not choose a render mode by habit. Server interactivity has a small initial download and direct access to server services, but it depends on a live connection and uses server resources for each active circuit. WebAssembly can continue executing client-side and reduces per-user server UI state, but it requires a larger download and reaches protected data through APIs. Static rendering is simple and efficient for content that does not need client-side interaction. Chapter 7 explains prerendering, interactive startup, circuits, and the rendering consequences in more detail.
 
-## 6.8 Attributes and References
+### 6.8 Attributes and References
 
 Component attributes can receive literals or C# expressions:
 
@@ -3903,7 +4053,7 @@ An `ElementReference` identifies a DOM element for framework features or JavaScr
 
 The parent can call public members after the child has rendered, but this creates tighter coupling than parameters and callbacks. A reference is appropriate for imperative operations such as focusing an input, opening a specialised editor, or invoking a method on a third-party component. It should not become the normal way parent and child components exchange state. References are assigned only after rendering creates the target. Accessing them during initialisation is too early. The lifecycle chapter will show when they become available.
 
-## 6.9 CSS Isolation, Imports, and Discovery
+### 6.9 CSS Isolation, Imports, and Discovery
 
 A Razor component can have a matching `.razor.css` file:
 
@@ -3970,7 +4120,7 @@ Components/
 
 Page components represent routes. Feature components represent reusable pieces of a feature. Shared components are genuinely cross-feature UI elements. A component should not be moved to `Shared` simply because it is used twice inside the same feature.
 
-## 6.10 The First Product Page
+### 6.10 The First Product Page
 
 The pieces can now be combined into a small page. `Products.razor`:
 
@@ -4103,19 +4253,21 @@ Products page owns screen state
 
 The page is not complete. It uses `CancellationToken.None`, reloads the whole product list after saving, and has only basic error handling. The editor and form validation have not yet been implemented. Those choices are deliberate. The purpose here is to see component composition and communication before adding rendering details and full interface behaviour. The markup remains readable because application operations live in `IProductCatalog`, repeated presentation lives in child components, and state ownership stays in the page. If the page grows, its loading and editing behaviour may move into a dedicated presentation-state service, but that extra abstraction is not yet necessary.
 
-## 6.11 Common Mistakes and Key Ideas
+### 6.11 Common Mistakes and Key Ideas
 
 Component problems usually come from unclear ownership rather than Razor syntax. Keep database access, business rules, HTTP translation, and unrelated workflow state outside the component; a page should coordinate presentation and call application services. Treat parameters as parent-owned input, report requested changes through callbacks, and use an internal edit model when temporary mutation is necessary. Prefer a clear value owner over webs of two-way binding, cascading values, or component references.
 
 Blazor already rerenders after its normal events and lifecycle methods, so manual `StateHasChanged` calls should be reserved for external notifications or deliberate intermediate states. Introduce generic components only after several real uses justify the abstraction, and remember that moving code into a `.razor.cs` file changes layout rather than responsibility. Interactive WebAssembly code runs in the browser and cannot contain secrets or server-only dependencies; all browser input remains untrusted regardless of render mode. A component is a C# type that describes UI. Parameters move data down, `EventCallback` reports actions up, events and binding connect browser input to state, fragments represent reusable UI, and services connect presentation to application operations. The browser still owns HTML, the DOM, CSS, accessibility, and final pixels.
 
-# 7. Rendering and State
+\clearpage
+
+## 7. Rendering and State
 
 A component describes what the interface should look like for its current state. When that state changes, Blazor runs the component again, compares the new result with the previous one, and updates only the affected parts of the browser DOM. That sounds similar to redrawing a desktop window, but Blazor does not paint pixels directly and it does not normally replace the whole page. It works with a component tree, a render tree, and a browser document that may live in another process or even on another machine.
 
 This chapter explains that mechanism and the lifecycle around it. It answers the questions that usually matter most when a Blazor application begins behaving unexpectedly: who requests a rerender, when lifecycle methods run, why changing a field sometimes updates the page and sometimes does not, where state should live, what survives navigation or refresh, why event subscriptions must be removed, and how server-side circuits change dependency-injection scopes.
 
-## 7.1 State, Render Trees, and the DOM
+### 7.1 State, Render Trees, and the DOM
 
 Consider a product page with three fields:
 
@@ -4164,7 +4316,7 @@ Razor component state
 
 Rendering therefore does not mean that Blazor rebuilds the whole page. A component may execute its rendering logic again, but only the calculated differences are applied. A page with one changed product price can produce a small text update rather than a new document. The comparison relies on the sequence and identity of render-tree entries. This is why manually building render trees requires stable sequence numbers and why normal Razor markup is preferable for almost all application code: the compiler can generate efficient, predictable instructions from the source structure.
 
-## 7.2 Render Triggers and External Notifications
+### 7.2 Render Triggers and External Notifications
 
 A component renders when it is first added to the component hierarchy. After that, `ComponentBase` requests rendering in several common situations: when the parent supplies parameters, when a Blazor event callback completes, and when the component explicitly calls `StateHasChanged`. Framework features such as cascading values can also cause parameter updates that lead to rendering. This explains why a button handler normally needs no manual notification:
 
@@ -4225,7 +4377,7 @@ The first call allows the intermediate status to render before the awaited opera
 
 `InvokeAsync` schedules the callback on Blazor's synchronization context. This matters particularly for interactive server components, where each circuit provides a logical single-threaded environment even though the server handles many circuits concurrently. Calling component rendering methods directly from an unrelated thread can violate that context. The discarded task in this compact example is acceptable only because the event delegate cannot return a `Task`; production code should ensure that exceptions are observed, commonly by using an asynchronous notification abstraction or by routing failures to an error-handling service. The essential pattern is subscription, `InvokeAsync`, `StateHasChanged`, and unsubscription.
 
-## 7.3 Parent Rendering, `ShouldRender`, and `@key`
+### 7.3 Parent Rendering, `ShouldRender`, and `@key`
 
 When a parent renders, Blazor evaluates the parameters supplied to each child. If a child receives new parameter values, its parameter lifecycle runs and it may render again. The child should therefore treat parameters as current input, not as values assigned only once.
 
@@ -4269,7 +4421,7 @@ When product `42` moves, its component identity follows product `42`. When a pro
 
 Use `@key` when items can be inserted, deleted, or reordered and child identity matters. It is not needed on every loop, and an unstable key such as a newly created object defeats the purpose.
 
-## 7.4 The Component Lifecycle
+### 7.4 The Component Lifecycle
 
 A component passes through a predictable set of stages. The exact framework implementation contains more detail, but the practical order is:
 
@@ -4329,7 +4481,7 @@ Navigating from `/products/41` to `/products/42` may reuse the same page compone
 
 Element references are not usable during initialization because the corresponding element does not exist yet. `firstRender` prevents repeating one-time setup after every update. Unlike ordinary event callbacks and other lifecycle methods, completion of `OnAfterRenderAsync` does not automatically request another render. Automatically doing so would create an endless loop: render, after-render task, render again. If after-render work changes state that must be displayed, request rendering explicitly and ensure the condition eventually stops. Server prerendering does not call the after-render methods because there is no interactive browser DOM at that stage. They run after the component becomes interactive.
 
-## 7.5 Async Work, Cancellation, and Disposal
+### 7.5 Async Work, Cancellation, and Disposal
 
 An asynchronous lifecycle method or event handler can yield before it completes. Blazor can render the synchronous state established before the first incomplete `await`, then render again when the task completes.
 
@@ -4387,7 +4539,7 @@ Production code should handle the expected cancellation path without showing it 
 
 Failing to unsubscribe lets the service keep a reference to the component. The removed component can continue receiving events and may remain in memory. Disposal timing should not be used as application logic. It may occur after navigation, conditional removal, circuit loss, or other framework activity, and an asynchronous initialization task may still be incomplete. Disposal code should tolerate partially created resources and should not call `StateHasChanged`, because the component is leaving the render tree. If both `IDisposable` and `IAsyncDisposable` are implemented, Blazor uses the asynchronous path. Prefer one interface that matches the resources being released.
 
-## 7.6 State Lifetimes and Ownership
+### 7.6 State Lifetimes and Ownership
 
 "State management" is not one feature. It is the decision of where a value belongs and how long it must survive. The Product Catalog may contain several kinds of state at once:
 
@@ -4456,7 +4608,7 @@ builder.Services.AddScoped<ProductWorkspaceState>();
 
 Components subscribe, use `InvokeAsync(StateHasChanged)` when notified externally, and unsubscribe during disposal. The service should expose meaningful operations such as `Select`, `BeginEdit`, or `Clear`, rather than public setters that allow arbitrary mutation. The meaning of `Scoped` depends on the Blazor execution model. In an ordinary HTTP endpoint, scoped means one instance per request. In interactive server rendering, a scoped service normally lives for the user's circuit, which can span many events and navigations. In WebAssembly, scoped services behave much like client-side singletons because there is no normal HTTP request scope inside the browser application. Never place per-user mutable state in a server singleton. A singleton is shared by all users in the process and can leak one user's data into another session. Use singleton services only for thread-safe application-wide data and behaviour.
 
-## 7.7 Navigation, Reconnection, and Prerendering
+### 7.7 Navigation, Reconnection, and Prerendering
 
 Internal Blazor navigation often preserves the interactive application and its scoped services. Page components may be replaced, but a circuit-level or client-level state service can remain alive. A full browser refresh starts a new document. Component instances disappear, and ordinary in-memory UI state is lost. In interactive server rendering, the old circuit may remain temporarily available for reconnection, but the application should not treat that as durable storage. A server restart, expired circuit, long disconnection, or deployment can remove it. State that must survive a refresh belongs in browser storage or on the server. Preferences such as compact layout may fit `localStorage`. A temporary workflow may fit `sessionStorage`. Business records, permissions, orders, and other authoritative data belong in a protected server store or database.
 
@@ -4472,7 +4624,7 @@ Initial HTTP request
 
 Initialization code may therefore run during prerendering and again during interactive startup. If both phases call a database or remote API, the user may see duplicate work or a brief change from loaded content back to a loading message. Persistent component state can serialize selected prerendered values into the response and restore them for the interactive instance. The interactive component then continues from the result instead of loading it again. This is appropriate for serializable state that was already obtained during prerendering; it is not a substitute for durable storage. Prerendered components also lack a usable browser DOM. JavaScript interoperability and element references must wait until interactive rendering and `OnAfterRenderAsync`.
 
-## 7.8 Interactive Server and WebAssembly State
+### 7.8 Interactive Server and WebAssembly State
 
 With interactive server rendering, each connected user has a **circuit**. The circuit contains component instances, their fields, the current render tree, scoped services, and enough framework state to process browser events and send UI updates.
 
@@ -4490,7 +4642,7 @@ This model provides direct access to server services and a small client download
 
 With interactive WebAssembly, component instances and scoped state services live in the browser's .NET runtime. They survive component rerenders and internal navigation while the client application remains loaded, but a refresh starts a new runtime and removes ordinary memory state. The client cannot directly access server memory, local server files, server secrets, or a database connection. Durable or protected state is reached through HTTP APIs. Values in the downloaded application must be considered visible to the user, even when they are not displayed in the UI. WebAssembly reduces server-held UI state and can continue some interaction after a temporary network interruption, but API calls still need loading, failure, and retry behaviour. Browser storage can preserve selected client preferences, while security-sensitive authority remains on the server.
 
-## 7.9 Product Catalog State Design
+### 7.9 Product Catalog State Design
 
 The Product Catalog can now assign each value to an appropriate owner:
 
@@ -4524,19 +4676,21 @@ User saves product
 
 The UI remains predictable because state ownership is explicit and every visible change follows from new state.
 
-## 7.10 Common Mistakes and Key Ideas
+### 7.10 Common Mistakes and Key Ideas
 
 Rendering problems usually indicate unclear state ownership or lifecycle assumptions. Let Blazor rerender after its own events, call `StateHasChanged` only when changes originate outside that flow, and avoid `ShouldRender` until measurement shows a real hot spot. Prefer explicit or immutable state changes when shared mutable objects make updates difficult to trace, use `@key` when list identity matters, and never store per-user mutable state in a singleton. Parameter-dependent loading belongs in parameter lifecycle methods, element references become usable only after rendering, and subscriptions or JavaScript references must be released during disposal. Async methods should leave valid state before every `await`, cancel stale work, and avoid blocking or uncontrolled fire-and-forget operations. Component fields do not survive refresh, deployment, or a lost server circuit unless the state is copied to the URL, browser storage, or durable server storage.
 
 Blazor compares render trees and applies the required DOM changes. The lifecycle separates initialization, parameter changes, and post-render work, while Interactive Server and WebAssembly place component state in different processes. Choose the owner and lifetime of each value before choosing the mechanism used to share it.
 
-# 8. Building Complete Interfaces
+\clearpage
+
+## 8. Building Complete Interfaces
 
 The previous two chapters explained how Blazor components communicate, render, and hold state. Those mechanisms are enough to build an isolated widget, but an application needs a larger structure around them. Users move between addresses, pages share navigation and common chrome, forms collect and validate input, layouts respond to different screen sizes, and some browser features still require JavaScript. A complete interface also needs keyboard support, useful focus behaviour, clear loading and error states, and enough performance discipline to remain pleasant as the amount of data grows.
 
 This chapter combines those concerns into one Product Catalog interface. It begins with routing and layouts, then builds an editor with `EditForm`, validation, and server-side errors. It finishes with styling, accessibility, JavaScript interoperability, and practical performance choices. The goal is not to catalogue every Blazor component. It is to show how the pieces cooperate in an application that feels like one coherent interface rather than a collection of demonstrations.
 
-## 8.1 Pages, Routes, Query Values, and Navigation
+### 8.1 Pages, Routes, Query Values, and Navigation
 
 A page is still a Razor component. The difference is that it has one or more route templates:
 
@@ -4651,7 +4805,7 @@ Navigation.NavigateTo("/account/login", forceLoad: true);
 
 Use it only when required. Internal enhanced navigation usually preserves more state and transfers less data.
 
-## 8.2 Layouts and Responsive Structure
+### 8.2 Layouts and Responsive Structure
 
 A layout is a component that inherits from `LayoutComponentBase` and renders the selected page through `@Body`. `MainLayout.razor`:
 
@@ -4752,7 +4906,7 @@ Responsive design is not mainly about adding many breakpoints. Start with conten
 
 The browser chooses as many columns as fit. No C# code needs to measure the window and decide how many cards to render. Use CSS for layout and visual adaptation. Use component state only when the application's behaviour genuinely changes, such as opening a modal navigation drawer or selecting a compact data representation.
 
-## 8.3 Forms and Typed Inputs
+### 8.3 Forms and Typed Inputs
 
 A plain HTML form can post named values to a server, but Blazor's `EditForm` adds a model-aware editing context, input components, validation tracking, and submission callbacks. A Product Catalog editor needs a dedicated form model:
 
@@ -4856,7 +5010,7 @@ An input's HTML type still affects browser behaviour. `InputText` renders a text
 
 Use the native element or built-in component that best matches the value. A custom JavaScript date picker is not automatically better than a normal date input. Native controls often provide good keyboard, touch, and accessibility behaviour with no additional code. Custom input components can derive from `InputBase<TValue>` when an application repeatedly needs a domain-specific editor that participates in validation. Do not create a wrapper around every built-in input merely to standardise one CSS class; ordinary attributes or a small field component may be clearer.
 
-## 8.4 Validation, Saving, and Unsaved Changes
+### 8.4 Validation, Saving, and Unsaved Changes
 
 `DataAnnotationsValidator` reads validation attributes from the form model. `ValidationMessage` displays messages for one field, while `ValidationSummary` displays all current messages:
 
@@ -4870,13 +5024,10 @@ Data annotations are appropriate for rules that can be evaluated from the submit
 ```text
 Input conversion
   -> Can text become the target .NET value?
-
 Form validation
   -> Does the edit model satisfy local input rules?
-
 Application validation
   -> Is the operation valid in current business state?
-
 Authorization
   -> May this user perform it?
 ```
@@ -5019,7 +5170,7 @@ User edits form
 
 Some rules may run in both places because they improve responsiveness. Duplication is acceptable when the two copies serve different trust boundaries, but the shared rule should be represented carefully so that messages and limits do not drift. A shared contract assembly can contain data annotations used by both interactive clients and the server, while the server still performs authorization and database-dependent validation. Do not display raw exception messages from the server. Return stable, user-safe validation and problem details. Log the internal exception with a trace identifier and show the user a message that helps them recover.
 
-## 8.5 Loading, Empty, Error, and Content States
+### 8.5 Loading, Empty, Error, and Content States
 
 A page should not render one blank area while data loads and then another blank area when no products exist. Those states mean different things:
 
@@ -5050,7 +5201,7 @@ else
 
 A loading state tells the user to wait. An empty state explains that the request succeeded but returned no items. An error state explains that the operation failed and may offer a recovery action. Content is the successful result. Keep existing content visible during small refreshes when possible. Replacing the entire page with a spinner after every filter change causes unnecessary movement and removes context. A subtle busy indicator or disabled control can show that an update is in progress while the old result remains visible. Skeletons should roughly match the eventual layout and should not animate aggressively. A plain text loading message is better than a decorative skeleton that makes the page harder to read.
 
-## 8.6 Accessibility, Keyboard Use, and Focus
+### 8.6 Accessibility, Keyboard Use, and Focus
 
 Accessible interfaces are easier to build when the markup uses elements for their intended purpose:
 
@@ -5112,7 +5263,7 @@ Use `polite` for ordinary progress and success messages. Reserve `role="alert"` 
 
 Do not hide essential progress behind animation that disappears entirely; provide text or another persistent cue. Accessibility should be tested, not inferred from markup alone. Navigate the application with only a keyboard, inspect the accessibility tree in developer tools, run an automated checker, and test at least one screen reader for important workflows. Automated tools find only part of the problem, but they catch many basic mistakes quickly.
 
-## 8.7 JavaScript Interoperability and DOM Ownership
+### 8.7 JavaScript Interoperability and DOM Ownership
 
 Blazor covers component rendering and common events, but the browser exposes APIs and libraries that remain JavaScript-based. JavaScript interoperability lets C# call JavaScript and JavaScript call .NET. Use it for capabilities such as:
 
@@ -5192,7 +5343,7 @@ Blazor owns wrapper and component lifecycle
 
 If a library exposes many low-level events and methods, wrap it in one focused component rather than spreading interop calls across pages. That wrapper can translate JavaScript data into application-specific parameters and callbacks. DOM cleanup sometimes needs to happen in JavaScript because the element may already be removed when the .NET component is disposing. Browser observers or the library's own lifecycle hooks can handle that case. The exact cleanup belongs to the side that owns the DOM object.
 
-## 8.8 Performance and Virtualization
+### 8.8 Performance and Virtualization
 
 Most business interfaces do not need manual rendering optimisations. Network calls, database queries, oversized images, unnecessary reloads, and large data sets usually matter before the cost of one ordinary component render. A practical order is:
 
@@ -5238,7 +5389,7 @@ private async ValueTask<ItemsProviderResult<ProductSummary>>
 
 Virtualization improves rendering by limiting visible elements, but it does not automatically make a poor data query efficient. The provider still needs indexed filtering, stable ordering, cancellation, and a bounded result. Item heights should be reasonably predictable so that scroll calculations remain accurate. A grid of a few dozen products does not need virtualization. Add it when the collection is large enough that rendering and DOM size are measurable problems.
 
-## 8.9 Reusable Components Without Premature Design Systems
+### 8.9 Reusable Components Without Premature Design Systems
 
 Consistency matters, but wrapping every HTML element in a custom component can make the interface harder to understand. A useful shared component owns meaningful behaviour or repeated structure:
 
@@ -5255,7 +5406,7 @@ ProductEditor
 
 A component that only turns `<button class="primary">` into `<PrimaryButton>` may add little unless it also standardises states, icons, accessibility, and application conventions. CSS classes and native elements are often enough. The same restraint applies to third-party UI libraries. They can save time for complex grids, charts, date pickers, and accessible dialogs, but they also shape markup, styling, bundle size, and upgrade work. Adopt one because it solves recurring requirements, not because an empty application feels unfinished without a component suite.
 
-## 8.10 A Complete Product Workspace
+### 8.10 A Complete Product Workspace
 
 The Product Catalog can now combine routing, layout, filters, form editing, and state updates.
 
@@ -5289,13 +5440,17 @@ User opens /products/42/edit
 
 The user can refresh or share the address because the selected product is represented by the route. The edit model is temporary because unfinished form input belongs to the current editor instance. The product itself remains authoritative on the server. An alternative workspace can keep the list and editor on one page. That is equally valid when the workflow benefits from side-by-side editing. The choice should come from user interaction, not from a rule that every entity requires separate list, details, create, and edit pages.
 
-## 8.11 Common Mistakes and Key Ideas
+### 8.11 Common Mistakes and Key Ideas
 
 A complete interface should preserve navigational state in routes or query values when refresh, bookmarking, or sharing matters; ordinary links remain preferable to programmatic navigation for ordinary destinations. Keep layouts structural, use temporary form models instead of mutating shared objects while the user types, and let server validation remain authoritative. Loading, empty, error, forbidden, conflict, and success are different states and should not collapse into one spinner or generic message. Native HTML supplies the best starting point for labels, keyboard behaviour, focus, and semantics. Do not substitute placeholders for labels, colour for meaning, or ARIA attributes for correct elements. JavaScript interop should expose a narrow browser capability or library boundary, with explicit DOM ownership and disposal, rather than becoming a second rendering system inside Blazor markup.
 
 Performance work should follow evidence: bound queries and page sizes, avoid unnecessary reloads and interop calls, and virtualize only collections large enough to justify it. `EditForm`, typed inputs, `EditContext`, validation stores, responsive CSS, and focused reusable components are tools for a coherent workflow, not reasons to build a design system before the application has repeated needs.
 
-# 9. Relational Data and SQL
+\clearpage
+
+# Part IV — Data
+
+## 9. Relational Data and SQL
 
 The Product Catalog now has routes, components, forms, validation, and application services, but its data still lives in process memory. Restarting the server removes every change, a second server instance sees a different collection, and concurrent operations depend on locks inside one process. A real application needs durable shared storage. For ordinary business systems, the default choice is usually a relational database.
 
@@ -5303,7 +5458,7 @@ A relational database stores data in tables, but that description is too shallow
 
 This chapter introduces the relational model directly. It uses SQL examples close to what EF Core will eventually generate, but it does not try to teach every feature of a specific database product. PostgreSQL, SQL Server, SQLite, MySQL, and other relational systems differ in syntax and capabilities, yet they share the same central ideas.
 
-## 9.1 Tables, Types, and Nullability
+### 9.1 Tables, Types, and Nullability
 
 A table represents one kind of stored fact. A `Products` table might contain one row per product and one column per stored attribute:
 
@@ -5358,7 +5513,7 @@ WHERE Description = NULL
 
 SQL uses three-valued logic: a comparison may be true, false, or unknown. Most comparisons involving null are unknown, and rows for which a `WHERE` condition is not true are filtered out. This matters when translating LINQ, designing optional relationships, and interpreting aggregate results. Use null when the absence of a value has a real meaning. Do not make every column nullable merely to simplify inserts. Required data should be `NOT NULL`, which lets the database reject invalid rows even when a bug, script, or another application bypasses normal C# validation. An empty description and an unknown description may or may not mean the same thing in the Product Catalog. The model should decide rather than leaving every caller to guess.
 
-## 9.2 Keys and Constraints
+### 9.2 Keys and Constraints
 
 A primary key uniquely identifies each row. In `Products`, `Id` serves that purpose:
 
@@ -5410,7 +5565,7 @@ CREATE TABLE Products (
 
 A check constraint does not replace application rules, but it prevents impossible persisted states. The application may explain that price must not be negative; the database ensures that no writer stores `-20`. Database errors should be translated carefully. A unique constraint failure is expected in some operations, but exposing the raw provider message to the user leaks implementation details and often produces poor text. The application should detect the relevant failure and return a stable result such as “A product with this code already exists.”
 
-## 9.3 Relationships, Delete Behaviour, and Normalisation
+### 9.3 Relationships, Delete Behaviour, and Normalisation
 
 Data becomes relational when one table refers to another. Suppose products belong to categories:
 
@@ -5492,7 +5647,6 @@ If the category description changes, every matching product row must change. If 
 ```text
 Categories
   Id | Name | Description
-
 Products
   Id | Name | CategoryId
 ```
@@ -5501,7 +5655,7 @@ Normalisation aims to store each independent fact in one appropriate place. It r
 
 Denormalisation deliberately duplicates or precomputes data for performance or reporting. It can be valid, but it introduces synchronisation work. Begin with a clear normalised model, measure the real query problem, and denormalise only when the benefit is worth the extra consistency burden.
 
-## 9.4 Reading, Filtering, and Parameters
+### 9.4 Reading, Filtering, and Parameters
 
 SQL is declarative. A query describes the result, and the database chooses an execution plan. A basic read is:
 
@@ -5575,7 +5729,7 @@ WHERE Name LIKE '%keyboard%'
 
 Full-text search, specialised indexes, or an external search service may be more appropriate when search requirements become complex.
 
-## 9.5 Joins and Aggregates
+### 9.5 Joins and Aggregates
 
 A foreign key stores the relationship, while a join retrieves related rows. To list products with category names:
 
@@ -5652,7 +5806,7 @@ HAVING COUNT(*) >= 5;
 
 Aggregates may return null when no rows contribute, depending on the function. `COUNT(*)` returns zero, but `AVG`, `MIN`, and `MAX` commonly return null for an empty set. C# projections must account for this. The database is usually better at filtering and aggregation than application code that loads every row and processes it in memory. A dashboard count should normally become `COUNT(*)`, not `ToListAsync()` followed by `.Count`.
 
-## 9.6 Writes and Transactions
+### 9.6 Writes and Transactions
 
 An insert adds a row:
 
@@ -5729,7 +5883,7 @@ These words describe goals, while exact guarantees depend on the database, isola
 
 EF Core wraps a typical `SaveChanges` call in a transaction when needed. Explicit transactions become useful when several saves or raw commands must commit together. Understanding the transaction boundary remains important even when the framework opens it automatically.
 
-## 9.7 Concurrency and Isolation
+### 9.7 Concurrency and Isolation
 
 Consider two administrators opening product `42` at the same time:
 
@@ -5777,7 +5931,7 @@ Transaction B locks Product 2, waits for Product 1
 
 The database detects the cycle and aborts one transaction. Applications should keep transactions short, access shared resources in consistent order where possible, and retry only operations that are safe to repeat.
 
-## 9.8 Indexes and Query Plans
+### 9.8 Indexes and Query Plans
 
 Without a useful index, the database may scan every row to find a match. An index stores selected column values in a structure that helps locate rows quickly:
 
@@ -5821,7 +5975,7 @@ LINQ construction
 
 Chapter 10 will show how to inspect EF Core's generated SQL and choose projections, tracking behaviour, and loading strategies deliberately.
 
-## 9.9 Versioning the Schema
+### 9.9 Versioning the Schema
 
 The database schema evolves with the application. A new version may add a product code, create a categories table, or make a field required. Editing production tables manually without a repeatable record makes deployments difficult to reproduce and diagnose. A migration is a versioned set of schema changes:
 
@@ -5844,7 +5998,7 @@ Each migration describes how to move the schema forward, and sometimes backward.
 
 This is especially important when several application instances run during deployment. The new application and old application may briefly share the same database, so schema changes should remain compatible across that window. A migration changes structure; it is not automatically a backup. Backups, restore testing, retention, and disaster recovery are separate operational responsibilities.
 
-## 9.10 The Product Catalog Schema and SQL Path
+### 9.10 The Product Catalog Schema and SQL Path
 
 A practical first relational model for the Product Catalog could contain these tables:
 
@@ -5852,7 +6006,6 @@ A practical first relational model for the Product Catalog could contain these t
 Categories
   Id
   Name
-
 Products
   Id
   Code
@@ -5865,11 +6018,9 @@ Products
   Version
   CreatedAt
   UpdatedAt
-
 Tags
   Id
   Name
-
 ProductTags
   ProductId
   TagId
@@ -5960,13 +6111,15 @@ WHERE Id = @id
 
 One affected row means the update succeeded. Zero means the product disappeared or changed since it was loaded. The application distinguishes those cases and returns either not found or conflict. This concrete SQL is what Entity Framework Core will help produce. EF Core removes repetitive mapping and command construction, but it does not change the database's work. A LINQ expression that describes a poor query still becomes poor SQL.
 
-## 9.11 Common Mistakes and Key Ideas
+### 9.11 Common Mistakes and Key Ideas
 
 Relational design should keep independently queried and constrained facts in ordinary columns and tables. Comma-separated identifiers and opaque JSON blobs hide relationships from foreign keys, joins, indexes, and targeted updates; JSON remains useful for genuinely embedded flexible data. Normalisation is not a demand to turn every scalar into a lookup table: a currency code can remain a value until the application needs currency metadata or relationships. C# validation provides useful feedback, while database constraints protect stored state from every writer. Translate known uniqueness, check, and foreign-key failures into stable application outcomes instead of exposing provider messages. Use explicit ordering, filter and aggregate in the database, keep result sizes bounded, avoid N+1 access, and add indexes from measured query patterns rather than habit.
 
 Transactions should remain short, optimistic concurrency should detect edits spanning requests, and migration SQL and execution plans should be reviewed directly. The database is an independent system with its own guarantees and costs; an ORM can improve access to it but cannot replace relational design or operational understanding.
 
-# 10. Entity Framework Core
+\clearpage
+
+## 10. Entity Framework Core
 
 Chapter 9 described the database directly: tables store facts, keys provide identity, foreign keys represent relationships, indexes support access patterns, transactions protect groups of changes, and SQL describes set-based reads and writes. Entity Framework Core sits between that relational system and C#. It maps rows to objects, translates LINQ expression trees into provider-specific SQL, tracks selected objects, and turns state changes into `INSERT`, `UPDATE`, and `DELETE` commands. It removes a large amount of repetitive data-access code, but it does not replace the database model or make every C# expression efficient.
 
@@ -5975,13 +6128,11 @@ The most useful mental model is that EF Core has three connected responsibilitie
 ```text
 Entity classes + mapping
   -> EF Core model
-
 LINQ expression
   -> database provider
   -> SQL command
   -> rows
   -> C# result
-
 Tracked entity changes
   -> SaveChanges
   -> INSERT / UPDATE / DELETE
@@ -5989,7 +6140,7 @@ Tracked entity changes
 
 This chapter maps the Product Catalog schema into EF Core, creates migrations, reads and writes data, handles relationships and optimistic concurrency, and examines the generated SQL. SQLite is used for local examples because it needs no separate server, but the same model can target PostgreSQL, SQL Server, or another supported relational provider. Provider differences still matter, especially for types, generated values, migrations, locking, indexes, and SQL features.
 
-## 10.1 The ORM Model and Provider Setup
+### 10.1 The ORM Model and Provider Setup
 
 EF Core is an object-relational mapper. It translates between two models that do not naturally have the same shape: an object graph with classes, references, and collections, and a relational model with tables, keys, rows, and joins. The mapping reduces manual work, but it cannot make the mismatch disappear. A navigation property is not a permanently loaded object reference; it represents a relationship that may or may not have been queried. A LINQ predicate is not executed by ordinary C# when it remains inside `IQueryable`; EF Core analyses its expression tree and asks the database provider to translate it. `SaveChanges` is not object serialization; it examines tracked state and creates relational commands.
 
@@ -6003,7 +6154,7 @@ dotnet tool install --global dotnet-ef
 
 The package and `dotnet-ef` major versions should match the EF Core major version used by the application. `Microsoft.EntityFrameworkCore.Sqlite` translates queries and commands to SQLite and supplies provider-specific type mapping. `Microsoft.EntityFrameworkCore.Design` supports design-time work such as migration generation. `dotnet-ef` is the CLI tool that invokes those design-time services. Changing providers is more than replacing one package name. The common LINQ and change-tracking model remains, but migrations and database capabilities are provider-specific. SQLite has limited schema-alteration behaviour and no SQL Server-style `rowversion`; PostgreSQL and SQL Server differ in identity generation, date types, case sensitivity, indexes, JSON support, and locking. A production switch should be tested against the real provider rather than assumed from an in-memory or SQLite test.
 
-## 10.2 Entities, `DbContext`, and Model Configuration
+### 10.2 Entities, `DbContext`, and Model Configuration
 
 The first Product Catalog entities can be ordinary C# classes:
 
@@ -6110,7 +6261,7 @@ public sealed class ProductTagConfiguration
 
 Configuration expresses the intended database contract: lengths, precision, uniqueness, required values, relationship cardinality, delete behaviour, and concurrency. Data annotations such as `[Required]`, `[MaxLength]`, and `[Timestamp]` can configure part of the model, but fluent configuration is more expressive and keeps persistence rules together. Use one style consistently enough that developers know where to look. Provider-specific configuration is sometimes necessary. An index include list, filtered index, collation, generated column, or row-version column may not translate across databases. Isolate such decisions rather than pretending the provider is irrelevant.
 
-## 10.3 Registration and Migrations
+### 10.3 Registration and Migrations
 
 Place the local connection string in configuration:
 
@@ -6176,7 +6327,7 @@ dotnet ef migrations bundle
 
 `EnsureCreated` is not a shortcut for migrations. It creates a schema for a model when no schema exists but does not provide normal incremental migration history. It is appropriate for disposable tests and prototypes, not for a database expected to evolve through production releases.
 
-## 10.4 LINQ Translation and Projection
+### 10.4 LINQ Translation and Projection
 
 A query begins as `IQueryable<T>`:
 
@@ -6258,7 +6409,7 @@ var page = await db.Products.AsNoTracking().Where(product => search == null || p
 
 The secondary unique ordering by `Id` makes paging stable when several products share the same name. Search semantics such as case sensitivity depend on database collation and provider translation; test them against the production database.
 
-## 10.5 Tracking, Single-Entity Queries, and Related Data
+### 10.5 Tracking, Single-Entity Queries, and Related Data
 
 Entity queries are tracking by default. When EF Core materialises an entity, it records its key, current state, and usually original values in the context's change tracker. If the entity is modified, `SaveChanges` can determine what command to issue:
 
@@ -6332,7 +6483,7 @@ var details = await db.Products.AsNoTracking().Where(product => product.Id == id
 
 The query declares exactly what the page needs and avoids exposing a live entity graph to the presentation layer.
 
-## 10.6 Saving, Disconnected Updates, and Concurrency
+### 10.6 Saving, Disconnected Updates, and Concurrency
 
 Creating an entity begins by marking it as added:
 
@@ -6371,9 +6522,7 @@ Request A
   -> context A loads product
   -> response sends DTO
   -> context A is disposed
-
 User edits for thirty seconds
-
 Request B
   -> context B receives update DTO
   -> context B must load or attach stored state
@@ -6426,7 +6575,7 @@ A real conflict handler may load current database values, show both versions, re
 
 Concurrency exceptions and uniqueness violations are different. A concurrency exception means a conditional update or delete matched no expected row. A unique constraint means the new stored values conflict with another row. Both may become `409 Conflict`, but they require different messages and recovery.
 
-## 10.7 Transactions and Set-Based Operations
+### 10.7 Transactions and Set-Based Operations
 
 A single `SaveChanges` call normally supplies the transaction boundary needed for one aggregate update. An explicit transaction is useful when several saves or commands must commit together:
 
@@ -6483,7 +6632,7 @@ if (affected == 0)
 
 Several `ExecuteUpdate` or `ExecuteDelete` calls do not automatically become one transaction merely because they use the same context. Open an explicit transaction when they must commit together.
 
-## 10.8 Raw SQL and Dapper
+### 10.8 Raw SQL and Dapper
 
 LINQ covers most ordinary queries, but raw SQL is appropriate when the database has a feature the provider cannot express well, when a carefully tuned query performs significantly better, or when an existing stored procedure or view must be used. An entity query can begin with parameterised SQL:
 
@@ -6514,7 +6663,7 @@ var products = await connection.QueryAsync<ProductSummary>(
 
 Using Dapper for selected reporting or highly tuned queries does not require abandoning EF Core for writes and ordinary access. Both can share the same database and, when necessary, the same ADO.NET transaction. The cost is that SQL, mapping, migrations, and provider details become more explicit. Choose it for a concrete query requirement, not because manually writing every command feels more “architectural.”
 
-## 10.9 `DbContext` Lifetime in Interactive Blazor
+### 10.9 `DbContext` Lifetime in Interactive Blazor
 
 A conventional HTTP request creates one dependency-injection scope, so a scoped `CatalogDbContext` lives only until the response completes. An interactive server rendering circuit can remain alive for many user interactions, and scoped services are normally shared across that circuit. Injecting a scoped context directly into a long-lived component or circuit service can therefore keep it alive too long and expose it to overlapping operations. Use a factory and create one context per component operation:
 
@@ -6546,7 +6695,7 @@ A conventional HTTP request creates one dependency-injection scope, so a scoped 
 
 A stronger application boundary is still to inject `IProductCatalog` into the component and let the infrastructure implementation create contexts. That keeps EF Core out of presentation code and allows the same operations to serve Minimal APIs, components, workers, and tests. The factory guidance remains relevant inside that infrastructure service. Interactive WebAssembly components cannot connect directly to a protected server database. They run in the browser and call an HTTP API. Database credentials, provider packages, and server-only entities must remain on the server side.
 
-## 10.10 Inspecting SQL and the Product Data Service
+### 10.10 Inspecting SQL and the Product Data Service
 
 EF Core integrates with `Microsoft.Extensions.Logging`. During development, enable command logging through category configuration:
 
@@ -6669,13 +6818,17 @@ builder.Services.AddScoped<IProductCatalog, EfProductCatalog>();
 
 The Minimal API and Blazor components do not need to know whether products come from a locked list, SQLite, or PostgreSQL. They depend on the operation contract. That is the practical value of the service boundary established earlier: infrastructure can change without moving database code into endpoints or presentation components.
 
-## 10.11 Common Mistakes and Key Ideas
+### 10.11 Common Mistakes and Key Ideas
 
 Use one short-lived `DbContext` per unit of work, never share it across concurrent operations, and do not treat tracked entities as an application cache. Keep read queries as `IQueryable` until filtering, ordering, projection, aggregation, and paging have translated to SQL. Prefer no-tracking projections for reads, tracked entities for deliberate load–change–save operations, and set-based commands when one database statement expresses the change. Large `Include` graphs and lazy-loading loops often hide excess rows or N+1 commands.
 
 Disconnected web input should arrive through request DTOs, not entity graphs passed directly to `Update`. Load current state or attach only the intended fields, include a concurrency token for edits that span requests, and translate known database conflicts without hiding unexpected provider failures. Generated migrations still require review for data loss, defaults, indexes, locking, and provider-specific SQL; `EnsureCreated` is not a migration strategy. Inspect command logs, `ToQueryString`, round-trip counts, and execution plans before optimising. EF Core maps and coordinates relational work, but query shape, context lifetime, constraints, and deployment safety remain application responsibilities.
 
-# 11. Authentication and Authorization
+\clearpage
+
+# Part V — Secure, Maintainable Applications
+
+## 11. Authentication and Authorization
 
 The Product Catalog can now receive requests, render a Blazor interface, and persist products through Entity Framework Core. The remaining problem is trust. A public visitor may be allowed to browse products, while only signed-in editors may change them and only administrators may manage users. The application must establish who is making a request, decide what that identity may do, and continue enforcing those decisions even when a client modifies its own UI or sends HTTP requests directly.
 
@@ -6691,7 +6844,7 @@ Request arrives
 
 Security is not one middleware call added near the end of development. It affects account storage, cookies, tokens, redirects, API responses, Blazor rendering, database queries, logs, deployment, and every boundary at which untrusted data enters the application. This chapter explains the ASP.NET Core security model from those boundaries inward.
 
-## 11.1 Identity, Schemes, and Authentication Configuration
+### 11.1 Identity, Schemes, and Authentication Configuration
 
 An identity is the application’s representation of a user, service, or device. Authentication answers, “Which identity does this credential prove?” Authorization answers, “May that identity perform this operation?” Consider three Product Catalog requests:
 
@@ -6709,7 +6862,6 @@ ASP.NET Core authentication is organised around named **schemes**. A scheme conn
 Scheme "CatalogCookie"
   -> CookieAuthenticationHandler
   -> cookie name, paths, lifetime, validation events
-
 Scheme "Bearer"
   -> JwtBearerHandler
   -> issuer, audience, signing keys, token validation
@@ -6751,7 +6903,7 @@ app.Run();
 
 `UseAuthentication` examines the request through the selected authentication handler and populates `HttpContext.User`. `UseAuthorization` evaluates the policy attached to the selected endpoint. Authentication must run first because authorization needs the resulting principal. In Minimal API applications, some middleware can be inserted automatically when the corresponding services are registered, but explicit placement keeps the ordering clear when the pipeline contains other middleware. The cookie is marked `HttpOnly` so ordinary JavaScript cannot read it, `Secure` so it travels only over HTTPS, and `SameSite=Lax` to limit many cross-site requests while preserving common navigation flows. These settings reduce risk but do not remove the need for antiforgery protection on relevant state-changing requests.
 
-## 11.2 Principals, Claims, Cookies, and Session Outcomes
+### 11.2 Principals, Claims, Cookies, and Session Outcomes
 
 After successful authentication, ASP.NET Core assigns a `ClaimsPrincipal` to `HttpContext.User`. A principal can contain one or more identities, and each identity contains claims. A claim is a type-value pair describing something asserted about the subject:
 
@@ -6817,7 +6969,6 @@ Successful login
   -> Server creates ClaimsPrincipal
   -> Cookie handler protects authentication ticket
   -> Browser stores cookie
-
 Later request
   -> Browser sends cookie
   -> Cookie handler validates and unprotects ticket
@@ -6846,7 +6997,6 @@ Anonymous request to protected endpoint
   -> Challenge
   -> login redirect for an interactive page
   -> 401 for an API endpoint
-
 Authenticated user without permission
   -> Forbid
   -> access-denied page for an interactive page
@@ -6862,7 +7012,7 @@ return Results.Forbid();
 
 Do not return `401` merely because a signed-in user lacks one permission; that user is authenticated, so the correct broad outcome is `403`. Conversely, a malformed credential is not `403`; the application has not established a valid identity.
 
-## 11.3 Endpoint, Role, Policy, and Resource Authorization
+### 11.3 Endpoint, Role, Policy, and Resource Authorization
 
 The simplest endpoint rule requires any authenticated user:
 
@@ -6925,12 +7075,10 @@ Roles are useful when the organisation already assigns stable groups such as adm
 ```text
 CatalogViewer
   -> products.read
-
 CatalogEditor
   -> products.read
   -> products.create
   -> products.edit
-
 CatalogAdministrator
   -> all editor permissions
   -> products.delete
@@ -7037,7 +7185,7 @@ static async Task<IResult> UpdateProduct(
 
 The order can reveal information. Returning `404` before authorization confirms that the product exists, while returning `404` for both missing and inaccessible resources hides that fact. Choose deliberately according to the application’s privacy requirements. Tenant filtering should also occur in database queries where possible. Loading another tenant’s row and rejecting it later increases the chance of accidental disclosure. Authorization checks remain useful, but query boundaries should prevent unrelated data from entering the operation at all.
 
-## 11.4 ASP.NET Core Identity and Passwords
+### 11.4 ASP.NET Core Identity and Passwords
 
 Cookie authentication by itself does not create users, hash passwords, generate reset tokens, confirm email addresses, manage lockout, or support multifactor authentication. ASP.NET Core Identity supplies those account-management features. It commonly stores users, password hashes, roles, claims, login providers, security stamps, and tokens through Entity Framework Core. A custom user can derive from `IdentityUser`:
 
@@ -7078,7 +7226,6 @@ Registration
   password + random salt
   -> password hashing algorithm
   -> stored hash and parameters
-
 Login
   supplied password + stored parameters
   -> password hashing algorithm
@@ -7087,7 +7234,7 @@ Login
 
 ASP.NET Core Identity’s `PasswordHasher<TUser>` handles the supported format, salt, work factor, and rehashing decisions. Do not use a fast general-purpose hash such as SHA-256 directly for passwords, and do not build a new password-storage format with `KeyDerivation.Pbkdf2` when Identity’s password hasher fits the application. Password policy should balance resistance to guessing with usability. Length matters more than forcing frequent arbitrary changes or requiring predictable character substitutions. Rate limiting, lockout, breached-password detection where appropriate, multifactor authentication, and secure reset flows strengthen the account beyond the composition rule alone. A password-reset token is itself a credential. It must be unpredictable, time-limited, single-purpose, and protected from logs and analytics. Error messages for login and reset should avoid revealing whether a particular email address is registered.
 
-## 11.5 External Login, OAuth, and OpenID Connect
+### 11.5 External Login, OAuth, and OpenID Connect
 
 An application can let a provider such as Google, Microsoft, or an organisational identity system authenticate the user. The Product Catalog redirects the browser to the provider, the provider authenticates the person, and the browser returns through a controlled callback. The application validates the response and establishes its own local session.
 
@@ -7107,7 +7254,6 @@ The application never receives the provider’s password. It receives identity i
 OAuth access token
   -> presented to an API
   -> grants scoped access
-
 OpenID Connect ID token
   -> presented to the client application
   -> describes the authenticated sign-in
@@ -7127,7 +7273,7 @@ A web application using OpenID Connect commonly follows the authorization-code f
 
 The browser carries the authorization code, not the long-lived application secret. PKCE binds the code exchange to the client that initiated the flow. A confidential server-side web client also authenticates itself with a secret or assertion stored only on the server. Do not treat an access token as a login session merely because it contains readable claims, and do not send an ID token to an API as if it were an access token. Validate issuer, audience, signature, lifetime, nonce, and protocol state through established middleware rather than parsing token strings manually.
 
-## 11.6 Bearer, Access, and Refresh Tokens
+### 11.6 Bearer, Access, and Refresh Tokens
 
 A client calls a protected API by adding a bearer token:
 
@@ -7162,7 +7308,6 @@ Access tokens should be short-lived because bearer tokens are difficult to revok
 ```text
 Short-lived access token
   -> sent to API frequently
-
 Longer-lived refresh token
   -> sent only to authorization server
   -> obtains replacement access token
@@ -7170,7 +7315,7 @@ Longer-lived refresh token
 
 A server-side web application can keep tokens in protected server storage and expose only its own cookie to the browser, often called a backend-for-frontend approach. This reduces direct token exposure in browser JavaScript. A pure browser client cannot keep a client secret and must use public-client protocol guidance. Token revocation is a trade-off. A self-contained access token can be validated without a database lookup, which improves scalability, but its claims may remain accepted until expiry. Short lifetimes, security-event checks, reference tokens, token introspection, or revocation lists can provide stronger control at additional cost.
 
-## 11.7 Blazor Authentication State and Protected UI
+### 11.7 Blazor Authentication State and Protected UI
 
 Server-rendered and interactive server Blazor components use the authenticated ASP.NET Core user. Authentication state is exposed to components through `AuthenticationStateProvider` and cascading authentication state. A component can receive it:
 
@@ -7201,7 +7346,6 @@ Templates may configure the cascading state through services rather than explici
 ```text
 Blazor UI check
   -> improves user experience
-
 Server endpoint check
   -> enforces security
 ```
@@ -7239,7 +7383,7 @@ It can expose the current principal:
 
 `AuthorizeView` hides or displays UI; it does not secure the event handler or endpoint behind that UI. A determined user can call a public method through another path or send the HTTP request directly. The application service and server endpoint still need authorization. Component authorization can also change while a long-lived circuit remains active. A disabled account or changed claim may not appear immediately without revalidation or a new authentication state. High-risk operations should validate current server state at execution time.
 
-## 11.8 CSRF, XSS, Injection, Files, and Secrets
+### 11.8 CSRF, XSS, Injection, Files, and Secrets
 
 Cross-site request forgery targets browser applications whose credentials are attached automatically, especially cookies. A user is signed in to `catalog.example.com` and then visits a malicious site. That site causes the browser to submit a state-changing request to the catalog. The browser may attach the catalog cookie even though the request originated elsewhere.
 
@@ -7276,17 +7420,15 @@ Connection strings, external-provider secrets, encryption keys, signing credenti
 
 HTTPS protects credentials and content in transit between endpoints. It does not protect secrets embedded in downloaded client code, exposed through logs, returned in error pages, or stored with excessive permissions.
 
-## 11.9 The Product Catalog Security Boundary
+### 11.9 The Product Catalog Security Boundary
 
 A practical first Product Catalog security model can remain small:
 
 ```text
 Anonymous
   -> list and view products
-
 CatalogEditor
   -> create and update products
-
 CatalogAdministrator
   -> editor permissions
   -> delete products
@@ -7365,7 +7507,7 @@ Unexpected infrastructure    -> 500
 
 The UI may redirect an anonymous user to sign in, display an access-denied message, preserve form input after a validation error, or reload after a conflict. Those are presentation choices. The server’s status and policy enforcement remain consistent regardless of which client called it.
 
-## 11.10 Testing Security
+### 11.10 Testing Security
 
 Security tests should exercise the actual boundary rather than only unit-test one claim predicate. Integration tests can send requests as anonymous users, editors, and administrators and verify the response:
 
@@ -7382,13 +7524,15 @@ Forged antiforgery request        -> rejected
 
 Resource-based rules need cases for owned, unowned, and missing resources. Authentication tests should cover ticket expiry, logout, revoked sessions, and claim changes where relevant. External-login tests should verify correlation failure and account-linking behaviour without relying only on a live provider. Do not disable HTTPS validation, token validation, antiforgery, or authorization in tests merely to make requests easy. Test helpers can create valid principals or issue test credentials while preserving the production pipeline. A system that is difficult to test securely often has identity concerns spread across too many layers.
 
-## 11.11 Common Mistakes and Key Ideas
+### 11.11 Common Mistakes and Key Ideas
 
 Client-side visibility is not enforcement. Hidden buttons, route guards, `AuthorizeView`, and WebAssembly checks improve the interface, while endpoint and resource authorization protect the operation. Use policies named for operations, centralise claim mapping, and distinguish authentication failure, forbidden access, and missing resources deliberately. Do not invent password hashing or protocol processing, log credentials, place tokens in URLs, or accept weak issuer, audience, signature, or lifetime validation. Cookies, bearer access tokens, ID tokens, and refresh tokens have different purposes. CORS, authentication, authorization, antiforgery, and content encoding also solve different problems: none substitutes for the others.
 
 Authentication never makes request data trusted. Keep untrusted strings encoded or sanitised, parameterise database commands, generate server-side file names, validate redirect targets, and keep secrets outside source control and browser code. ASP.NET Core Identity, cookie and bearer handlers, OpenID Connect middleware, claims, roles, policies, and resource handlers form a security pipeline that should be exercised through integration tests rather than trusted as scattered conditionals.
 
-# 12. Application Structure
+\clearpage
+
+## 12. Application Structure
 
 The Product Catalog now has every major technical layer needed for an ordinary business application: an ASP.NET Core host, HTTP endpoints, Blazor components, application services, Entity Framework Core persistence, authentication, and authorization. The remaining challenge is not adding another framework. It is arranging the existing code so that changes stay local, tests remain useful, and one technical concern does not quietly spread through the whole system.
 
@@ -7396,7 +7540,7 @@ Application structure is often discussed through large diagrams and rigid labels
 
 This chapter develops a structure for the Product Catalog that is strong enough for a real application but restrained enough to remain understandable. It separates domain rules, application operations, infrastructure, HTTP, and Blazor presentation; then it connects DTOs, validation, errors, pagination, filtering, file handling, and testing to those boundaries. The goal is not to produce the maximum number of layers. It is to make dependencies point in a useful direction.
 
-## 12.1 Dependency Direction and Solution Layout
+### 12.1 Dependency Direction and Solution Layout
 
 A maintainable web application normally has code near the centre that expresses business meaning and code near the outside that talks to frameworks and external systems.
 
@@ -7405,7 +7549,6 @@ Browser and HTTP
   -> Presentation adapters
   -> Application operations
   -> Domain rules
-
 Infrastructure
   -> Database, files, email, external APIs
   -> Implements contracts required by application code
@@ -7417,13 +7560,11 @@ This does not require a framework. It can be achieved with ordinary projects, na
 
 ```text
 ProductCatalog.sln
-
 src/
   ProductCatalog.Domain/
   ProductCatalog.Application/
   ProductCatalog.Infrastructure/
   ProductCatalog.Web/
-
 tests/
   ProductCatalog.Domain.Tests/
   ProductCatalog.Application.Tests/
@@ -7436,14 +7577,11 @@ tests/
 ```text
 Domain
   -> no project references
-
 Application
   -> Domain
-
 Infrastructure
   -> Application
   -> Domain
-
 Web
   -> Application
   -> Infrastructure
@@ -7451,7 +7589,7 @@ Web
 
 The web project references infrastructure so that `Program.cs` can register concrete implementations. Application code does not reference infrastructure. That inversion is the important part: the application defines what it needs, and infrastructure implements it. A smaller application can combine `Domain` and `Application`, or keep everything in one project with namespaces and folders. The principles still apply. Projects create compile-time boundaries, but they also add ceremony, build work, and navigation cost. Use a separate project when it protects a meaningful dependency boundary or supports reuse and testing, not merely because a diagram contains a box.
 
-## 12.2 Domain, Application, Infrastructure, and Web
+### 12.2 Domain, Application, Infrastructure, and Web
 
 The domain layer contains rules that are meaningful even without HTTP, a database, or a UI. For the Product Catalog, a product may have rules around code format, price, currency, availability, category assignment, and allowed status transitions. A domain type can enforce some of its own invariants:
 
@@ -7697,7 +7835,7 @@ Application result
 
 The mapping is different from HTTP, which is exactly why the application result should not itself be an `IResult`.
 
-## 12.3 DTOs and Mapping
+### 12.3 DTOs and Mapping
 
 A data transfer object is a shape used to cross a boundary. The word is often used broadly, but the important point is that the type exists for transfer rather than as the complete internal model. The Product Catalog may have several related shapes:
 
@@ -7758,23 +7896,19 @@ public static class ProductHttpMappings
 
 Manual mapping is often preferable for important contracts because every transferred field is visible. Mapping libraries can reduce repetitive property assignment, but they also make missing or unintended mappings less obvious and add configuration that must be tested. Use one when it removes significant real repetition without hiding security-sensitive or meaning-changing transformations. Mapping is a good place for transport conversion, not business rules. Currency normalization, permission checks, and category validity belong in the application or domain. Renaming `CategoryName` to `category` for a response belongs in the adapter.
 
-## 12.4 Validation, Errors, and Problem Details
+### 12.4 Validation, Errors, and Problem Details
 
 Validation is not one universal method. Different layers answer different questions:
 
 ```text
 HTTP binding
   -> Can the request be parsed?
-
 Presentation validation
   -> Can the user receive immediate feedback?
-
 Application validation
   -> Is the requested operation complete and meaningful?
-
 Domain validation
   -> Would the resulting state violate an invariant?
-
 Database constraints
   -> Can invalid state be stored despite another writer or bug?
 ```
@@ -7918,7 +8052,7 @@ public static IResult ToHttpResult<T>(this Result<T> result, Func<T, IResult> su
 
 Keep the mapping explicit enough that endpoint contracts remain understandable and OpenAPI metadata remains accurate.
 
-## 12.5 Pagination, Filtering, and Sorting
+### 12.5 Pagination, Filtering, and Sorting
 
 An unbounded `GET /api/products` works with ten rows and becomes dangerous with one million. Pagination limits database work, object materialisation, serialization, transfer, browser memory, and DOM size. A simple query model can validate limits:
 
@@ -8024,7 +8158,7 @@ var ordered = queryable.Order(query).ThenBy(product => product.Id);
 
 Search behaviour depends on collation and provider. `Contains` may be case-sensitive or insensitive depending on the database. Leading-wildcard text search may not use a normal index. For larger catalogues, full-text search or a dedicated search system may become appropriate. Begin with the real requirement, inspect generated SQL and query plans, and avoid pretending that every search problem is solved by loading rows and using `StringComparison` in memory.
 
-## 12.6 File Uploads and Replacement
+### 12.6 File Uploads and Replacement
 
 A product image upload begins as an HTTP multipart form, becomes a stream, passes application validation, is stored by infrastructure, and produces a reference saved with the product.
 
@@ -8093,7 +8227,7 @@ File metadata belongs in the database; large file bytes often belong in filesyst
 
 If step 2 or 3 fails, delete the unused new file through cleanup logic. If step 4 fails, the product still points to the correct new file, while an orphan remains for later cleanup. The opposite order—deleting the old file before committing the new reference—can leave the product with no valid image. For highly reliable workflows, record cleanup or delivery work in an outbox table inside the database transaction and let a background worker perform it. The same pattern appears with email and notifications in Chapter 13.
 
-## 12.7 Composition in `Program.cs`
+### 12.7 Composition in `Program.cs`
 
 As the application grows, `Program.cs` should remain readable:
 
@@ -8138,23 +8272,19 @@ public static IServiceCollection AddInfrastructure(this IServiceCollection servi
 
 Do not hide the entire application behind dozens of tiny registration methods. Group by meaningful subsystem, and keep it possible to discover which implementations are selected. Composition code should be concise, not mysterious.
 
-## 12.8 Testing Domain and Application Boundaries
+### 12.8 Testing Domain and Application Boundaries
 
 Different tests answer different questions. A domain test verifies rules without frameworks. An application test verifies operation coordination. An infrastructure test verifies mapping and provider behaviour. A web test verifies the actual HTTP or component boundary.
 
 ```text
 Domain test
   -> Product rejects negative price
-
 Application test
   -> UpdateProduct returns conflict for stale version
-
 Infrastructure test
   -> EF query filters and orders correctly in SQLite
-
 Web integration test
   -> PUT /api/products/42 returns 403 for viewer
-
 Blazor component test
   -> validation errors appear beside fields
 ```
@@ -8202,7 +8332,7 @@ public async Task UpdateReturnsConflictForStaleVersion()
 
 Use a fake or mock to control an external boundary and observe a meaningful interaction. Avoid mocking every concrete class in a chain. If the test needs ten mocks to construct one handler, the operation may have too many responsibilities or the test may be coupled to implementation details. Application tests should verify outcomes, changed domain state, and important side effects such as one save or one notification request. They should not assert every internal method call.
 
-## 12.9 Testing Infrastructure, HTTP, Authentication, and Components
+### 12.9 Testing Infrastructure, HTTP, Authentication, and Components
 
 EF Core’s in-memory provider does not behave like a relational database. It does not enforce all relational constraints, translate SQL, or reproduce provider-specific behaviour. Use the actual production provider when practical, or SQLite when the production-independent relational behaviour is what matters. A SQLite test can create a temporary database:
 
@@ -8313,7 +8443,7 @@ public void ProductEditorShowsNameValidation()
 
 Useful component tests cover conditional rendering, event callbacks, validation messages, loading states, and policy-dependent UI. They should not attempt to prove browser layout, CSS rendering, or JavaScript library behaviour that requires a real browser. End-to-end tests with Playwright are better for critical workflows involving actual navigation, focus, JavaScript, and browser security. Use end-to-end tests selectively. They are slower and more fragile than lower-level tests, but one realistic path such as login, create product, edit product, and verify update can catch integration failures no isolated test sees.
 
-## 12.10 Feature Organisation Without Ceremony
+### 12.10 Feature Organisation Without Ceremony
 
 A project containing hundreds of files becomes difficult to navigate when everything is grouped only by technical type:
 
@@ -8372,7 +8502,7 @@ Tests mock every layer but never prove the actual system works.
 
 Abstraction should remove volatility, protect a boundary, name a concept, or improve testing. It should not merely make the project resemble a diagram. The opposite extreme is also costly: one web project containing endpoint lambdas, EF Core entities, queries, domain rules, file access, and component code with no internal boundaries. That design is easy for the first week and expensive after several features. A useful rule is to introduce the smallest structure that makes current dependencies correct and current code understandable, while leaving room to extract a boundary when a real second implementation, source of complexity, or testing need appears.
 
-## 12.11 The Complete Structure
+### 12.11 The Complete Structure
 
 An update request now crosses clear boundaries:
 
@@ -8421,7 +8551,11 @@ Finally, do not let architecture become an end in itself. A structure is success
 
 Maintainable structure follows dependency direction. Domain code expresses business meaning, application code coordinates use cases, infrastructure implements databases and external systems, and the web project adapts HTTP and Blazor while composing the concrete application. DTOs protect boundaries, mapping remains explicit, and validation, domain invariants, and database constraints answer different questions. Stable application errors can become Problem Details or UI states without exposing provider details. Pagination, filtering, sorting, and uploads must keep work bounded and secure. Tests should run at the cheapest boundary that proves the behaviour: pure rules, application coordination, real provider behaviour, the HTTP pipeline, component rendering, or a small number of browser journeys. Architecture is useful only when it makes ownership, change, and verification clearer.
 
-# 13. Features Beyond Request and Response
+\clearpage
+
+# Part VI — Running a Real Application
+
+## 13. Features Beyond Request and Response
 
 Most examples so far have followed one clean path: a client sends a request, the server performs an operation, and the response returns before the request ends. That model covers a large part of web development, but real applications also need work that outlives one request. A product change may need to notify connected browsers, invalidate caches, send email, generate thumbnails, write audit exports, retry a temporarily unavailable provider, or continue after the original user closes the tab. Some work should happen immediately but outside the caller's response time; other work must be durable enough to survive process restarts and server failures.
 
@@ -8429,7 +8563,7 @@ These features are often grouped under words such as background jobs, real-time 
 
 This chapter connects those mechanisms through the Product Catalog. When an editor changes product `42`, the database update should commit once, connected viewers should learn about the change, cached product data should become stale no longer, and selected users may receive email. The chapter begins with hosted services and work queues, then builds reliable delivery through an outbox, introduces SignalR and notification channels, and finishes with caching and operational concerns.
 
-## 13.1 The Request Boundary and Fire-and-Forget Work
+### 13.1 The Request Boundary and Fire-and-Forget Work
 
 A request should normally remain open until the operation that determines its outcome has completed. If updating a product requires a database transaction, the endpoint should not return success before that transaction commits. The client needs to know whether the update succeeded, failed validation, encountered a conflict, or could not reach the database. Other effects do not need to delay the response. Sending three hundred notification emails, generating several image variants, or refreshing a search index may take seconds or minutes. Holding the HTTP request open for that work increases latency, consumes resources, and creates ambiguous failures when the client disconnects midway. A useful division is:
 
@@ -8440,7 +8574,6 @@ Inside the request
   -> change authoritative state
   -> commit transaction
   -> return stable result
-
 Outside the request
   -> send email
   -> broadcast update
@@ -8469,7 +8602,7 @@ The email task is started and then ignored. It still uses the request cancellati
 
 `Task.Run` does not solve those problems. It moves work to the thread pool but does not give it durable ownership, retries, lifecycle management, or a valid dependency injection scope. Fire-and-forget work is acceptable only for genuinely disposable effects where loss and failure are explicitly harmless, such as an optional in-process metric that has another source. Business work should be handed to a queue or recorded durably before the request ends.
 
-## 13.2 Hosted Services, Scopes, and In-Process Queues
+### 13.2 Hosted Services, Scopes, and In-Process Queues
 
 ASP.NET Core can run background work through hosted services. A hosted service implements `IHostedService`, while `BackgroundService` supplies a simpler base class for a long-running asynchronous loop.
 
@@ -8603,7 +8736,7 @@ builder.Services.AddHostedService<CatalogWorkQueueWorker>();
 
 A bounded queue prevents unlimited memory growth. When it is full, producers wait, which applies backpressure rather than quietly allocating until the process fails. Other policies can drop old or new items, but loss must be an explicit decision. This queue is process-local. Restarting the application removes pending items, and another server instance has a different queue. It suits cache warming, optional thumbnail regeneration, and other reconstructible work. It is not sufficient for billing, email confirmation, audit export, or any action the application promises to complete.
 
-## 13.3 Durable Outbox Delivery
+### 13.3 Durable Outbox Delivery
 
 Important background work needs durable ownership. A database-backed job table, external message broker, or cloud queue can hold work independently of one process. The Product Catalog already has a relational database, so an **outbox** is a natural first step. The outbox stores messages in the same database transaction as the business change:
 
@@ -8612,7 +8745,6 @@ Transaction begins
   -> Update Product row
   -> Insert OutboxMessage row
 Transaction commits
-
 Later
   -> Worker reads OutboxMessage
   -> Delivers notification
@@ -8679,7 +8811,7 @@ var messages = await db.OutboxMessages
 
 With several application instances, two workers can read the same rows. Production implementations need an atomic claim, provider-specific locking, a lease column, or a queue system designed for competing consumers. A claim may set `LockedUntil` and `LockedBy` in one conditional update. If a worker stops, the lease eventually expires so another worker can retry. Do not hide this concurrency problem behind a repository method named `GetPending`. The database operation must guarantee that only the intended workers own a message at one time, while still accepting that a claimed message may be retried after uncertain failure. For modest applications, a well-designed database outbox is enough. Larger systems may publish outbox messages to a broker and let separate worker processes consume them. The application contract does not need to change; only the infrastructure does.
 
-## 13.4 Scheduled Work
+### 13.4 Scheduled Work
 
 Queued work has a specific trigger: a product changed, a file was uploaded, or a user requested an export. Scheduled work runs because time reached a condition: expire old drafts every hour, generate a daily report, or refresh an exchange-rate table at 02:00. A simple periodic worker can use `PeriodicTimer`:
 
@@ -8708,7 +8840,7 @@ public sealed class ExpiredDraftCleanupWorker(IServiceScopeFactory scopeFactory)
 
 This is suitable when approximate intervals are enough and one running instance may execute the work. It does not guarantee “exactly at 02:00,” persist missed runs, coordinate multiple servers, or provide an administration UI. Those requirements justify a dedicated job scheduler or external platform service. Scheduled jobs should also be idempotent. A daily cleanup may run twice during failover or not at all while the application is stopped. Persist the last successful run or select work by current state rather than assuming the timer fired exactly once.
 
-## 13.5 SignalR, Groups, Publishing, and Reconnection
+### 13.5 SignalR, Groups, Publishing, and Reconnection
 
 HTTP requests are initiated by the client. SignalR adds a long-lived connection through which the server can send messages to connected clients. It chooses an appropriate transport, manages connection state, serializes method arguments, and presents a hub-based programming model. Register and map a hub:
 
@@ -8737,13 +8869,10 @@ A hub is transient. A new hub instance handles each invocation, so fields on the
 ```text
 Clients.All
   -> every connected client
-
 Clients.Client(connectionId)
   -> one connection
-
 Clients.User(userId)
   -> all connections associated with one user
-
 Clients.Group(groupName)
   -> connections currently in one group
 ```
@@ -8843,7 +8972,7 @@ public sealed class CatalogLiveClient(NavigationManager navigation) : IAsyncDisp
 
 Automatic reconnect retries the transport connection; it does not guarantee that the client received every event or retained every group subscription. After reconnecting, the client should rejoin needed groups and reload authoritative state when missing an event would matter. For an interactive server-rendered Blazor component, component logic already runs on the server over its Blazor circuit. It can update its own state immediately after its own command. Receiving independent cross-session events still requires a deliberate bridge, such as a browser SignalR client, a circuit-aware state service, or a different application design. Do not assume that the internal Blazor circuit automatically subscribes a component to custom application events.
 
-## 13.6 Persistent Notifications and Email
+### 13.6 Persistent Notifications and Email
 
 A notification is more than a SignalR message. A useful model separates the user-visible notification from delivery attempts.
 
@@ -8855,7 +8984,6 @@ Notification
   -> related resource
   -> created time
   -> read time
-
 NotificationDelivery
   -> notification
   -> channel: in-app, email, push
@@ -8901,23 +9029,19 @@ public sealed record EmailMessage(string Recipient, string Subject, string TextB
 
 Infrastructure can use a provider SDK or maintained SMTP library. The legacy `System.Net.Mail.SmtpClient` type remains available but is not recommended for new development. The application layer should not depend on provider response types or construct provider-specific templates. Email content needs the same security care as HTML pages. Encode untrusted values before inserting them into HTML templates. Do not include secrets, password-reset tokens, or sensitive medical and financial details in logs. Reset and invitation links are credentials and should expire, be single-purpose, and avoid analytics systems that capture full URLs. The worker should distinguish temporary provider failures from permanent address or template failures. Record provider message identifiers when available, but do not treat them as proof of final delivery. Webhooks for bounce and complaint events can update delivery status later.
 
-## 13.7 Cache Fundamentals, Memory Cache, and `HybridCache`
+### 13.7 Cache Fundamentals, Memory Cache, and `HybridCache`
 
 A cache holds data that can be reconstructed from an authoritative source. If deleting the cache destroys the only copy, it was not a cache. The Product Catalog database remains the truth; caches reduce repeated database and serialization work. Caching has several levels:
 
 ```text
 Browser cache
   -> reused by one browser
-
 Output cache
   -> stores complete HTTP responses
-
 Application data cache
   -> stores objects or query results
-
 Distributed cache
   -> shared by several application instances
-
 Database cache
   -> internal pages and execution plans managed by database
 ```
@@ -8990,7 +9114,7 @@ public sealed class CachedProductQueries(HybridCache cache, IDbContextFactory<Ca
 
 With only default registration, the primary local cache is used. Adding a supported distributed-cache backend lets instances share serialized entries while retaining local speed. Distributed caching is not automatically faster than the database for every query; it adds network calls, serialization, configuration, and failure modes. It is valuable when the source is significantly more expensive, values are reused often, and several instances need a shared copy. Use structured key schemes such as `tenant:7:product:42`. Include every trusted dimension that changes the result, including tenant, culture, currency, or permission-sensitive variant. Omitting one can leak data between users or return the wrong representation.
 
-## 13.8 Invalidation, Output Caching, Stampedes, and Failure
+### 13.8 Invalidation, Output Caching, Stampedes, and Failure
 
 Expiration limits how long stale data can survive if explicit invalidation fails. Invalidation removes or supersedes entries immediately when authoritative data changes. A product update can invalidate its details entry:
 
@@ -9073,7 +9197,7 @@ A distributed cache is another network dependency. If product data can still be 
 
 Write-through caching updates the cache as part of each write path. Cache-aside removes the old entry and lets the next read repopulate it. Cache-aside is simpler and avoids treating the cache as part of the authoritative transaction, though the first reader after a write pays the reload cost. Choose deliberately and preserve correctness when cache writes fail.
 
-## 13.9 File Jobs and Background Observability
+### 13.9 File Jobs and Background Observability
 
 Chapter 12 introduced safe file upload and storage. Once an image is stored, the application may need thumbnails, format conversion, virus scanning, metadata extraction, or CDN publication. Those derived operations belong naturally in the outbox or a durable job queue.
 
@@ -9083,7 +9207,6 @@ Upload request
   -> save file metadata and outbox job
   -> commit
   -> return accepted product state
-
 Background worker
   -> scan or decode original
   -> generate derived sizes
@@ -9116,7 +9239,7 @@ SignalR connection count
 
 Logs should include message ID, message type, attempt, related product or user ID, and trace or correlation information. Do not log complete email bodies, tokens, secrets, or unbounded payloads. A health check should distinguish readiness from liveness. A worker process may be alive but unable to reach the database or message provider. Whether that should mark the whole web application unready depends on the feature. Public product reads may remain healthy while email delivery is degraded. Report component status without unnecessarily removing the entire site from service. Administrative tooling should show failed jobs and permit safe retry after the underlying problem is corrected. Manual retry must retain the original idempotency identifier rather than create an unrelated duplicate operation.
 
-## 13.10 One Complete Product Change
+### 13.10 One Complete Product Change
 
 The Product Catalog can now process one update without coupling every effect to the request:
 
@@ -9131,7 +9254,6 @@ Editor saves product 42
   -> Transaction commits
   -> Endpoint returns updated product
   -> Blazor updates editor immediately
-
 Outbox worker later claims message
   -> Invalidates product and list caches
   -> Evicts product output-cache tag
@@ -9143,19 +9265,21 @@ Outbox worker later claims message
 
 A viewer connected through SignalR receives the event and reloads product `42`. A disconnected viewer receives nothing in real time but sees current data on the next request. A user notification remains in the database and appears after sign-in. Email may arrive later. If the mail provider is unavailable, the product update remains committed and the delivery retries independently. This design accepts that not all effects become visible at the same instant. The authoritative state changes atomically; derived views converge shortly afterward. The system is eventually consistent outside the product transaction, but it does not lose responsibility for promised work.
 
-## 13.11 Common Mistakes and Key Ideas
+### 13.11 Common Mistakes and Key Ideas
 
 Do not start untracked tasks from endpoints or capture scoped services after a request ends. Process-local queues are appropriate only when lost work is acceptable; promised work belongs in durable storage such as an outbox or broker. Workers create a scope per item or bounded batch, stop claiming work during shutdown, use stable message identifiers, tolerate at-least-once delivery, bound retries, and preserve failed items for investigation.
 
 SignalR hubs are transient and live messages can be missed. Persist notifications that must survive disconnection, re-authorize group membership, reload authoritative state after reconnect, and treat provider acceptance of email as a delivery attempt rather than proof of arrival. A cache is similarly non-authoritative: use bounded and normalized keys, include tenant or user dimensions, invalidate after commit, retain expiration as a safety net, and plan for stampedes, outages, and several application instances. Choose the simplest mechanism that satisfies durability and timeliness. Not every effect needs real-time delivery, but every effect that outlives the request needs an explicit owner, failure policy, and observable queue or delivery state.
 
-# 14. Deployment and Operation
+\clearpage
+
+## 14. Deployment and Operation
 
 A web application is not finished when it works under `dotnet run`. Development runs with local configuration, a developer certificate, source files, a writable project directory, one process, and a person watching the terminal. Production must start after a reboot, survive ordinary failures, receive traffic through a real domain, protect secrets, preserve authentication keys, apply database changes safely, expose useful health information, and produce enough telemetry for someone to understand failures without attaching a debugger. Deployment is therefore not a final copy step. It is the process of turning source code into a repeatable release and placing that release inside an operational environment. Operation begins where deployment ends: keeping the process available, observing its behaviour, rotating credentials, restoring backups, scaling when needed, and replacing one version with another without corrupting data or losing users unnecessarily.
 
 This chapter deploys the Product Catalog first as a published .NET application on Linux behind Nginx, then shows the equivalent container model. The technologies can change—a cloud platform may replace `systemd`, a managed ingress may replace Nginx, and a secret manager may replace environment variables—but the responsibilities remain the same.
 
-## 14.1 Production Layers, Publishing, and Release Identity
+### 14.1 Production Layers, Publishing, and Release Identity
 
 The application process is only one part of a production service. A typical Linux deployment has several layers:
 
@@ -9242,7 +9366,7 @@ app.MapGet("/internal/version", (IHostEnvironment environment) => TypedResults.O
 
 Do not expose connection strings, server paths, loaded secrets, complete environment variables, or framework internals through a public diagnostics page. The purpose is to answer “Which release is running?” rather than to dump the process. A version also improves incident response. Logs from three instances can be grouped by release, a failed deployment can be correlated with one commit, and a rollback target can be selected without guessing which files were copied last Tuesday.
 
-## 14.2 Linux Directories and `systemd`
+### 14.2 Linux Directories and `systemd`
 
 A simple server layout separates releases, shared writable state, and the currently active version:
 
@@ -9252,11 +9376,9 @@ A simple server layout separates releases, shared writable state, and the curren
     2026-07-13.1/
     2026-07-20.1/
   current -> releases/2026-07-20.1/
-
 /var/lib/product-catalog/
   uploads/
   data-protection-keys/
-
 /etc/product-catalog/
   product-catalog.env
 ```
@@ -9311,7 +9433,7 @@ journalctl -u product-catalog -f
 
 `Restart=always` recovers from an unexpected process exit, but repeated restart loops still require alerting and investigation. A process manager is not a substitute for correct error handling. It ensures that a transient crash does not leave the service permanently stopped. The service binds Kestrel to `127.0.0.1:5080`, so it is reachable only from the same machine. Nginx will own public ports `80` and `443`. This keeps Kestrel's internal endpoint out of the public network surface.
 
-## 14.3 Reverse Proxies, Forwarded Headers, and HTTPS
+### 14.3 Reverse Proxies, Forwarded Headers, and HTTPS
 
 A reverse proxy accepts the public connection and forwards the request to Kestrel:
 
@@ -9406,7 +9528,7 @@ app.UseHttpsRedirection();
 
 HSTS tells supporting browsers to use HTTPS for the domain for a period of time. Enable it only after HTTPS works reliably for the domain and subdomain policy is understood, because a bad HSTS configuration can make an HTTP-only recovery path unavailable to browsers. Certificates expire. A production setup needs automated issuance or renewal and a monitored reload path. A certificate existing today is not an operational plan. Alert before expiry and verify renewal from outside the server. Traffic between the reverse proxy and Kestrel can remain local HTTP when both processes share a trusted machine. If that hop crosses an untrusted network, protect it with TLS or another private network boundary. “HTTPS at the browser” does not automatically protect every internal hop.
 
-## 14.4 Configuration and Data Protection
+### 14.4 Configuration and Data Protection
 
 The published application should contain safe defaults, while environment-specific values arrive at runtime. Environment variables map double underscores to configuration sections:
 
@@ -9440,7 +9562,7 @@ builder.Services
 
 The directory must remain private to the service account and backed up according to the application's session-recovery needs. On a multi-machine deployment, use an appropriate shared provider such as database, distributed cache, object storage, or a platform integration. `SetApplicationName` isolates compatible applications sharing the same key storage. Changing the application name, losing the key ring, or swapping to an environment with unrelated keys invalidates existing protected values. Treat key-ring deployment as part of release design, especially with blue-green environments and deployment slots.
 
-## 14.5 Migrations and Schema Compatibility
+### 14.5 Migrations and Schema Compatibility
 
 Production schema changes should not normally be an uncontrolled side effect of every application instance starting. Several instances may race, the application account may not have schema-modification permission, and a long migration may leave the service unavailable without a clear operator. Generate and review an idempotent SQL script:
 
@@ -9467,22 +9589,19 @@ The release pipeline can back up or snapshot the database where appropriate, app
 Release A
   -> add new nullable column
   -> old application still works
-
 Release B
   -> application writes old and new forms
   -> backfill existing rows
-
 Release C
   -> application reads new form
   -> old column remains temporarily
-
 Release D
   -> remove old column after no old instance remains
 ```
 
 The same principle applies to outbox payloads, cache keys, SignalR messages, and API contracts. A new worker may read messages written by the previous release. A browser can keep old JavaScript or WebAssembly assets during deployment. Persisted and distributed contracts need an overlap period. Rollback also becomes easier when the database remains backward compatible. Reverting application binaries cannot undo a destructive schema migration automatically. Forward-compatible schema design is more reliable than assuming every deployment can be reversed by copying old files.
 
-## 14.6 Release Switching, Rollback, and Shutdown
+### 14.6 Release Switching, Rollback, and Shutdown
 
 Copy each release into a new directory rather than overwriting files used by the running process:
 
@@ -9506,7 +9625,7 @@ This is simple replacement deployment and causes a short interruption. For many 
 
 A worker should stop claiming new messages when shutdown begins and either complete or release its current lease. A long upload may need to fail cleanly and retry. A database transaction should finish quickly rather than remain open during the entire shutdown period. The proxy or load balancer should stop routing new traffic before the process is killed. Interactive server Blazor users lose their circuits when the hosting process stops. The browser can reconnect, but component state held only in memory may disappear. Important draft or workflow state should be persisted independently rather than relying on one process surviving every deployment. Graceful shutdown reduces disruption; it cannot make arbitrary in-memory state durable. Design state ownership first, then choose a shutdown timeout long enough for normal requests without allowing a broken process to block deployment indefinitely.
 
-## 14.7 Containers, SDK Publishing, and Persistent State
+### 14.7 Containers, SDK Publishing, and Persistent State
 
 A container image contains the application, runtime, operating-system libraries, and startup command in an immutable package. The container runtime supplies configuration, networking, writable volumes, resource limits, and process supervision.
 
@@ -9515,7 +9634,6 @@ Container image
   -> read-only application layers
   -> ProductCatalog.Web
   -> ASP.NET Core runtime
-
 Container instance
   -> environment configuration
   -> network endpoint
@@ -9583,7 +9701,7 @@ volumes:
 
 For multiple instances, local volumes are rarely enough for shared uploads or keys. Use object storage, a shared key provider, and a database reachable by all instances. Do not use a local SQLite file as a casually shared multi-instance production database through a network volume; its locking and operational model differ from a server database. The container should run as a non-root user where the selected image and hosting platform allow it. Grant write access only to mounted directories that need it. The application directory itself should remain read-only.
 
-## 14.8 Health, Telemetry, and Alerts
+### 14.8 Health, Telemetry, and Alerts
 
 Health checks are HTTP endpoints intended for load balancers, orchestrators, and monitoring systems. Register and map a basic check:
 
@@ -9615,10 +9733,8 @@ The load balancer can remove an unready instance while leaving the process alive
 ```text
 Log
   -> Product 42 update failed with version conflict
-
 Metric
   -> 37 conflicts in the last five minutes
-
 Trace
   -> Browser request -> ASP.NET Core -> SQL -> email provider
 ```
@@ -9653,7 +9769,7 @@ Current deployment version
 
 Every alert needs an owner and a response. A dashboard nobody watches and an alert nobody understands do not improve reliability. Link alerts to concise runbooks that explain where to inspect logs, how to identify the current release, how to disable a failing integration, and how to roll back safely.
 
-## 14.9 Scaling and Resource Limits
+### 14.9 Scaling and Resource Limits
 
 Adding a second application instance changes several earlier assumptions:
 
@@ -9685,14 +9801,13 @@ app.MapPost("/account/login", Login).RequireRateLimiting("login");
 
 An in-process limiter protects one instance. A distributed attack or multi-instance deployment may require limits at the load balancer, API gateway, CDN, or shared store. Rate limiting also does not replace authentication lockout, DDoS protection, input validation, or database query limits. Timeouts should be shorter than upstream proxy timeouts and should cancel downstream database or HTTP work where safe. A timeout that returns to the client while the server continues the same expensive work provides little protection.
 
-## 14.10 Backups and the Deployment Sequence
+### 14.10 Backups and the Deployment Sequence
 
 The database, uploaded files, object storage metadata, and perhaps Data Protection keys need backup policies. A backup plan defines frequency, retention, encryption, off-site location, access control, and acceptable data-loss and recovery times. Two operational targets are useful:
 
 ```text
 Recovery Point Objective
   -> How much recent data may be lost?
-
 Recovery Time Objective
   -> How long may restoration take?
 ```
@@ -9717,7 +9832,7 @@ A nightly database backup has an RPO of up to roughly one day unless transaction
 
 The smoke test should use the real public path where possible: DNS, HTTPS, reverse proxy, authentication, database, and static assets. Testing only `curl localhost:5080` proves Kestrel but not the certificate, forwarded headers, proxy upgrade handling, or public routing. A rollback decision should be based on predetermined signals such as elevated errors, failed migrations, broken login, or key business operations. During an incident, “wait a little longer” is not a deployment strategy.
 
-## 14.11 Production Request Path and Key Risks
+### 14.11 Production Request Path and Key Risks
 
 The request path now includes operational infrastructure:
 
@@ -9745,29 +9860,27 @@ Finally, do not call a backup successful until a restore has been tested. Availa
 
 Production surrounds the ASP.NET Core process with DNS, TLS, a reverse proxy or load balancer, process supervision, configuration, secrets, durable storage, telemetry, backups, and a deployment mechanism. `dotnet publish` creates the release artifact; Linux services or containers run it under a restricted identity. Forwarded headers must be accepted only from trusted proxies, Data Protection keys must survive replacement, and migrations should be controlled deployment artifacts with backward-compatible schema changes. Health checks guide restart and routing, while logs, metrics, and traces explain behaviour. Scaling requires removing process-local assumptions around caches, queues, files, keys, SignalR, and interactive server circuits. Backups count only when restoration is tested, and rollback works only when release and schema compatibility were designed before the incident.
 
-# 15. The Complete Request Revisited
+\clearpage
+
+## 15. The Complete Request Revisited
 
 The tutorial began with one user action: entering a URL and waiting for a page to appear. At that point, the path from address bar to pixels contained many unfamiliar systems. DNS, TLS, HTTP, Kestrel, middleware, routing, components, databases, authentication, caches, background workers, and production infrastructure seemed like separate subjects. They are now parts of one path.
 
 This final chapter does not introduce another framework. It follows the Product Catalog through two complete interactions. The first is a read: an anonymous visitor opens the product page. The second is a write: an authenticated editor changes a price. The read shows how a document reaches the browser and becomes interactive. The write shows how browser state becomes an HTTP request, crosses authorization and application boundaries, changes the database, produces a response, rerenders the UI, and schedules effects that continue after the request ends. The purpose is not to memorise every individual step. It is to learn where to look when something goes wrong and where each responsibility belongs when the application changes.
 
-## 15.1 From the URL to the Public Edge
+### 15.1 From the URL to the Public Edge
 
 The deployed Product Catalog can be pictured as five connected regions:
 
 ```text
 Browser
   -> HTML, CSS, DOM, events, Blazor, browser storage
-
 Public network edge
   -> DNS, HTTPS, reverse proxy, forwarded headers
-
 ASP.NET Core host
   -> Kestrel, middleware, routing, authentication, authorization, endpoints
-
 Application and infrastructure
   -> use cases, domain rules, EF Core, database, files, external services
-
 Work beyond the request
   -> outbox, workers, SignalR, notifications, caching, telemetry
 ```
@@ -9828,7 +9941,6 @@ The cookie may be absent for an anonymous visitor. Other headers describe accept
 ```text
 Public request
   https://catalog.example.com/products/42
-
 Internal request
   http://127.0.0.1:5080/products/42
 ```
@@ -9843,7 +9955,7 @@ X-Forwarded-Host: catalog.example.com
 
 Kestrel sees the internal connection from the proxy. Forwarded Headers middleware later restores the external scheme, host, and client address, but only because the proxy is configured as trusted. Without that restoration, ASP.NET Core may think the request used HTTP and generate incorrect redirects, cookies, or external-login callback URLs. The reverse proxy does not normally know which product is being requested in the business sense. It sees an HTTP path and forwards it. Product routing remains inside ASP.NET Core.
 
-## 15.2 From Kestrel to the Selected Endpoint
+### 15.2 From Kestrel to the Selected Endpoint
 
 Kestrel reads the incoming HTTP data and creates the features from which ASP.NET Core constructs an `HttpContext`. The context belongs to this request and contains:
 
@@ -9862,7 +9974,6 @@ The host creates one dependency injection scope for the request. Scoped services
 ```text
 Application process
   -> shared singleton services
-
 Request /products/42
   -> one request scope
   -> scoped services for this request
@@ -9923,7 +10034,7 @@ permission     -> products.edit
 
 If no valid cookie exists, the principal remains anonymous. The public product-details page allows anonymous access, so the request can continue. An administration page might require authentication and trigger a challenge instead. Authentication does not load every user property or automatically approve every operation. It answers which accepted identity is associated with the request. Authorization then evaluates that identity against the selected endpoint policy and, when necessary, the specific product. An invalid or expired credential normally produces `401` when authentication is required. A valid identity without the required permission produces `403`. A public page does not need either failure merely because the visitor is anonymous.
 
-## 15.3 The Read Path Through Application Code and EF Core
+### 15.3 The Read Path Through Application Code and EF Core
 
 A server-rendered Blazor component can inject an application query service and load the product during its lifecycle:
 
@@ -9960,7 +10071,6 @@ The two hosting paths differ at the outer adapter:
 ```text
 Interactive server component
   -> application service directly
-
 WebAssembly component
   -> HTTP API
   -> application service
@@ -9996,10 +10106,8 @@ The query owns application meaning: find the details needed by the product scree
 ```text
 Where
   -> SQL WHERE
-
 Select
   -> selected columns and joins
-
 SingleOrDefaultAsync
   -> execute query and expect zero or one result
 ```
@@ -10016,7 +10124,7 @@ WHERE p.Id = @id;
 
 The parameter value is sent separately rather than concatenated into SQL text. The database engine parses and plans the command, uses indexes where useful, reads matching rows, and returns the selected values. EF Core materialises `ProductDetails` directly from the projection. `AsNoTracking` is appropriate because the read does not intend to modify the entity. Projection avoids loading every product column and relationship. The application receives one ordinary C# result without needing to know how the provider represented the join. If the database is unavailable, the provider throws an infrastructure exception. The exception handler logs the full error and returns a safe production response. The component or API client sees an application failure, not a connection string or SQL stack trace.
 
-## 15.4 From Server Output to Browser Pixels
+### 15.4 From Server Output to Browser Pixels
 
 For server rendering, the component uses the returned data to produce a render tree. Blazor compares component output and produces HTML for the initial response. The server may include markers and boot resources needed for later interactivity. For an API call, the endpoint maps the application result to a typed HTTP result:
 
@@ -10039,7 +10147,6 @@ ASP.NET Core serializes the response model as JSON, sets the status and content 
 ```text
 ProductDetails
   -> Blazor render tree and HTML
-
 ProductDetails
   -> ProductDetailsResponse and JSON
 ```
@@ -10065,10 +10172,8 @@ The browser interprets the status, headers, and body. A status code is not merel
 ```text
 HTML
   -> DOM
-
 CSS
   -> style rules
-
 DOM + styles
   -> layout
   -> paint
@@ -10078,7 +10183,7 @@ DOM + styles
 
 If the page uses interactive server rendering, the browser establishes the Blazor connection after initial rendering. Component code continues running on the server, while events and render updates cross the circuit. If it uses WebAssembly, the browser downloads the .NET runtime and required assemblies and runs component code locally. In either case, the browser remains responsible for the DOM, CSS, input, accessibility tree, and final rendering. The page may look complete before every resource finishes. A product image can arrive after the product name. A cached stylesheet may require no transfer. A failed JavaScript module can break one interactive feature while static content remains visible.
 
-## 15.5 From User Input to an Authorized Update
+### 15.5 From User Input to an Authorized Update
 
 The visitor now sees product `42`. An authorised editor opens the edit form and changes the price from `129.00` to `119.00`. The text box contains browser-side state. It is not yet database state. In Blazor, `@bind` updates the form model when the configured binding event occurs. `EditForm` and validation components can display immediate feedback. That feedback improves the user experience but does not establish trust. A caller can bypass the component and send an HTTP request directly. When the editor selects Save, the event handler runs:
 
@@ -10134,16 +10239,12 @@ The DTO contains only fields the client may submit. It is not the EF Core entity
 ```text
 Binding
   -> Can the bytes become the expected input type?
-
 Input validation
   -> Are submitted values complete and well formed?
-
 Authorization
   -> May this principal request the operation?
-
 Domain rules
   -> Is the resulting state allowed?
-
 Database constraints
   -> Can invalid state be stored despite another writer or bug?
 ```
@@ -10156,7 +10257,7 @@ products.MapPut("/{id:int}", UpdateProduct).RequireAuthorization(CatalogPolicies
 
 Authorization evaluates the principal created by authentication. The policy may require an authenticated user and a `products.edit` permission claim. If the product belongs to a tenant or owner, the handler may also perform resource-based authorization after loading it. The Blazor UI may hide the Save button from unauthorized users, but the endpoint remains authoritative. Browser markup, WebAssembly code, route guards, and `AuthorizeView` are visible or controllable by the user. Security decisions are enforced on the server operation. An anonymous caller receives `401`. A signed-in caller without permission receives `403`. Neither reaches the product update logic.
 
-## 15.6 From Application Handler to Rerender
+### 15.6 From Application Handler to Rerender
 
 The endpoint maps transport input into an application command:
 
@@ -10286,7 +10387,7 @@ HTTP response
 
 This is the answer to the early question “Who requests rerendering?” The framework schedules rendering after recognised component events and lifecycle work, while component code changes the state that makes the next render different. External events may need `InvokeAsync(StateHasChanged)` or another framework-aware notification path because Blazor cannot infer arbitrary state changes outside its event flow.
 
-## 15.7 Background Work, SignalR, and Cache Invalidation
+### 15.7 Background Work, SignalR, and Cache Invalidation
 
 The update response does not wait for every secondary effect. The database transaction already recorded an outbox message, so the application has durably accepted responsibility for later work.
 
@@ -10328,7 +10429,7 @@ Database internal cache
 
 The product update invalidates application-controlled copies after commit. A details key such as `product:42` is removed. Product-list entries may be invalidated through a tag or versioned key. Output-cache entries tagged `products` are evicted. Browser caching should use response validators or short freshness according to how current the screen must be. Invalidation can fail, so expiration remains a safety net. The database is still authoritative. A cache outage should normally reduce performance rather than lose product data. Immutable static assets follow a different strategy. A new CSS or image file receives a versioned URL, so old cached content remains correct for its old address and no immediate global invalidation is needed.
 
-## 15.8 Telemetry, Failure, and Boundary-First Debugging
+### 15.8 Telemetry, Failure, and Boundary-First Debugging
 
 The production request produces several forms of telemetry. A trace connects the reverse-proxied HTTP request, application operation, EF Core command, and perhaps later background work through propagated identifiers. Structured logs record meaningful events:
 
@@ -10359,46 +10460,32 @@ A single `409` may be ordinary concurrent editing. A rising conflict rate after 
 ```text
 DNS failure
   -> browser cannot locate host
-
 TLS failure
   -> secure connection cannot be established
-
 Proxy failure
   -> gateway error or no connection to Kestrel
-
 Kestrel or startup failure
   -> connection refused or service unavailable
-
 Routing failure
   -> 404 or 405
-
 Binding or validation failure
   -> 400
-
 Authentication failure
   -> 401
-
 Authorization failure
   -> 403
-
 Missing product
   -> 404
-
 Concurrency conflict
   -> 409
-
 Rate limit
   -> 429
-
 Dependency unavailable
   -> 503 or controlled failure
-
 Unexpected exception
   -> 500 with correlated server log
-
 Blazor state or rendering problem
   -> request may succeed while UI remains wrong
-
 CSS problem
   -> DOM may be correct while pixels look wrong
 ```
@@ -10452,32 +10539,25 @@ Is the database current?
 
 Each question either identifies the failing boundary or proves that the next boundary should be inspected. This method is faster than assuming that every visible UI problem is a Blazor bug or every failed request is a database bug.
 
-## 15.9 Responsibilities and Final Application Shape
+### 15.9 Responsibilities and Final Application Shape
 
 The complete path contains many libraries, but maintainability comes from placing responsibilities correctly:
 
 ```text
 Browser and Blazor component
   -> display state and handle interaction
-
 HTTP endpoint
   -> translate transport input and output
-
 Application operation
   -> coordinate one use case
-
 Domain model
   -> enforce business invariants
-
 Infrastructure
   -> implement database, file, cache, email, and provider access
-
 Database
   -> preserve relational integrity and durable state
-
 Background system
   -> own work that outlives the request
-
 Deployment environment
   -> run, secure, observe, and replace the process
 ```
@@ -10487,16 +10567,12 @@ A framework type crossing inward is not automatically wrong, but it should have 
 ```text
 ProductCatalog.Domain
   -> Product, ProductCode, Money, domain rules
-
 ProductCatalog.Application
   -> commands, queries, handlers, results, infrastructure contracts
-
 ProductCatalog.Infrastructure
   -> EF Core, database mappings, file storage, email, cache, outbox delivery
-
 ProductCatalog.Web
   -> Program.cs, middleware, Minimal APIs, Blazor components, authentication
-
 ProductCatalog.Tests
   -> domain, application, infrastructure, HTTP, component, and end-to-end tests
 ```
@@ -10516,35 +10592,34 @@ Backup and restore process
 
 Not every application needs every item on day one. The structure describes where a requirement belongs when it arrives.
 
-## 15.10 The End-to-End Mental Model
+### 15.10 The End-to-End Mental Model
 
 A complete web interaction is a sequence of boundaries rather than one local call. A URL becomes DNS and TLS traffic, passes through a proxy and Kestrel, moves through middleware and routing, acquires an authenticated principal, invokes an application operation, becomes SQL through EF Core, and returns as HTML or JSON that the browser renders into pixels. A write adds binding, validation, authorization, domain rules, concurrency, a database transaction, and a component rerender; an outbox can then carry cache invalidation, SignalR, notification, and email work beyond the request. Debugging follows the same path one boundary at a time. The durable mental model is ownership: browser, HTTP adapter, application, domain, infrastructure, database, background system, and deployment environment each solve a different part of the operation.
 
-# Appendix A. Practical Command and Diagnostic Reference
+\clearpage
+
+# Appendices
+
+## Appendix A. Practical Command and Diagnostic Reference
 
 The main chapters explain how the web stack works and why its boundaries matter. This appendix is a compact working reference for the commands and diagnostic paths used while building the application. It is not meant to be memorised. Its purpose is to reduce the time between observing a problem and reaching the layer that can explain it. The most useful habit is to identify the boundary before selecting a tool. The .NET CLI answers project, build, test, package, and publish questions. Browser developer tools answer request, DOM, CSS, storage, and client-runtime questions. ASP.NET Core logs answer host, middleware, routing, authentication, and endpoint questions. EF Core logging and database tools answer query, transaction, constraint, and migration questions. Process managers, reverse proxies, health checks, and telemetry answer production questions.
 
 ```text
 Project does not compile
   -> .NET CLI and compiler output
-
 Browser cannot connect
   -> DNS, TLS, process, port, proxy, and Kestrel
-
 Request returns wrong result
   -> Network panel, ASP.NET Core logs, endpoint and application result
-
 UI does not update
   -> component state, render scheduling, DOM, and CSS
-
 Data is wrong or slow
   -> generated SQL, database constraints, indexes, and execution plan
-
 Production instance is unhealthy
   -> health checks, service logs, metrics, traces, and deployment version
 ```
 
-## A.1 SDKs and Runtimes
+### A.1 SDKs and Runtimes
 
 Begin by confirming which `dotnet` executable and SDK the shell is actually using:
 
@@ -10569,7 +10644,7 @@ dotnet --list-runtimes
 
 Run `dotnet --version` from the solution directory after adding or changing the file. The selected SDK depends on the current directory and parent directories because the CLI searches upward for `global.json`. An editor launched from another folder may therefore select a different SDK unless its workspace and environment are configured consistently. A target framework such as `net10.0` is not the same as the selected SDK or installed runtime. The SDK compiles the project, the target framework describes the API surface and runtime family for which it is compiled, and the runtime executes a framework-dependent deployment.
 
-## A.2 Projects and Solutions
+### A.2 Projects and Solutions
 
 List installed templates:
 
@@ -10646,7 +10721,7 @@ dotnet list src/ProductCatalog.Infrastructure reference
 
 A build can enforce only project-level direction. It cannot prevent a namespace inside `Application` from taking on web responsibilities if both live in one project. Compile-time project boundaries and disciplined type ownership work together.
 
-## A.3 Build, Watch, and Packages
+### A.3 Build, Watch, and Packages
 
 The normal development cycle is:
 
@@ -10743,7 +10818,7 @@ A package update is a code change. Read release notes, rebuild, run tests, and i
 
 Projects then reference packages without repeating their versions.
 
-## A.4 Tests
+### A.4 Tests
 
 Run every test:
 
@@ -10785,7 +10860,7 @@ dotnet test --logger "trx;LogFileName=ProductCatalog.trx" --results-directory ar
 
 A passing unit-test suite does not prove HTTP routing, EF Core provider translation, browser behaviour, or production configuration. Match the test to the boundary: ordinary C# tests for domain rules, controlled collaborators for application operations, a relational provider for EF Core behaviour, `WebApplicationFactory` for HTTP, bUnit for component state and markup, and Playwright for a small number of critical browser journeys.
 
-## A.5 EF Core Migrations
+### A.5 EF Core Migrations
 
 Install or update the EF Core tool:
 
@@ -10857,7 +10932,7 @@ dotnet ef migrations bundle \
 
 Before applying a migration, inspect the generated operations and SQL. Confirm nullability, defaults, foreign keys, delete behaviour, indexes, data conversion, table rebuilds, and possible locks. Test it against production-like data volume. A migration that completes instantly on an empty development database may be disruptive on millions of rows. When the tools cannot create the context, read the design-time error carefully. Common causes are a missing connection string, the wrong startup project, several contexts without `--context`, startup code that requires unavailable services, or a design-time factory that no longer matches the context constructor.
 
-## A.6 Running and Configuring the Application
+### A.6 Running and Configuring the Application
 
 Run a project:
 
@@ -10895,7 +10970,7 @@ dotnet run --project src/ProductCatalog.Web -- --Catalog:PageSize=50
 
 The effective value depends on provider precedence. When configuration is wrong, identify every source capable of setting it: base JSON, environment JSON, user secrets, environment variables, command-line arguments, launch profile, service unit, container configuration, and platform secret injection. Do not print the complete configuration tree in production. It can contain connection strings, provider credentials, signing material, or personal data. Log the presence and safe identity of required configuration rather than its secret value.
 
-## A.7 Ports, HTTP, and Browser Tools
+### A.7 Ports, HTTP, and Browser Tools
 
 When the browser reports that it cannot connect, verify that the process is running and listening:
 
@@ -10976,21 +11051,17 @@ The Elements panel answers whether the expected DOM exists and which CSS rules w
 ```text
 Network
   -> Did the required data or document arrive?
-
 Console
   -> Did client startup or interop fail?
-
 Component state
   -> Did the application store the expected result?
-
 Elements
   -> Did the DOM change?
-
 Styles
   -> Did CSS make the changed DOM visible?
 ```
 
-## A.8 ASP.NET Core and Blazor Diagnosis
+### A.8 ASP.NET Core and Blazor Diagnosis
 
 Enable useful framework categories temporarily through configuration:
 
@@ -11041,7 +11112,7 @@ Set breakpoints or temporary logs in the event handler and lifecycle methods. Ch
 
 Avoid using `@ref` to make components call each other as a general state architecture. Prefer parameters, `EventCallback`, cascading values, and explicit state services. Component references are useful for focused imperative operations such as placing focus or invoking a specialised control API.
 
-## A.9 EF Core and Dependency Injection Diagnosis
+### A.9 EF Core and Dependency Injection Diagnosis
 
 Enable command logging during development:
 
@@ -11091,7 +11162,7 @@ builder.Services
 
 Then inspect the relevant extension rather than searching the whole repository for one service. Use `ValidateOnStart` for options whose absence should prevent the application from accepting traffic. In Development, scope validation can reveal captive scoped dependencies before they become stale-state or disposal failures. When a service resolves in an HTTP request but fails in a background worker, remember that hosted services are singletons and no request scope exists. Create a scope for one message or batch. When a `DbContext` behaves unpredictably in interactive server Blazor, replace a long-lived injected context with `IDbContextFactory<TContext>` and one context per operation.
 
-## A.10 Authentication and Authorization Diagnosis
+### A.10 Authentication and Authorization Diagnosis
 
 Separate the questions:
 
@@ -11106,7 +11177,7 @@ Was the response a challenge or forbid?
 
 Inspect cookies in the browser Application panel and request headers in the Network panel. A cookie can exist but fail decryption because Data Protection keys changed, the application name differs, the cookie expired, the host or path no longer matches, or secure-cookie requirements are not satisfied. For bearer tokens, inspect only non-secret metadata through trusted tooling. Validate issuer, audience, signature, and lifetime. Do not paste production tokens into public decoding sites or logs. A JWT payload being readable does not mean the signature is valid. Use a test authentication scheme in integration tests rather than disabling authorization. Test anonymous, authenticated-but-forbidden, and authorised cases through the actual pipeline. When UI visibility differs from endpoint access, remember that `AuthorizeView` and hidden buttons are presentation controls; server policies are enforcement.
 
-## A.11 Production Diagnosis
+### A.11 Production Diagnosis
 
 Identify the running release first:
 
@@ -11135,7 +11206,7 @@ Then determine whether the failure affects one instance, all instances, one depe
 
 Do not restart repeatedly without first capturing the startup error and current state. A restart can restore service after a transient failure, but it can also erase useful process evidence, repeat a destructive startup action, or hide a resource leak until it grows again. Health checks are signals for infrastructure, not a replacement for business monitoring. An application can respond to `/health/live` while login, checkout, or product updates are broken. Combine technical probes with a small number of representative synthetic journeys.
 
-## A.12 Publishing and Inspecting Releases
+### A.12 Publishing and Inspecting Releases
 
 Create a Release artifact:
 
@@ -11171,43 +11242,31 @@ dotnet publish src/ProductCatalog.Web/ProductCatalog.Web.csproj \
 
 The published directory is the deployment input. Do not deploy the project directory, source tree, `obj`, or arbitrary contents from `bin`. Package and checksum the artifact so the server receives the exact output that was tested. After deployment, test both the private Kestrel route and public HTTPS route, then verify authentication, static assets, database connectivity, migration compatibility, Data Protection keys, SignalR or Blazor connections, and one state-changing operation in a safe staging or smoke-test context.
 
-## A.13 Boundary Checklist
+### A.13 Boundary Checklist
 
 When time is limited, use this condensed map:
 
 ```text
 Build fails
   -> SDK, target framework, package restore, project references, compiler output
-
 Application does not start
   -> configuration validation, DI construction, port, certificate, database startup dependency
-
 No browser connection
   -> DNS, TLS, firewall, proxy, process, Kestrel binding
-
 Wrong HTTP response
   -> method, path, headers, body, middleware order, routing, binding, policy, endpoint result
-
 Wrong UI
   -> client request, component state, render mode, lifecycle, rerender, DOM, CSS
-
 Wrong data
   -> request DTO, application mapping, domain rule, tracking, concurrency, SQL, constraint
-
 Slow request
   -> trace timing, repeated calls, query shape, indexes, cache behaviour, external dependency
-
 Lost background work
   -> fire-and-forget task, non-durable queue, outbox claim, retry, idempotency, dead-letter state
-
 Works on one instance only
   -> process-local cache, queue, files, Data Protection keys, SignalR scale-out, Blazor affinity
-
 Deployment regression
   -> release identity, configuration difference, schema compatibility, key persistence, proxy change
-
 Cannot recover data
   -> backup age, restore procedure, external file storage, key ownership, tested recovery objective
 ```
-
-The framework supplies detailed APIs, but diagnosis usually begins with one simple question: **which boundary last behaved correctly?** Once that boundary is known, the next tool and source of truth become much easier to choose.
